@@ -1,4 +1,4 @@
-# PerkBite — Cafe Ordering & Loyalty SaaS
+# Guesstora — Cafe Ordering & Loyalty SaaS
 
 A runnable React + Node/Express + MySQL application for QR menus, ordering, table bookings, configurable loyalty visits, rewards and an owner dashboard.
 
