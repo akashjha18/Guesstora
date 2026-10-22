@@ -525,15 +525,15 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
       {/* HEADER SECTION */}
       <div className="crm-orders-header-card" style={{ marginBottom: 20 }}>
         <div className="crm-orders-header-left">
-          <div className="crm-orders-brand-emblem" style={{ background: 'linear-gradient(135deg, #ea7a33, #b45309)' }}>
+          <div className="crm-orders-brand-emblem" style={{ background: 'linear-gradient(135deg, #176B50, #123D32)' }}>
             <UserCheck size={24} style={{ color: '#fff' }} />
           </div>
           <div className="crm-orders-brand-info">
             <div className="crm-orders-title-row">
               <h1 className="crm-orders-title">Staff Operations & Tip Payroll</h1>
-              <span className="crm-menu-status-badge" style={{ background: 'rgba(234, 122, 51, 0.15)', color: '#ea7a33' }}>
-                <span className="crm-pulse-dot" style={{ background: '#ea7a33' }} />
-                Phase 11 Operations
+              <span className="crm-menu-status-badge" style={{ background: 'rgba(220, 239, 228, 0.16)', color: '#E6F7ED', border: '1px solid rgba(220, 239, 228, 0.35)' }}>
+                <span className="crm-pulse-dot" style={{ background: '#34d399', boxShadow: '0 0 8px #34d399' }} />
+                Workforce & Tips
               </span>
             </div>
             <p className="crm-orders-subtitle">
@@ -550,7 +550,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
               setClockActionType('in');
               setTimeClockModal(true);
             }}
-            style={{ background: '#ea7a33', display: 'flex', alignItems: 'center', gap: 6 }}
+            style={{ background: '#176B50', display: 'flex', alignItems: 'center', gap: 6 }}
           >
             <Camera size={16} />
             <span>Time Clock / Punch In</span>
@@ -585,7 +585,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
         style={{
           display: 'flex',
           gap: 12,
-          borderBottom: '1px solid #3d2b1f',
+          borderBottom: '1px solid #e5e7eb',
           paddingBottom: 14,
           marginBottom: 24,
           overflowX: 'auto',
@@ -599,17 +599,18 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
             fetchTodayBoard();
           }}
           style={{
-            background: activeTab === 'attendance' ? '#ea7a33' : '#221915',
-            color: activeTab === 'attendance' ? '#fff' : '#a89f91',
-            border: `1px solid ${activeTab === 'attendance' ? '#ea7a33' : '#3d2b1f'}`,
+            background: activeTab === 'attendance' ? '#176B50' : '#ffffff',
+            color: activeTab === 'attendance' ? '#ffffff' : '#4b5563',
+            border: `1px solid ${activeTab === 'attendance' ? '#176B50' : '#e5e7eb'}`,
             padding: '8px 18px',
-            borderRadius: 8,
+            borderRadius: 9999,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: 8,
             fontWeight: 600,
             fontSize: 13,
+            boxShadow: activeTab === 'attendance' ? '0 4px 12px rgba(23,107,80,0.25)' : 'none',
           }}
         >
           <Clock size={16} />
@@ -624,17 +625,18 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
             fetchSchedules();
           }}
           style={{
-            background: activeTab === 'roster' ? '#ea7a33' : '#221915',
-            color: activeTab === 'roster' ? '#fff' : '#a89f91',
-            border: `1px solid ${activeTab === 'roster' ? '#ea7a33' : '#3d2b1f'}`,
+            background: activeTab === 'roster' ? '#176B50' : '#ffffff',
+            color: activeTab === 'roster' ? '#ffffff' : '#4b5563',
+            border: `1px solid ${activeTab === 'roster' ? '#176B50' : '#e5e7eb'}`,
             padding: '8px 18px',
-            borderRadius: 8,
+            borderRadius: 9999,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: 8,
             fontWeight: 600,
             fontSize: 13,
+            boxShadow: activeTab === 'roster' ? '0 4px 12px rgba(23,107,80,0.25)' : 'none',
           }}
         >
           <CalendarDays size={16} />
@@ -649,17 +651,18 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
             fetchTipPools();
           }}
           style={{
-            background: activeTab === 'tips' ? '#ea7a33' : '#221915',
-            color: activeTab === 'tips' ? '#fff' : '#a89f91',
-            border: `1px solid ${activeTab === 'tips' ? '#ea7a33' : '#3d2b1f'}`,
+            background: activeTab === 'tips' ? '#176B50' : '#ffffff',
+            color: activeTab === 'tips' ? '#ffffff' : '#4b5563',
+            border: `1px solid ${activeTab === 'tips' ? '#176B50' : '#e5e7eb'}`,
             padding: '8px 18px',
-            borderRadius: 8,
+            borderRadius: 9999,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: 8,
             fontWeight: 600,
             fontSize: 13,
+            boxShadow: activeTab === 'tips' ? '0 4px 12px rgba(23,107,80,0.25)' : 'none',
           }}
         >
           <DollarSign size={16} />
@@ -674,17 +677,18 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
             fetchPerformanceMetrics();
           }}
           style={{
-            background: activeTab === 'analytics' ? '#ea7a33' : '#221915',
-            color: activeTab === 'analytics' ? '#fff' : '#a89f91',
-            border: `1px solid ${activeTab === 'analytics' ? '#ea7a33' : '#3d2b1f'}`,
+            background: activeTab === 'analytics' ? '#176B50' : '#ffffff',
+            color: activeTab === 'analytics' ? '#ffffff' : '#4b5563',
+            border: `1px solid ${activeTab === 'analytics' ? '#176B50' : '#e5e7eb'}`,
             padding: '8px 18px',
-            borderRadius: 8,
+            borderRadius: 9999,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: 8,
             fontWeight: 600,
             fontSize: 13,
+            boxShadow: activeTab === 'analytics' ? '0 4px 12px rgba(23,107,80,0.25)' : 'none',
           }}
         >
           <Award size={16} />
@@ -699,7 +703,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           {/* TOP SUMMARY CARDS */}
           <div className="stats-cards-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
-            <div className="stat-card" style={{ background: '#221915', border: '1px solid #3d2b1f' }}>
+            <div className="stat-card" style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
               <div className="stat-card-top">
                 <div className="stat-icon-wrap" style={{ background: 'rgba(34, 197, 94, 0.15)', color: '#22c55e' }}>
                   <UserCheck size={22} />
@@ -714,7 +718,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
               </div>
             </div>
 
-            <div className="stat-card" style={{ background: '#221915', border: '1px solid #3d2b1f' }}>
+            <div className="stat-card" style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
               <div className="stat-card-top">
                 <div className="stat-icon-wrap" style={{ background: 'rgba(234, 179, 8, 0.15)', color: '#eab308' }}>
                   <Pause size={22} />
@@ -729,7 +733,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
               </div>
             </div>
 
-            <div className="stat-card" style={{ background: '#221915', border: '1px solid #3d2b1f' }}>
+            <div className="stat-card" style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
               <div className="stat-card-top">
                 <div className="stat-icon-wrap" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6' }}>
                   <Calendar size={22} />
@@ -744,7 +748,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
               </div>
             </div>
 
-            <div className="stat-card" style={{ background: '#221915', border: '1px solid #3d2b1f' }}>
+            <div className="stat-card" style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
               <div className="stat-card-top">
                 <div className="stat-icon-wrap" style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444' }}>
                   <AlertTriangle size={22} />
@@ -761,13 +765,13 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
           </div>
 
           {/* TODAY'S LIVE STAFF ATTENDANCE BOARD */}
-          <div style={{ background: '#221915', border: '1px solid #3d2b1f', borderRadius: 12, padding: 20 }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, padding: 20, boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#f9fafb' }}>
+                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#111827' }}>
                   Today's Live Floor Attendance Board ({todayBoard.date})
                 </h3>
-                <p style={{ margin: '4px 0 0', fontSize: 13, color: '#a89f91' }}>
+                <p style={{ margin: '4px 0 0', fontSize: 13, color: '#6b7280' }}>
                   Real-time punch records, break timers, and clock-out actions
                 </p>
               </div>
@@ -783,9 +787,9 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
             </div>
 
             {todayBoard.attendances.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px 20px', color: '#8c8279' }}>
-                <Clock size={36} style={{ color: '#ea7a33', opacity: 0.6, marginBottom: 12 }} />
-                <h4 style={{ margin: '0 0 6px', color: '#f9fafb' }}>No Clock-In Records Yet Today</h4>
+              <div style={{ textAlign: 'center', padding: '40px 20px', color: '#6b7280' }}>
+                <Clock size={36} style={{ color: '#176B50', opacity: 0.6, marginBottom: 12 }} />
+                <h4 style={{ margin: '0 0 6px', color: '#111827' }}>No Clock-In Records Yet Today</h4>
                 <p style={{ margin: 0, fontSize: 13 }}>
                   Staff can punch in using PIN or biometric selfie camera verification.
                 </p>
@@ -796,7 +800,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                     setClockActionType('in');
                     setTimeClockModal(true);
                   }}
-                  style={{ marginTop: 16, background: '#ea7a33' }}
+                  style={{ marginTop: 16, background: '#176B50' }}
                 >
                   <Camera size={14} style={{ marginRight: 6 }} />
                   Punch First Clock-In
@@ -806,7 +810,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}>
                   <thead>
-                    <tr style={{ borderBottom: '1px solid #3d2b1f', color: '#a89f91', fontSize: 12 }}>
+                    <tr style={{ borderBottom: '1px solid #e5e7eb', color: '#4b5563', fontSize: 12, background: '#f9fafb' }}>
                       <th style={{ padding: '10px 12px' }}>STAFF MEMBER</th>
                       <th style={{ padding: '10px 12px' }}>ROLE</th>
                       <th style={{ padding: '10px 12px' }}>CLOCK IN</th>
@@ -827,7 +831,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                         <tr
                           key={att.id}
                           style={{
-                            borderBottom: '1px solid rgba(61, 43, 31, 0.5)',
+                            borderBottom: '1px solid #f3f4f6',
                             transition: 'background 0.2s',
                           }}
                         >
@@ -837,7 +841,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                                 <img
                                   src={att.clockInSelfie}
                                   alt="Selfie"
-                                  style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '2px solid #ea7a33' }}
+                                  style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '2px solid #176B50' }}
                                 />
                               ) : (
                                 <div
@@ -845,21 +849,21 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                                     width: 36,
                                     height: 36,
                                     borderRadius: '50%',
-                                    background: '#2a201b',
-                                    color: '#ea7a33',
+                                    background: '#f3f4f6',
+                                    color: '#176B50',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     fontWeight: 700,
-                                    border: '1px solid #3d2b1f',
+                                    border: '1px solid #e5e7eb',
                                   }}
                                 >
                                   {(user.name || 'S').charAt(0)}
                                 </div>
                               )}
                               <div>
-                                <div style={{ fontWeight: 600, color: '#f9fafb' }}>{user.name || 'Staff Member'}</div>
-                                <div style={{ fontSize: 11, color: '#8c8279' }}>{user.phone || user.email || 'Floor Staff'}</div>
+                                <div style={{ fontWeight: 600, color: '#111827' }}>{user.name || 'Staff Member'}</div>
+                                <div style={{ fontSize: 11, color: '#6b7280' }}>{user.phone || user.email || 'Floor Staff'}</div>
                               </div>
                             </div>
                           </td>
@@ -868,12 +872,12 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                             <span
                               style={{
                                 textTransform: 'capitalize',
-                                background: '#2a201b',
+                                background: '#f3f4f6',
                                 padding: '4px 10px',
                                 borderRadius: 6,
                                 fontSize: 12,
-                                color: '#e5e7eb',
-                                border: '1px solid #3d2b1f',
+                                color: '#111827',
+                                border: '1px solid #e5e7eb',
                               }}
                             >
                               {user.role || 'Barista'}
@@ -881,7 +885,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                           </td>
 
                           <td style={{ padding: '12px' }}>
-                            <div style={{ color: '#f9fafb', fontWeight: 500 }}>
+                            <div style={{ color: '#111827', fontWeight: 500 }}>
                               {att.clockInTime ? new Date(att.clockInTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '--'}
                             </div>
                             {att.isLate && (
@@ -956,11 +960,11 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                             )}
                           </td>
 
-                          <td style={{ padding: '12px', color: '#f9fafb', fontWeight: 600 }}>
+                          <td style={{ padding: '12px', color: '#111827', fontWeight: 600 }}>
                             {att.workHours > 0 ? `${att.workHours} hrs` : '--'}
                           </td>
 
-                          <td style={{ padding: '12px', color: '#a89f91' }}>
+                          <td style={{ padding: '12px', color: '#6b7280' }}>
                             {Array.isArray(att.breaks) && att.breaks.length > 0 ? (
                               <span>{att.breaks.length} breaks ({att.breakHours || 0}h)</span>
                             ) : (
@@ -981,7 +985,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                                       setClockActionType('break_start');
                                       setTimeClockModal(true);
                                     }}
-                                    style={{ padding: '5px 10px', fontSize: 12, background: '#2a201b' }}
+                                    style={{ padding: '5px 10px', fontSize: 12, background: '#f3f4f6' }}
                                     title="Start Meal or Coffee Break"
                                   >
                                     <Pause size={12} style={{ marginRight: 4 }} />
@@ -1039,13 +1043,13 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
           </div>
 
           {/* HISTORICAL ATTENDANCE & PAYROLL LOGS ACCORDION */}
-          <div style={{ background: '#221915', border: '1px solid #3d2b1f', borderRadius: 12, padding: 20 }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, padding: 20, boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#f9fafb' }}>
+                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#111827' }}>
                   Payroll Hours & Attendance Audit Log
                 </h3>
-                <p style={{ margin: '4px 0 0', fontSize: 13, color: '#a89f91' }}>
+                <p style={{ margin: '4px 0 0', fontSize: 13, color: '#6b7280' }}>
                   Aggregated work hours, break deduction & punctuality compliance
                 </p>
               </div>
@@ -1065,9 +1069,10 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                       fontSize: 12,
                       fontWeight: 600,
                       cursor: 'pointer',
-                      background: reportRange === r ? '#ea7a33' : '#1a1412',
-                      color: reportRange === r ? '#fff' : '#a89f91',
-                      border: '1px solid #3d2b1f',
+                      background: reportRange === r ? '#176B50' : '#ffffff',
+                      color: reportRange === r ? '#fff' : '#4b5563',
+                      border: `1px solid ${reportRange === r ? '#176B50' : '#e5e7eb'}`,
+                      borderRadius: 9999,
                     }}
                   >
                     {r === 'today' ? 'Today' : r === '7days' ? 'Last 7 Days' : 'Last 30 Days'}
@@ -1081,42 +1086,42 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                 style={{
                   display: 'flex',
                   gap: 20,
-                  background: '#1a1412',
+                  background: '#f8fafc',
                   padding: '12px 16px',
-                  borderRadius: 8,
+                  borderRadius: 12,
                   marginBottom: 16,
-                  border: '1px solid #3d2b1f',
+                  border: '1px solid #e5e7eb',
                   fontSize: 13,
                 }}
               >
                 <div>
-                  <span style={{ color: '#8c8279' }}>Total Work Hours: </span>
+                  <span style={{ color: '#6b7280' }}>Total Work Hours: </span>
                   <strong style={{ color: '#22c55e' }}>{reportSummary.totalWorkHours} hrs</strong>
                 </div>
                 <div>
-                  <span style={{ color: '#8c8279' }}>Break Hours: </span>
+                  <span style={{ color: '#6b7280' }}>Break Hours: </span>
                   <strong style={{ color: '#eab308' }}>{reportSummary.totalBreakHours} hrs</strong>
                 </div>
                 <div>
-                  <span style={{ color: '#8c8279' }}>Completed Shifts: </span>
-                  <strong style={{ color: '#f9fafb' }}>{reportSummary.totalRecords}</strong>
+                  <span style={{ color: '#6b7280' }}>Completed Shifts: </span>
+                  <strong style={{ color: '#111827' }}>{reportSummary.totalRecords}</strong>
                 </div>
                 <div>
-                  <span style={{ color: '#8c8279' }}>Late Incident Count: </span>
+                  <span style={{ color: '#6b7280' }}>Late Incident Count: </span>
                   <strong style={{ color: '#ef4444' }}>{reportSummary.lateArrivals}</strong>
                 </div>
               </div>
             )}
 
             {attendanceLogs.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '24px', color: '#8c8279', fontSize: 13 }}>
+              <div style={{ textAlign: 'center', padding: '24px', color: '#6b7280', fontSize: 13 }}>
                 Click a range above or no historical attendance found for this timeframe.
               </div>
             ) : (
               <div style={{ maxHeight: 300, overflowY: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 12 }}>
                   <thead>
-                    <tr style={{ borderBottom: '1px solid #3d2b1f', color: '#8c8279' }}>
+                    <tr style={{ borderBottom: '1px solid #e5e7eb', color: '#4b5563', background: '#f9fafb' }}>
                       <th style={{ padding: '8px' }}>DATE</th>
                       <th style={{ padding: '8px' }}>STAFF</th>
                       <th style={{ padding: '8px' }}>IN</th>
@@ -1128,15 +1133,15 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                   <tbody>
                     {attendanceLogs.map(l => (
                       <tr key={l.id} style={{ borderBottom: '1px solid rgba(61, 43, 31, 0.4)' }}>
-                        <td style={{ padding: '8px', color: '#f9fafb' }}>{l.date}</td>
-                        <td style={{ padding: '8px', fontWeight: 600, color: '#f9fafb' }}>{l.user?.name || 'Staff'}</td>
+                        <td style={{ padding: '8px', color: '#111827' }}>{l.date}</td>
+                        <td style={{ padding: '8px', fontWeight: 600, color: '#111827' }}>{l.user?.name || 'Staff'}</td>
                         <td style={{ padding: '8px', color: '#22c55e' }}>
                           {l.clockInTime ? new Date(l.clockInTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '--'}
                         </td>
                         <td style={{ padding: '8px', color: '#ef4444' }}>
                           {l.clockOutTime ? new Date(l.clockOutTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '--'}
                         </td>
-                        <td style={{ padding: '8px', fontWeight: 700, color: '#ea7a33' }}>{l.workHours} hrs</td>
+                        <td style={{ padding: '8px', fontWeight: 700, color: '#176B50' }}>{l.workHours} hrs</td>
                         <td style={{ padding: '8px' }}>
                           {l.isLate ? (
                             <span style={{ color: '#ef4444' }}>Late +{l.lateMinutes}m</span>
@@ -1161,10 +1166,10 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#f9fafb' }}>
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#111827' }}>
                 Weekly Shift Rostering & Schedule Planner
               </h3>
-              <p style={{ margin: '4px 0 0', fontSize: 13, color: '#a89f91' }}>
+              <p style={{ margin: '4px 0 0', fontSize: 13, color: '#6b7280' }}>
                 Assign staff shifts, configure opening/closing shifts, and monitor roster compliance
               </p>
             </div>
@@ -1184,18 +1189,18 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                 });
                 setScheduleModalOpen(true);
               }}
-              style={{ background: '#ea7a33', display: 'flex', alignItems: 'center', gap: 6 }}
+              style={{ background: '#176B50', display: 'flex', alignItems: 'center', gap: 6 }}
             >
               <Plus size={16} />
               <span>Add Scheduled Shift</span>
             </button>
           </div>
 
-          <div style={{ background: '#221915', border: '1px solid #3d2b1f', borderRadius: 12, padding: 20 }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, padding: 20, boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
             {schedules.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px 20px', color: '#8c8279' }}>
-                <CalendarDays size={36} style={{ color: '#ea7a33', opacity: 0.6, marginBottom: 12 }} />
-                <h4 style={{ margin: '0 0 6px', color: '#f9fafb' }}>No Shifts Rostered</h4>
+              <div style={{ textAlign: 'center', padding: '40px 20px', color: '#6b7280' }}>
+                <CalendarDays size={36} style={{ color: '#176B50', opacity: 0.6, marginBottom: 12 }} />
+                <h4 style={{ margin: '0 0 6px', color: '#111827' }}>No Shifts Rostered</h4>
                 <p style={{ margin: 0, fontSize: 13 }}>Schedule morning, evening, or custom shifts for your team.</p>
               </div>
             ) : (
@@ -1206,10 +1211,11 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                     <div
                       key={sch.id}
                       style={{
-                        background: '#1a1412',
-                        border: '1px solid #3d2b1f',
-                        borderRadius: 10,
+                        background: '#ffffff',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: 14,
                         padding: 16,
+                        boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-between',
@@ -1223,11 +1229,11 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                                 fontSize: 11,
                                 fontWeight: 700,
                                 textTransform: 'uppercase',
-                                background: '#2a201b',
-                                color: '#ea7a33',
+                                background: '#f3f4f6',
+                                color: '#176B50',
                                 padding: '3px 8px',
                                 borderRadius: 4,
-                                border: '1px solid #3d2b1f',
+                                border: '1px solid #e5e7eb',
                               }}
                             >
                               {sch.shiftType.replace('_', ' ')}
@@ -1244,39 +1250,39 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                           </span>
                         </div>
 
-                        <div style={{ fontSize: 15, fontWeight: 700, color: '#f9fafb', marginBottom: 4 }}>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: '#111827', marginBottom: 4 }}>
                           {user.name || 'Staff Member'}
                         </div>
-                        <div style={{ fontSize: 12, color: '#8c8279', marginBottom: 12 }}>
-                          Role: <span style={{ color: '#e5e7eb', textTransform: 'capitalize' }}>{sch.role}</span>
+                        <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 12 }}>
+                          Role: <span style={{ color: '#111827', textTransform: 'capitalize' }}>{sch.role}</span>
                         </div>
 
                         <div
                           style={{
-                            background: '#221915',
+                            background: '#f8fafc',
                             padding: '10px 12px',
-                            borderRadius: 6,
-                            border: '1px solid #3d2b1f',
+                            borderRadius: 8,
+                            border: '1px solid #e5e7eb',
                             marginBottom: 12,
                           }}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#f9fafb', fontWeight: 600 }}>
-                            <Clock size={14} style={{ color: '#ea7a33' }} />
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#111827', fontWeight: 600 }}>
+                            <Clock size={14} style={{ color: '#176B50' }} />
                             <span>{sch.startTime} - {sch.endTime}</span>
                           </div>
-                          <div style={{ fontSize: 11, color: '#8c8279', marginTop: 4 }}>
+                          <div style={{ fontSize: 11, color: '#6b7280', marginTop: 4 }}>
                             Date: {sch.date}
                           </div>
                         </div>
 
                         {sch.notes && (
-                          <div style={{ fontSize: 11, color: '#a89f91', fontStyle: 'italic', marginBottom: 12 }}>
+                          <div style={{ fontSize: 11, color: '#6b7280', fontStyle: 'italic', marginBottom: 12 }}>
                             "{sch.notes}"
                           </div>
                         )}
                       </div>
 
-                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, borderTop: '1px solid #3d2b1f', paddingTop: 10 }}>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, borderTop: '1px solid #f3f4f6', paddingTop: 10 }}>
                         <button
                           type="button"
                           className="crm-btn-secondary"
@@ -1323,10 +1329,10 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#f9fafb' }}>
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#111827' }}>
                 Tip Pool & Service Charge Payroll Engine
               </h3>
-              <p style={{ margin: '4px 0 0', fontSize: 13, color: '#a89f91' }}>
+              <p style={{ margin: '4px 0 0', fontSize: 13, color: '#6b7280' }}>
                 Aggregate cash tips, card tips & service charges. Calculate role-weighted or hours-based fair split.
               </p>
             </div>
@@ -1334,7 +1340,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
               type="button"
               className="crm-btn-primary"
               onClick={() => setCreateTipPoolModal(true)}
-              style={{ background: '#ea7a33', display: 'flex', alignItems: 'center', gap: 6 }}
+              style={{ background: '#176B50', display: 'flex', alignItems: 'center', gap: 6 }}
             >
               <Plus size={16} />
               <span>Create Daily Tip Pool</span>
@@ -1343,11 +1349,11 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
 
           {/* ACTIVE TIP POOL CARD */}
           {activeTipPool ? (
-            <div style={{ background: '#221915', border: '1px solid #3d2b1f', borderRadius: 12, padding: 24 }}>
+            <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, padding: 24, boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <h2 style={{ margin: 0, fontSize: 20, color: '#f9fafb', fontWeight: 800 }}>{activeTipPool.title}</h2>
+                    <h2 style={{ margin: 0, fontSize: 20, color: '#111827', fontWeight: 800 }}>{activeTipPool.title}</h2>
                     <span
                       style={{
                         textTransform: 'uppercase',
@@ -1355,17 +1361,17 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                         fontWeight: 700,
                         padding: '3px 8px',
                         borderRadius: 4,
-                        background: activeTipPool.status === 'settled' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(234, 122, 51, 0.2)',
-                        color: activeTipPool.status === 'settled' ? '#22c55e' : '#ea7a33',
-                        border: `1px solid ${activeTipPool.status === 'settled' ? '#22c55e' : '#ea7a33'}`,
+                        background: activeTipPool.status === 'settled' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(23, 107, 80, 0.2)',
+                        color: activeTipPool.status === 'settled' ? '#16A579' : '#F28A45',
+                        border: `1px solid ${activeTipPool.status === 'settled' ? '#16A579' : '#F28A45'}`,
                       }}
                     >
                       {activeTipPool.status}
                     </span>
                   </div>
-                  <div style={{ fontSize: 13, color: '#8c8279', marginTop: 4 }}>
+                  <div style={{ fontSize: 13, color: '#6b7280', marginTop: 4 }}>
                     Date: {activeTipPool.date} | Method:{' '}
-                    <strong style={{ color: '#e5e7eb' }}>{(activeTipPool.distributionMethod || 'role_weighted').replace('_', ' ')}</strong>
+                    <strong style={{ color: '#111827' }}>{(activeTipPool.distributionMethod || 'role_weighted').replace('_', ' ')}</strong>
                   </div>
                 </div>
 
@@ -1375,7 +1381,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                       type="button"
                       className="crm-btn-primary"
                       onClick={() => handleCalculateDistribution(activeTipPool.id)}
-                      style={{ background: '#ea7a33', display: 'flex', alignItems: 'center', gap: 6 }}
+                      style={{ background: '#176B50', display: 'flex', alignItems: 'center', gap: 6 }}
                     >
                       <Sliders size={14} />
                       <span>Calculate Split</span>
@@ -1416,30 +1422,30 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                   marginBottom: 24,
                 }}
               >
-                <div style={{ background: '#1a1412', padding: 14, borderRadius: 8, border: '1px solid #3d2b1f' }}>
-                  <div style={{ fontSize: 12, color: '#8c8279' }}>Cash Tips</div>
+                <div style={{ background: '#f8fafc', padding: 14, borderRadius: 12, border: '1px solid #e5e7eb' }}>
+                  <div style={{ fontSize: 12, color: '#6b7280' }}>Cash Tips</div>
                   <div style={{ fontSize: 18, fontWeight: 700, color: '#22c55e', marginTop: 4 }}>
                     {money(activeTipPool.cashTips)}
                   </div>
                 </div>
 
-                <div style={{ background: '#1a1412', padding: 14, borderRadius: 8, border: '1px solid #3d2b1f' }}>
-                  <div style={{ fontSize: 12, color: '#8c8279' }}>Digital / Card Tips</div>
+                <div style={{ background: '#f8fafc', padding: 14, borderRadius: 12, border: '1px solid #e5e7eb' }}>
+                  <div style={{ fontSize: 12, color: '#6b7280' }}>Digital / Card Tips</div>
                   <div style={{ fontSize: 18, fontWeight: 700, color: '#3b82f6', marginTop: 4 }}>
                     {money(activeTipPool.cardTips)}
                   </div>
                 </div>
 
-                <div style={{ background: '#1a1412', padding: 14, borderRadius: 8, border: '1px solid #3d2b1f' }}>
-                  <div style={{ fontSize: 12, color: '#8c8279' }}>Service Charges</div>
+                <div style={{ background: '#f8fafc', padding: 14, borderRadius: 12, border: '1px solid #e5e7eb' }}>
+                  <div style={{ fontSize: 12, color: '#6b7280' }}>Service Charges</div>
                   <div style={{ fontSize: 18, fontWeight: 700, color: '#eab308', marginTop: 4 }}>
                     {money(activeTipPool.serviceChargeAmount)}
                   </div>
                 </div>
 
-                <div style={{ background: '#2a1a12', padding: 14, borderRadius: 8, border: '1px solid #ea7a33' }}>
-                  <div style={{ fontSize: 12, color: '#ea7a33', fontWeight: 600 }}>TOTAL POOL TO DISBURSE</div>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: '#f9fafb', marginTop: 4 }}>
+                <div style={{ background: '#ecfdf5', padding: 14, borderRadius: 12, border: '1px solid #a7f3d0' }}>
+                  <div style={{ fontSize: 12, color: '#176B50', fontWeight: 600 }}>TOTAL POOL TO DISBURSE</div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: '#111827', marginTop: 4 }}>
                     {money(activeTipPool.totalAmount)}
                   </div>
                 </div>
@@ -1447,19 +1453,19 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
 
               {/* DISTRIBUTIONS BREAKDOWN TABLE */}
               <div style={{ marginTop: 20 }}>
-                <h4 style={{ margin: '0 0 12px', fontSize: 14, color: '#f9fafb', fontWeight: 700 }}>
+                <h4 style={{ margin: '0 0 12px', fontSize: 14, color: '#111827', fontWeight: 700 }}>
                   Staff Disbursement Breakdown ({activeTipPool.distributions?.length || 0} Recipients)
                 </h4>
 
                 {(!activeTipPool.distributions || activeTipPool.distributions.length === 0) ? (
-                  <div style={{ textAlign: 'center', padding: '30px 20px', color: '#8c8279', background: '#1a1412', borderRadius: 8 }}>
+                  <div style={{ textAlign: 'center', padding: '30px 20px', color: '#6b7280', background: '#f8fafc', borderRadius: 12, border: '1px dashed #d1d5db' }}>
                     <p style={{ margin: 0, fontSize: 13 }}>Click "Calculate Split" to run the distribution algorithm across clocked-in staff.</p>
                   </div>
                 ) : (
-                  <div style={{ overflowX: 'auto', background: '#1a1412', borderRadius: 8, border: '1px solid #3d2b1f' }}>
+                  <div style={{ overflowX: 'auto', background: '#ffffff', borderRadius: 12, border: '1px solid #e5e7eb' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}>
                       <thead>
-                        <tr style={{ borderBottom: '1px solid #3d2b1f', color: '#8c8279', fontSize: 12 }}>
+                        <tr style={{ borderBottom: '1px solid #e5e7eb', color: '#4b5563', fontSize: 12, background: '#f9fafb' }}>
                           <th style={{ padding: '10px 14px' }}>STAFF MEMBER</th>
                           <th style={{ padding: '10px 14px' }}>ROLE</th>
                           <th style={{ padding: '10px 14px' }}>HOURS WORKED</th>
@@ -1471,12 +1477,12 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                       <tbody>
                         {activeTipPool.distributions.map(d => (
                           <tr key={d.id} style={{ borderBottom: '1px solid rgba(61, 43, 31, 0.4)' }}>
-                            <td style={{ padding: '12px 14px', fontWeight: 600, color: '#f9fafb' }}>{d.staffName}</td>
+                            <td style={{ padding: '12px 14px', fontWeight: 600, color: '#111827' }}>{d.staffName}</td>
                             <td style={{ padding: '12px 14px' }}>
-                              <span style={{ textTransform: 'capitalize', color: '#e5e7eb' }}>{d.role}</span>
+                              <span style={{ textTransform: 'capitalize', color: '#111827' }}>{d.role}</span>
                             </td>
-                            <td style={{ padding: '12px 14px', color: '#a89f91' }}>{d.hoursWorked} hrs</td>
-                            <td style={{ padding: '12px 14px', color: '#ea7a33', fontWeight: 600 }}>{d.sharePercent}%</td>
+                            <td style={{ padding: '12px 14px', color: '#6b7280' }}>{d.hoursWorked} hrs</td>
+                            <td style={{ padding: '12px 14px', color: '#176B50', fontWeight: 600 }}>{d.sharePercent}%</td>
                             <td style={{ padding: '12px 14px', fontWeight: 700, color: '#22c55e', fontSize: 14 }}>
                               {money(d.allocatedAmount)}
                             </td>
@@ -1504,10 +1510,10 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
               </div>
             </div>
           ) : (
-            <div style={{ textAlign: 'center', padding: '40px', background: '#221915', borderRadius: 12, border: '1px solid #3d2b1f' }}>
-              <Coins size={36} style={{ color: '#ea7a33', opacity: 0.6, marginBottom: 12 }} />
-              <h4 style={{ color: '#f9fafb' }}>No Tip Pools Created</h4>
-              <p style={{ color: '#8c8279', fontSize: 13 }}>Create a tip pool to distribute cash, card, and bill service charges.</p>
+            <div style={{ textAlign: 'center', padding: '40px', background: '#f8fafc', borderRadius: 16, border: '1px dashed #d1d5db' }}>
+              <Coins size={36} style={{ color: '#176B50', opacity: 0.6, marginBottom: 12 }} />
+              <h4 style={{ color: '#111827' }}>No Tip Pools Created</h4>
+              <p style={{ color: '#6b7280', fontSize: 13 }}>Create a tip pool to distribute cash, card, and bill service charges.</p>
             </div>
           )}
         </div>
@@ -1520,10 +1526,10 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#f9fafb' }}>
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#111827' }}>
                 Staff Performance & Upselling Leaderboard
               </h3>
-              <p style={{ margin: '4px 0 0', fontSize: 13, color: '#a89f91' }}>
+              <p style={{ margin: '4px 0 0', fontSize: 13, color: '#6b7280' }}>
                 Track server revenue, orders handled, average ticket size, upsell rate, and gamified medals
               </p>
             </div>
@@ -1539,13 +1545,10 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                   }}
                   style={{
                     padding: '6px 14px',
-                    borderRadius: 6,
-                    fontSize: 12,
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    background: perfRange === r ? '#ea7a33' : '#221915',
-                    color: perfRange === r ? '#fff' : '#a89f91',
-                    border: '1px solid #3d2b1f',
+                    background: perfRange === r ? '#176B50' : '#ffffff',
+                    color: perfRange === r ? '#ffffff' : '#4b5563',
+                    border: `1px solid ${perfRange === r ? '#176B50' : '#e5e7eb'}`,
+                    borderRadius: 9999,
                   }}
                 >
                   {r === 'today' ? 'Today' : r === '7days' ? 'Last 7 Days' : 'Last 30 Days'}
@@ -1556,9 +1559,9 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
 
           {/* OVERVIEW STATS */}
           <div className="stats-cards-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-            <div className="stat-card" style={{ background: '#221915', border: '1px solid #3d2b1f' }}>
+            <div className="stat-card" style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
               <div className="stat-card-top">
-                <div className="stat-icon-wrap" style={{ background: 'rgba(234, 122, 51, 0.15)', color: '#ea7a33' }}>
+                <div className="stat-icon-wrap" style={{ background: 'rgba(23, 107, 80, 0.15)', color: '#176B50' }}>
                   <TrendingUp size={22} />
                 </div>
                 <div className="stat-info">
@@ -1566,12 +1569,12 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                   <h3 className="stat-value">{money(perfMetrics?.totalStoreRevenue || 0)}</h3>
                 </div>
               </div>
-              <div className="stat-card-bottom" style={{ color: '#ea7a33', fontSize: 12 }}>
+              <div className="stat-card-bottom" style={{ color: '#176B50', fontSize: 12 }}>
                 Across {perfMetrics?.totalOrdersCount || 0} customer orders
               </div>
             </div>
 
-            <div className="stat-card" style={{ background: '#221915', border: '1px solid #3d2b1f' }}>
+            <div className="stat-card" style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
               <div className="stat-card-top">
                 <div className="stat-icon-wrap" style={{ background: 'rgba(34, 197, 94, 0.15)', color: '#22c55e' }}>
                   <Coffee size={22} />
@@ -1590,7 +1593,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
               </div>
             </div>
 
-            <div className="stat-card" style={{ background: '#221915', border: '1px solid #3d2b1f' }}>
+            <div className="stat-card" style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
               <div className="stat-card-top">
                 <div className="stat-icon-wrap" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6' }}>
                   <Award size={22} />
@@ -1613,18 +1616,18 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
           </div>
 
           {/* LEADERBOARD TABLE */}
-          <div style={{ background: '#221915', border: '1px solid #3d2b1f', borderRadius: 12, padding: 20 }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, padding: 20, boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
             {(!perfMetrics?.leaderboard || perfMetrics.leaderboard.length === 0) ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: '#8c8279' }}>
-                <Award size={36} style={{ color: '#ea7a33', opacity: 0.6, marginBottom: 12 }} />
-                <h4 style={{ color: '#f9fafb' }}>No Completed Orders Recorded</h4>
+              <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
+                <Award size={36} style={{ color: '#176B50', opacity: 0.6, marginBottom: 12 }} />
+                <h4 style={{ color: '#111827' }}>No Completed Orders Recorded</h4>
                 <p style={{ fontSize: 13 }}>Orders assigned to servers or floor captains will automatically rank here.</p>
               </div>
             ) : (
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}>
                   <thead>
-                    <tr style={{ borderBottom: '1px solid #3d2b1f', color: '#8c8279', fontSize: 12 }}>
+                    <tr style={{ borderBottom: '1px solid #e5e7eb', color: '#4b5563', fontSize: 12, background: '#f9fafb' }}>
                       <th style={{ padding: '12px' }}>RANK</th>
                       <th style={{ padding: '12px' }}>STAFF MEMBER</th>
                       <th style={{ padding: '12px' }}>ROLE</th>
@@ -1645,28 +1648,28 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                           key={item.userId}
                           style={{
                             borderBottom: '1px solid rgba(61, 43, 31, 0.4)',
-                            background: item.rank === 1 ? 'rgba(234, 122, 51, 0.05)' : 'transparent',
+                            background: item.rank === 1 ? 'rgba(23, 107, 80, 0.05)' : 'transparent',
                           }}
                         >
                           <td style={{ padding: '14px 12px', fontSize: 16, fontWeight: 700 }}>{medal}</td>
-                          <td style={{ padding: '14px 12px', fontWeight: 600, color: '#f9fafb' }}>
+                          <td style={{ padding: '14px 12px', fontWeight: 600, color: '#111827' }}>
                             {item.staffName}
                           </td>
                           <td style={{ padding: '14px 12px' }}>
-                            <span style={{ textTransform: 'capitalize', color: '#e5e7eb' }}>{item.role}</span>
+                            <span style={{ textTransform: 'capitalize', color: '#111827' }}>{item.role}</span>
                           </td>
                           <td style={{ padding: '14px 12px', fontWeight: 700, color: '#22c55e', fontSize: 14 }}>
                             {money(item.totalRevenue)}
                           </td>
-                          <td style={{ padding: '14px 12px', color: '#f9fafb' }}>
+                          <td style={{ padding: '14px 12px', color: '#111827' }}>
                             {item.completedOrders} orders
                           </td>
-                          <td style={{ padding: '14px 12px', color: '#a89f91' }}>{money(item.aov)}</td>
+                          <td style={{ padding: '14px 12px', color: '#6b7280' }}>{money(item.aov)}</td>
                           <td style={{ padding: '14px 12px' }}>
                             <span
                               style={{
                                 fontWeight: 700,
-                                color: item.upsellRate >= 30 ? '#ea7a33' : '#a89f91',
+                                color: item.upsellRate >= 30 ? '#176B50' : '#a89f91',
                               }}
                             >
                               {item.upsellRate}%
@@ -1681,11 +1684,11 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                                     title={b.label}
                                     style={{
                                       fontSize: 11,
-                                      background: '#2a201b',
-                                      border: '1px solid #3d2b1f',
+                                      background: '#f3f4f6',
+                                      border: '1px solid #e5e7eb',
                                       padding: '2px 8px',
                                       borderRadius: 12,
-                                      color: '#f9fafb',
+                                      color: '#111827',
                                       display: 'inline-flex',
                                       alignItems: 'center',
                                       gap: 4,
@@ -1719,22 +1722,22 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
           <div
             className="crm-modal-card"
             style={{
-              background: '#1a1412',
-              border: '1px solid #3d2b1f',
-              borderRadius: 14,
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: 16,
               padding: 24,
               width: '100%',
               maxWidth: 480,
-              boxShadow: '0 20px 40px rgba(0,0,0,0.8)',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.12)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ background: '#ea7a33', padding: 8, borderRadius: 8, color: '#fff' }}>
+                <div style={{ background: '#176B50', padding: 8, borderRadius: 8, color: '#fff' }}>
                   <Clock size={18} />
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: 17, color: '#f9fafb' }}>
+                  <h3 style={{ margin: 0, fontSize: 17, color: '#111827' }}>
                     {clockActionType === 'in'
                       ? 'Clock In / Time Punch'
                       : clockActionType === 'break_start'
@@ -1743,7 +1746,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                       ? 'End Break & Resume'
                       : 'Clock Out / End Shift'}
                   </h3>
-                  <span style={{ fontSize: 12, color: '#8c8279' }}>
+                  <span style={{ fontSize: 12, color: '#6b7280' }}>
                     {new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })} • PIN / Biometric Verification
                   </span>
                 </div>
@@ -1751,7 +1754,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
               <button
                 type="button"
                 onClick={closeClockModal}
-                style={{ background: 'none', border: 'none', color: '#a89f91', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer' }}
               >
                 <X size={18} />
               </button>
@@ -1761,7 +1764,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
               {/* Select Staff if Clocking in */}
               {clockActionType === 'in' && (
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 6 }}>
                     Select Staff Member
                   </label>
                   <select
@@ -1769,7 +1772,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                     value={selectedStaffForClock}
                     onChange={e => setSelectedStaffForClock(e.target.value)}
                     required
-                    style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                    style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                   >
                     <option value="">-- Choose Staff Member --</option>
                     {activeStaff.map(s => (
@@ -1784,14 +1787,14 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
               {/* Break Type Selector */}
               {clockActionType === 'break_start' && (
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 6 }}>
                     Break Category
                   </label>
                   <select
                     className="crm-form-input"
                     value={breakTypeInput}
                     onChange={e => setBreakTypeInput(e.target.value)}
-                    style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                    style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                   >
                     <option value="meal">Meal Break (30 mins)</option>
                     <option value="coffee">Coffee / Tea Break (15 mins)</option>
@@ -1816,9 +1819,10 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                       fontSize: 12,
                       fontWeight: 600,
                       cursor: 'pointer',
-                      background: clockMethod === 'pin' ? '#ea7a33' : '#221915',
-                      color: clockMethod === 'pin' ? '#fff' : '#a89f91',
-                      border: '1px solid #3d2b1f',
+                      background: clockMethod === 'pin' ? '#176B50' : '#ffffff',
+                      color: clockMethod === 'pin' ? '#fff' : '#4b5563',
+                      border: `1px solid ${clockMethod === 'pin' ? '#176B50' : '#e5e7eb'}`,
+                      borderRadius: 9999,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -1841,9 +1845,10 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                       fontSize: 12,
                       fontWeight: 600,
                       cursor: 'pointer',
-                      background: clockMethod === 'selfie' ? '#ea7a33' : '#221915',
-                      color: clockMethod === 'selfie' ? '#fff' : '#a89f91',
-                      border: '1px solid #3d2b1f',
+                      background: clockMethod === 'selfie' ? '#176B50' : '#ffffff',
+                      color: clockMethod === 'selfie' ? '#fff' : '#4b5563',
+                      border: `1px solid ${clockMethod === 'selfie' ? '#176B50' : '#e5e7eb'}`,
+                      borderRadius: 9999,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -1858,7 +1863,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
               {/* Method A: PIN Keypad */}
               {clockMethod === 'pin' && (clockActionType === 'in' || clockActionType === 'out') && (
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 6 }}>
                     4-Digit Staff Security PIN
                   </label>
                   <input
@@ -1874,9 +1879,9 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                       letterSpacing: 8,
                       fontSize: 20,
                       fontWeight: 700,
-                      background: '#221915',
-                      borderColor: '#3d2b1f',
-                      color: '#f9fafb',
+                      background: '#f8fafc',
+                      borderColor: '#d1d5db',
+                      color: '#111827',
                     }}
                   />
                   {/* Quick Number Pad Buttons */}
@@ -1895,10 +1900,10 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                         }}
                         style={{
                           padding: '10px',
-                          background: '#221915',
-                          border: '1px solid #3d2b1f',
-                          borderRadius: 6,
-                          color: '#f9fafb',
+                          background: '#f8fafc',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: 8,
+                          color: '#111827',
                           fontSize: 14,
                           fontWeight: 600,
                           cursor: 'pointer',
@@ -1966,7 +1971,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                         type="button"
                         className="crm-btn-primary"
                         onClick={captureCameraPhoto}
-                        style={{ marginTop: 10, width: '100%', background: '#ea7a33' }}
+                        style={{ marginTop: 10, width: '100%', background: '#176B50' }}
                       >
                         <Camera size={14} style={{ marginRight: 6 }} />
                         Snap Photo Verification
@@ -1978,7 +1983,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
 
               {/* Optional Notes */}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                   Notes (Optional)
                 </label>
                 <input
@@ -1987,7 +1992,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                   onChange={e => setClockNotes(e.target.value)}
                   placeholder="e.g. Covering morning rush on Barista bar"
                   className="crm-form-input"
-                  style={{ width: '100%', background: '#221915', borderColor: '#3d2b1f', color: '#f9fafb' }}
+                  style={{ width: '100%', background: '#f8fafc', borderColor: '#d1d5db', color: '#111827' }}
                 />
               </div>
 
@@ -2005,7 +2010,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                   type="submit"
                   disabled={loading}
                   className="crm-btn-primary"
-                  style={{ flex: 2, justifyContent: 'center', background: '#ea7a33' }}
+                  style={{ flex: 2, justifyContent: 'center', background: '#176B50' }}
                 >
                   {loading ? 'Verifying...' : 'Confirm Action'}
                 </button>
@@ -2023,28 +2028,28 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
           <div
             className="crm-modal-card"
             style={{
-              background: '#1a1412',
-              border: '1px solid #3d2b1f',
-              borderRadius: 14,
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: 16,
               padding: 24,
               width: '100%',
               maxWidth: 480,
-              boxShadow: '0 20px 40px rgba(0,0,0,0.8)',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.12)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ background: '#ea7a33', padding: 8, borderRadius: 8, color: '#fff' }}>
+                <div style={{ background: '#176B50', padding: 8, borderRadius: 8, color: '#fff' }}>
                   <Calendar size={18} />
                 </div>
-                <h3 style={{ margin: 0, fontSize: 17, color: '#f9fafb' }}>
+                <h3 style={{ margin: 0, fontSize: 17, color: '#111827' }}>
                   {editingScheduleId ? 'Edit Shift Schedule' : 'Roster New Shift'}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setScheduleModalOpen(false)}
-                style={{ background: 'none', border: 'none', color: '#a89f91', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer' }}
               >
                 <X size={18} />
               </button>
@@ -2052,7 +2057,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
 
             <form onSubmit={handleSaveSchedule} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                   Staff Member
                 </label>
                 <select
@@ -2060,7 +2065,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                   value={scheduleForm.userId}
                   onChange={e => setScheduleForm({ ...scheduleForm, userId: e.target.value })}
                   required
-                  style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                  style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                 >
                   <option value="">-- Choose Staff Member --</option>
                   {activeStaff.map(s => (
@@ -2073,7 +2078,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                     Date
                   </label>
                   <input
@@ -2082,12 +2087,12 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                     value={scheduleForm.date}
                     onChange={e => setScheduleForm({ ...scheduleForm, date: e.target.value })}
                     required
-                    style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                    style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                     Shift Template
                   </label>
                   <select
@@ -2115,7 +2120,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                       }
                       setScheduleForm({ ...scheduleForm, shiftType: type, startTime: st, endTime: et });
                     }}
-                    style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                    style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                   >
                     <option value="morning">Morning (07:30 - 15:30)</option>
                     <option value="afternoon">Afternoon (12:00 - 20:30)</option>
@@ -2129,7 +2134,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                     Start Time
                   </label>
                   <input
@@ -2138,12 +2143,12 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                     value={scheduleForm.startTime}
                     onChange={e => setScheduleForm({ ...scheduleForm, startTime: e.target.value })}
                     required
-                    style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                    style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                     End Time
                   </label>
                   <input
@@ -2152,20 +2157,20 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                     value={scheduleForm.endTime}
                     onChange={e => setScheduleForm({ ...scheduleForm, endTime: e.target.value })}
                     required
-                    style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                    style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                   Assigned Operational Role
                 </label>
                 <select
                   className="crm-form-input"
                   value={scheduleForm.role}
                   onChange={e => setScheduleForm({ ...scheduleForm, role: e.target.value })}
-                  style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                  style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                 >
                   <option value="barista">Barista</option>
                   <option value="captain">Floor Captain</option>
@@ -2176,7 +2181,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                   Instructions / Shift Notes
                 </label>
                 <input
@@ -2185,7 +2190,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                   value={scheduleForm.notes}
                   onChange={e => setScheduleForm({ ...scheduleForm, notes: e.target.value })}
                   placeholder="e.g. Lead morning espresso bar opening"
-                  style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                  style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                 />
               </div>
 
@@ -2202,7 +2207,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                   type="submit"
                   disabled={loading}
                   className="crm-btn-primary"
-                  style={{ flex: 2, justifyContent: 'center', background: '#ea7a33' }}
+                  style={{ flex: 2, justifyContent: 'center', background: '#176B50' }}
                 >
                   {editingScheduleId ? 'Update Roster' : 'Save Shift Schedule'}
                 </button>
@@ -2220,26 +2225,26 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
           <div
             className="crm-modal-card"
             style={{
-              background: '#1a1412',
-              border: '1px solid #3d2b1f',
-              borderRadius: 14,
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: 16,
               padding: 24,
               width: '100%',
               maxWidth: 500,
-              boxShadow: '0 20px 40px rgba(0,0,0,0.8)',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.12)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ background: '#ea7a33', padding: 8, borderRadius: 8, color: '#fff' }}>
+                <div style={{ background: '#176B50', padding: 8, borderRadius: 8, color: '#fff' }}>
                   <Coins size={18} />
                 </div>
-                <h3 style={{ margin: 0, fontSize: 17, color: '#f9fafb' }}>Create Shift Tip Pool</h3>
+                <h3 style={{ margin: 0, fontSize: 17, color: '#111827' }}>Create Shift Tip Pool</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setCreateTipPoolModal(false)}
-                style={{ background: 'none', border: 'none', color: '#a89f91', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer' }}
               >
                 <X size={18} />
               </button>
@@ -2247,7 +2252,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
 
             <form onSubmit={handleSaveTipPool} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                   Pool Title
                 </label>
                 <input
@@ -2256,12 +2261,12 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                   value={tipPoolForm.title}
                   onChange={e => setTipPoolForm({ ...tipPoolForm, title: e.target.value })}
                   required
-                  style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                  style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                   Date
                 </label>
                 <input
@@ -2270,13 +2275,13 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                   value={tipPoolForm.date}
                   onChange={e => setTipPoolForm({ ...tipPoolForm, date: e.target.value })}
                   required
-                  style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                  style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                     Cash Tips (₹)
                   </label>
                   <input
@@ -2286,12 +2291,12 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                     className="crm-form-input"
                     value={tipPoolForm.cashTips}
                     onChange={e => setTipPoolForm({ ...tipPoolForm, cashTips: Number(e.target.value) || 0 })}
-                    style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                    style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                     Card Tips (₹)
                   </label>
                   <input
@@ -2301,12 +2306,12 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                     className="crm-form-input"
                     value={tipPoolForm.cardTips}
                     onChange={e => setTipPoolForm({ ...tipPoolForm, cardTips: Number(e.target.value) || 0 })}
-                    style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                    style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                     Service Charge (₹)
                   </label>
                   <input
@@ -2316,27 +2321,27 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                     className="crm-form-input"
                     value={tipPoolForm.serviceChargeAmount}
                     onChange={e => setTipPoolForm({ ...tipPoolForm, serviceChargeAmount: Number(e.target.value) || 0 })}
-                    style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                    style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                   />
                 </div>
               </div>
 
-              <div style={{ background: '#2a1a12', padding: '10px 14px', borderRadius: 8, border: '1px solid #ea7a33', textAlign: 'right' }}>
-                <span style={{ fontSize: 12, color: '#ea7a33' }}>Total Pool Aggregated: </span>
-                <strong style={{ fontSize: 16, color: '#f9fafb' }}>
+              <div style={{ background: '#ecfdf5', padding: '10px 14px', borderRadius: 8, border: '1px solid #a7f3d0', textAlign: 'right' }}>
+                <span style={{ fontSize: 12, color: '#176B50' }}>Total Pool Aggregated: </span>
+                <strong style={{ fontSize: 16, color: '#111827' }}>
                   {money((tipPoolForm.cashTips || 0) + (tipPoolForm.cardTips || 0) + (tipPoolForm.serviceChargeAmount || 0))}
                 </strong>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                   Disbursement Formula
                 </label>
                 <select
                   className="crm-form-input"
                   value={tipPoolForm.distributionMethod}
                   onChange={e => setTipPoolForm({ ...tipPoolForm, distributionMethod: e.target.value })}
-                  style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                  style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                 >
                   <option value="role_weighted">Role-Weighted Split (Barista 40%, Captain 35%, Kitchen 25%, Cashier 20%)</option>
                   <option value="hours_worked">Hours-Worked Proportionate Split</option>
@@ -2357,7 +2362,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                   type="submit"
                   disabled={loading}
                   className="crm-btn-primary"
-                  style={{ flex: 2, justifyContent: 'center', background: '#ea7a33' }}
+                  style={{ flex: 2, justifyContent: 'center', background: '#176B50' }}
                 >
                   Save & Initialize Pool
                 </button>
@@ -2375,13 +2380,13 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
           <div
             className="crm-modal-card"
             style={{
-              background: '#1a1412',
-              border: '1px solid #3d2b1f',
-              borderRadius: 14,
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: 16,
               padding: 24,
               width: '100%',
               maxWidth: 440,
-              boxShadow: '0 20px 40px rgba(0,0,0,0.8)',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.12)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -2389,32 +2394,32 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                 <div style={{ background: '#22c55e', padding: 8, borderRadius: 8, color: '#fff' }}>
                   <CheckCircle2 size={18} />
                 </div>
-                <h3 style={{ margin: 0, fontSize: 17, color: '#f9fafb' }}>Settle Tip Disbursement</h3>
+                <h3 style={{ margin: 0, fontSize: 17, color: '#111827' }}>Settle Tip Disbursement</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setSettleModalOpen(false)}
-                style={{ background: 'none', border: 'none', color: '#a89f91', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer' }}
               >
                 <X size={18} />
               </button>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <p style={{ margin: 0, fontSize: 13, color: '#a89f91' }}>
+              <p style={{ margin: 0, fontSize: 13, color: '#6b7280' }}>
                 Disbursing <strong style={{ color: '#22c55e' }}>{money(activeTipPool.totalAmount)}</strong> across{' '}
                 <strong>{activeTipPool.distributions?.length || 0} team members</strong>.
               </p>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                   Disbursement Mode
                 </label>
                 <select
                   className="crm-form-input"
                   value={payoutMethodInput}
                   onChange={e => setPayoutMethodInput(e.target.value)}
-                  style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                  style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                 >
                   <option value="upi">Instant UPI Payout</option>
                   <option value="cash">Direct Cash Distribution</option>
@@ -2424,7 +2429,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#a89f91', marginBottom: 4 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
                   Transaction / Voucher Reference
                 </label>
                 <input
@@ -2433,7 +2438,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                   value={payoutRefInput}
                   onChange={e => setPayoutRefInput(e.target.value)}
                   placeholder="e.g. UPI-TXN-882194 or Petty Cash Slip #104"
-                  style={{ width: '100%', background: '#221915', color: '#f9fafb', borderColor: '#3d2b1f' }}
+                  style={{ width: '100%', background: '#f8fafc', color: '#111827', borderColor: '#d1d5db' }}
                 />
               </div>
 
@@ -2469,24 +2474,24 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
           <div
             className="crm-modal-card"
             style={{
-              background: '#1a1412',
-              border: '1px solid #3d2b1f',
-              borderRadius: 14,
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: 16,
               padding: 24,
               width: '100%',
               maxWidth: 520,
-              boxShadow: '0 20px 40px rgba(0,0,0,0.8)',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.12)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <Printer size={18} style={{ color: '#ea7a33' }} />
-                <h3 style={{ margin: 0, fontSize: 17, color: '#f9fafb' }}>80mm Thermal Tip Settlement Slip</h3>
+                <Printer size={18} style={{ color: '#176B50' }} />
+                <h3 style={{ margin: 0, fontSize: 17, color: '#111827' }}>80mm Thermal Tip Settlement Slip</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setSlipModalOpen(false)}
-                style={{ background: 'none', border: 'none', color: '#a89f91', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer' }}
               >
                 <X size={18} />
               </button>
@@ -2502,7 +2507,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                 fontFamily: 'Courier New, monospace',
                 maxHeight: 380,
                 overflowY: 'auto',
-                border: '1px solid #3d2b1f',
+                border: '1px solid #374151',
                 lineHeight: 1.4,
               }}
             >
@@ -2527,7 +2532,7 @@ export default function StaffOperationsManager({ cafe, token, staffList = [] }) 
                 onClick={() => {
                   window.print();
                 }}
-                style={{ flex: 1, justifyContent: 'center', background: '#ea7a33' }}
+                style={{ flex: 1, justifyContent: 'center', background: '#176B50' }}
               >
                 <Printer size={14} style={{ marginRight: 6 }} /> Print Slip
               </button>

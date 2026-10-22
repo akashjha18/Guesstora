@@ -16,6 +16,7 @@ export function calculateRewardProgress(visits, required) {
 export async function processLoyalty({ order, customer, cafe }) {
   if (order.loyaltyProcessed || order.status !== 'completed' || order.paymentStatus !== 'paid') return null;
   order.loyaltyProcessed = true;
+  if (!customer) { await order.save(); return null; }
   if (!cafe.loyaltyEnabled || order.subtotal < cafe.loyaltyMinimumSpend) { await order.save(); return null; }
   customer.visits += 1;
   let reward = null;

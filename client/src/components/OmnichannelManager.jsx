@@ -273,7 +273,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
           slug: newOutletSlug || newOutletName.toLowerCase().replace(/[^a-z0-9]/g, '-'),
           tables: Number(newOutletTables) || 10,
           currency: cafe?.currency || 'INR',
-          brandColor: cafe?.brandColor || '#ea7a33'
+          brandColor: cafe?.brandColor || '#176B50'
         })
       });
       showNotification(`Outlet "${res.outlet.name}" provisioned and linked to brand chain!`);
@@ -312,8 +312,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
   };
 
   return (
-    <div className="omnichannel-root" style={{
-      color: '#FAF6F0',
+    <div className="crm-orders-wrapper" style={{
+      padding: '0 0 40px 0',
+      color: '#1f2937',
       fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
     }}>
       {/* Toast Notification */}
@@ -327,10 +328,10 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
           borderRadius: 10,
           background: notice.isErr ? '#7F1D1D' : '#14532D',
           border: `1px solid ${notice.isErr ? '#EF4444' : '#22C55E'}`,
-          color: '#FAF6F0',
+          color: '#F1F7F2',
           fontSize: 13,
           fontWeight: 600,
-          boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
           display: 'flex',
           alignItems: 'center',
           gap: 10
@@ -340,85 +341,40 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
         </div>
       )}
 
-      {/* Main Header Banner */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1A120C 0%, #241711 50%, #2D1E16 100%)',
-        borderRadius: 16,
-        padding: '28px 32px',
-        border: '1px solid rgba(234, 122, 51, 0.25)',
-        marginBottom: 24,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: 16,
-        boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
-      }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-            <div style={{
-              width: 44,
-              height: 44,
-              borderRadius: 12,
-              background: 'linear-gradient(135deg, #EA7A33, #C85A1B)',
-              display: 'grid',
-              placeItems: 'center',
-              boxShadow: '0 4px 16px rgba(234, 122, 51, 0.35)'
-            }}>
-              <Globe size={24} color="#FAF6F0" />
+      {/* Main Header Banner - Staff & Roles Theme */}
+      <div className="crm-orders-header-card" style={{ marginBottom: 24 }}>
+        <div className="crm-orders-header-left">
+          <div className="crm-orders-brand-emblem">
+            <Globe size={24} style={{ color: '#DCEFE4' }} />
+          </div>
+          <div className="crm-orders-brand-info">
+            <div className="crm-orders-title-row">
+              <h2 className="crm-orders-title">Enterprise & Omnichannel Network</h2>
+              <span className="crm-orders-live-badge">
+                <span className="crm-orders-live-pulse"></span>
+                Active Outlet: {cafe?.name || 'Main Roastery'}
+              </span>
             </div>
-            <div>
-              <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em', color: '#FAF6F0' }}>
-                Enterprise & Omnichannel Network
-              </h1>
-              <p style={{ margin: 0, fontSize: 13, color: '#A89F91' }}>
-                Zomato & Swiggy aggregator sync, automated WhatsApp Cloud API, and multi-outlet roastery chain portal
-              </p>
-            </div>
+            <p className="crm-orders-subtitle">
+              Zomato & Swiggy aggregator sync, automated WhatsApp Cloud API, and multi-outlet roastery chain portal
+            </p>
           </div>
         </div>
 
         {/* Global Action Pills */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{
-            background: 'rgba(234, 122, 51, 0.1)',
-            border: '1px solid rgba(234, 122, 51, 0.3)',
-            borderRadius: 30,
-            padding: '6px 14px',
-            fontSize: 12,
-            fontWeight: 600,
-            color: '#EA7A33',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6
-          }}>
-            <Radio size={14} className="crm-pulse-dot" />
-            <span>Active Outlet: {cafe?.name || 'Main Roastery'}</span>
-          </div>
-
+        <div className="crm-orders-header-actions">
           <button
             type="button"
+            className="crm-btn-secondary"
             onClick={() => {
               fetchChannelsData();
               fetchWhatsAppData();
               fetchBrandData();
               showNotification('Enterprise metrics refreshed');
             }}
-            style={{
-              background: '#2D1E16',
-              border: '1px solid #3E2B20',
-              color: '#FAF6F0',
-              borderRadius: 8,
-              padding: '8px 14px',
-              fontSize: 12,
-              fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              cursor: 'pointer'
-            }}
           >
-            <RefreshCw size={13} /> Refresh
+            <RefreshCw size={13} />
+            <span>Refresh</span>
           </button>
         </div>
       </div>
@@ -426,36 +382,38 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
       {/* Sub-Tabs Navigation Bar */}
       <div style={{
         display: 'flex',
-        gap: 8,
-        borderBottom: '1px solid #2D1E16',
-        paddingBottom: 12,
-        marginBottom: 24
+        gap: 10,
+        marginBottom: 24,
+        flexWrap: 'wrap'
       }}>
         <button
           type="button"
           onClick={() => setSubTab('channels')}
           style={{
-            background: subTab === 'channels' ? '#EA7A33' : 'rgba(45, 30, 22, 0.6)',
-            color: subTab === 'channels' ? '#1A120C' : '#FAF6F0',
+            background: subTab === 'channels' ? '#176B50' : '#ffffff',
+            color: subTab === 'channels' ? '#ffffff' : '#4b5563',
+            border: subTab === 'channels' ? '1px solid #176B50' : '1px solid #e5e7eb',
+            borderRadius: 10,
+            padding: '10px 20px',
             fontWeight: 700,
             fontSize: 13,
-            padding: '10px 20px',
-            borderRadius: 10,
-            border: 'none',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: 8,
+            boxShadow: subTab === 'channels' ? '0 4px 12px rgba(23, 107, 80, 0.25)' : '0 1px 3px rgba(0,0,0,0.05)',
             transition: 'all 0.15s ease'
           }}
         >
           <ShoppingBag size={16} />
           <span>Delivery Aggregators</span>
           <span style={{
-            background: subTab === 'channels' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.1)',
+            background: subTab === 'channels' ? 'rgba(255,255,255,0.2)' : '#f3f4f6',
+            color: subTab === 'channels' ? '#ffffff' : '#374151',
             padding: '2px 8px',
             borderRadius: 20,
-            fontSize: 11
+            fontSize: 11,
+            fontWeight: 700
           }}>
             {channels.filter(c => c.status === 'online').length}/3 Online
           </span>
@@ -465,27 +423,30 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
           type="button"
           onClick={() => setSubTab('whatsapp')}
           style={{
-            background: subTab === 'whatsapp' ? '#EA7A33' : 'rgba(45, 30, 22, 0.6)',
-            color: subTab === 'whatsapp' ? '#1A120C' : '#FAF6F0',
+            background: subTab === 'whatsapp' ? '#176B50' : '#ffffff',
+            color: subTab === 'whatsapp' ? '#ffffff' : '#4b5563',
+            border: subTab === 'whatsapp' ? '1px solid #176B50' : '1px solid #e5e7eb',
+            borderRadius: 10,
+            padding: '10px 20px',
             fontWeight: 700,
             fontSize: 13,
-            padding: '10px 20px',
-            borderRadius: 10,
-            border: 'none',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: 8,
+            boxShadow: subTab === 'whatsapp' ? '0 4px 12px rgba(23, 107, 80, 0.25)' : '0 1px 3px rgba(0,0,0,0.05)',
             transition: 'all 0.15s ease'
           }}
         >
           <MessageSquare size={16} />
           <span>WhatsApp Cloud API</span>
           <span style={{
-            background: subTab === 'whatsapp' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.1)',
+            background: subTab === 'whatsapp' ? 'rgba(255,255,255,0.2)' : '#f3f4f6',
+            color: subTab === 'whatsapp' ? '#ffffff' : '#374151',
             padding: '2px 8px',
             borderRadius: 20,
-            fontSize: 11
+            fontSize: 11,
+            fontWeight: 700
           }}>
             {waConfig?.status?.toUpperCase()}
           </span>
@@ -495,27 +456,30 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
           type="button"
           onClick={() => setSubTab('chain')}
           style={{
-            background: subTab === 'chain' ? '#EA7A33' : 'rgba(45, 30, 22, 0.6)',
-            color: subTab === 'chain' ? '#1A120C' : '#FAF6F0',
+            background: subTab === 'chain' ? '#176B50' : '#ffffff',
+            color: subTab === 'chain' ? '#ffffff' : '#4b5563',
+            border: subTab === 'chain' ? '1px solid #176B50' : '1px solid #e5e7eb',
+            borderRadius: 10,
+            padding: '10px 20px',
             fontWeight: 700,
             fontSize: 13,
-            padding: '10px 20px',
-            borderRadius: 10,
-            border: 'none',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: 8,
+            boxShadow: subTab === 'chain' ? '0 4px 12px rgba(23, 107, 80, 0.25)' : '0 1px 3px rgba(0,0,0,0.05)',
             transition: 'all 0.15s ease'
           }}
         >
           <Building2 size={16} />
           <span>Brand Chain & Sister Outlets</span>
           <span style={{
-            background: subTab === 'chain' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.1)',
+            background: subTab === 'chain' ? 'rgba(255,255,255,0.2)' : '#f3f4f6',
+            color: subTab === 'chain' ? '#ffffff' : '#374151',
             padding: '2px 8px',
             borderRadius: 20,
-            fontSize: 11
+            fontSize: 11,
+            fontWeight: 700
           }}>
             {brandOverview?.outlets?.length || 1} Outlets
           </span>
@@ -530,32 +494,30 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
           {/* Top Actions Row */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#FAF6F0' }}>
+              <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#111827' }}>
                 Aggregator Channel Matrix
               </h3>
-              <p style={{ margin: 0, fontSize: 13, color: '#A89F91' }}>
+              <p style={{ margin: 0, fontSize: 13, color: '#6b7280' }}>
                 Incoming orders auto-inject into KDS, deplete raw stock, and deduct aggregator commissions.
               </p>
             </div>
             <button
               type="button"
+              className="crm-btn-primary"
               onClick={() => setSimModalOpen(true)}
               style={{
-                background: 'linear-gradient(135deg, #EA7A33, #C85A1B)',
-                color: '#FAF6F0',
-                border: 'none',
-                borderRadius: 8,
-                padding: '10px 18px',
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
-                boxShadow: '0 4px 12px rgba(234, 122, 51, 0.3)'
+                padding: '10px 18px',
+                borderRadius: 10,
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: 'pointer'
               }}
             >
-              <Play size={15} /> Simulate Inbound Aggregator Webhook
+              <Play size={15} />
+              <span>Simulate Inbound Aggregator Webhook</span>
             </button>
           </div>
 
@@ -573,24 +535,24 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
               return (
                 <div key={chan.id || chan.channel} style={{
-                  background: '#241711',
-                  border: '1px solid #38261C',
-                  borderRadius: 14,
-                  padding: 20,
+                  background: '#ffffff',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: 16,
+                  padding: 22,
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 16,
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
+                  boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
                 }}>
                   {/* Channel Header */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       <div style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 10,
-                        background: `${themeColor}20`,
-                        border: `1px solid ${themeColor}50`,
+                        width: 42,
+                        height: 42,
+                        borderRadius: 12,
+                        background: `${themeColor}15`,
+                        border: `1.5px solid ${themeColor}30`,
                         display: 'grid',
                         placeItems: 'center',
                         color: themeColor,
@@ -600,11 +562,11 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                         {isZomato ? 'Z' : isSwiggy ? 'S' : 'UP'}
                       </div>
                       <div>
-                        <h4 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#FAF6F0' }}>
+                        <h4 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#111827' }}>
                           {chan.channel.toUpperCase()}
                         </h4>
-                        <span style={{ fontSize: 11, color: '#A89F91' }}>
-                          Store ID: <code style={{ color: '#EA7A33' }}>{chan.storeId || `STORE-${cafe?.slug || 'DEMO'}`}</code>
+                        <span style={{ fontSize: 12, color: '#6b7280' }}>
+                          Store ID: <code style={{ color: '#176B50', fontWeight: 600 }}>{chan.storeId || `STORE-${cafe?.slug || 'DEMO'}`}</code>
                         </span>
                       </div>
                     </div>
@@ -616,9 +578,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                       fontSize: 11,
                       fontWeight: 700,
                       textTransform: 'uppercase',
-                      background: chan.status === 'online' ? 'rgba(34, 197, 94, 0.15)' : chan.status === 'paused' ? 'rgba(234, 179, 8, 0.15)' : 'rgba(107, 114, 128, 0.2)',
-                      color: chan.status === 'online' ? '#22C55E' : chan.status === 'paused' ? '#EAB308' : '#9CA3AF',
-                      border: `1px solid ${chan.status === 'online' ? '#22C55E40' : chan.status === 'paused' ? '#EAB30840' : '#6B728040'}`
+                      background: chan.status === 'online' ? 'rgba(34, 197, 94, 0.15)' : chan.status === 'paused' ? 'rgba(234, 179, 8, 0.15)' : 'rgba(107, 114, 128, 0.15)',
+                      color: chan.status === 'online' ? '#16a34a' : chan.status === 'paused' ? '#d97706' : '#6b7280',
+                      border: `1px solid ${chan.status === 'online' ? '#22C55E40' : chan.status === 'paused' ? '#EAB30840' : '#d1d5db'}`
                     }}>
                       ● {chan.status}
                     </span>
@@ -626,17 +588,17 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
                   {/* Settings Control Strip */}
                   <div style={{
-                    background: '#1A120C',
-                    borderRadius: 10,
+                    background: '#f8fafc',
+                    borderRadius: 12,
                     padding: 14,
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 12,
-                    border: '1px solid #2D1E16'
+                    border: '1px solid #e2e8f0'
                   }}>
                     {/* Status Toggle Switcher */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: 12, color: '#A89F91' }}>Channel State:</span>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: '#4b5563' }}>Channel State:</span>
                       <div style={{ display: 'flex', gap: 4 }}>
                         {['online', 'paused', 'offline'].map(st => (
                           <button
@@ -645,15 +607,16 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                             onClick={() => handleUpdateChannel(chan.channel, { status: st })}
                             disabled={updatingChannel === chan.channel}
                             style={{
-                              background: chan.status === st ? themeColor : '#241711',
-                              color: chan.status === st ? '#FAF6F0' : '#A89F91',
-                              border: '1px solid #38261C',
+                              background: chan.status === st ? themeColor : '#ffffff',
+                              color: chan.status === st ? '#ffffff' : '#6b7280',
+                              border: `1px solid ${chan.status === st ? themeColor : '#d1d5db'}`,
                               borderRadius: 6,
-                              padding: '3px 8px',
+                              padding: '4px 10px',
                               fontSize: 10,
                               fontWeight: 700,
                               textTransform: 'uppercase',
-                              cursor: 'pointer'
+                              cursor: 'pointer',
+                              boxShadow: chan.status === st ? '0 2px 4px rgba(0,0,0,0.1)' : 'none'
                             }}
                           >
                             {st}
@@ -664,7 +627,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
                     {/* Commission Rate */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: 12, color: '#A89F91' }}>Aggregator Commission:</span>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: '#4b5563' }}>Aggregator Commission:</span>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <input
                           type="number"
@@ -676,33 +639,33 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                             }
                           }}
                           style={{
-                            width: 54,
-                            background: '#241711',
-                            border: '1px solid #38261C',
-                            color: '#FAF6F0',
+                            width: 58,
+                            background: '#ffffff',
+                            border: '1px solid #d1d5db',
+                            color: '#111827',
                             borderRadius: 6,
-                            padding: '3px 6px',
+                            padding: '4px 8px',
                             textAlign: 'right',
                             fontSize: 12,
-                            fontWeight: 600
+                            fontWeight: 700
                           }}
                         />
-                        <span style={{ fontSize: 12, color: '#A89F91' }}>%</span>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: '#6b7280' }}>%</span>
                       </div>
                     </div>
 
                     {/* Auto-Accept Orders */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: 12, color: '#A89F91' }}>Auto-Accept to KDS:</span>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: '#4b5563' }}>Auto-Accept to KDS:</span>
                       <button
                         type="button"
                         onClick={() => handleUpdateChannel(chan.channel, { autoAccept: !chan.autoAccept })}
                         style={{
-                          background: chan.autoAccept ? '#22C55E20' : '#38261C',
-                          color: chan.autoAccept ? '#22C55E' : '#9CA3AF',
-                          border: `1px solid ${chan.autoAccept ? '#22C55E' : '#4B5563'}`,
+                          background: chan.autoAccept ? '#22C55E15' : '#f3f4f6',
+                          color: chan.autoAccept ? '#16a34a' : '#6b7280',
+                          border: `1px solid ${chan.autoAccept ? '#22C55E40' : '#d1d5db'}`,
                           borderRadius: 6,
-                          padding: '3px 10px',
+                          padding: '4px 12px',
                           fontSize: 11,
                           fontWeight: 700,
                           cursor: 'pointer'
@@ -715,17 +678,17 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
                   {/* Webhook Endpoint snippet */}
                   <div style={{
-                    background: '#1A120C',
+                    background: '#f8fafc',
                     borderRadius: 8,
                     padding: '8px 12px',
                     fontSize: 11,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    border: '1px dashed #38261C'
+                    border: '1px dashed #cbd5e1'
                   }}>
-                    <span style={{ color: '#A89F91', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      <code>{`/api/webhooks/delivery/${chan.channel}`}</code>
+                    <span style={{ color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <code style={{ color: '#0f172a' }}>{`/api/webhooks/delivery/${chan.channel}`}</code>
                     </span>
                     <button
                       type="button"
@@ -733,7 +696,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                         navigator.clipboard.writeText(`${window.location.origin}/api/webhooks/delivery/${chan.channel}`);
                         showNotification(`Webhook endpoint copied for ${chan.channel.toUpperCase()}`);
                       }}
-                      style={{ background: 'none', border: 'none', color: '#EA7A33', cursor: 'pointer', padding: 2 }}
+                      style={{ background: 'none', border: 'none', color: '#176B50', cursor: 'pointer', padding: 2 }}
                       title="Copy webhook URL"
                     >
                       <Copy size={13} />
@@ -746,27 +709,28 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
           {/* Inbound Delivery Orders Feed */}
           <div style={{
-            background: '#241711',
-            borderRadius: 14,
+            background: '#ffffff',
+            borderRadius: 16,
             padding: 24,
-            border: '1px solid #38261C'
+            border: '1px solid #e5e7eb',
+            boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <Clock size={18} color="#EA7A33" />
-                <h4 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#FAF6F0' }}>
+                <Clock size={18} color="#176B50" />
+                <h4 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#111827' }}>
                   Live Aggregator Order Feed & Commission Ledger
                 </h4>
               </div>
-              <span style={{ fontSize: 12, color: '#A89F91' }}>
+              <span style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }}>
                 {deliveryOrders.length} Recent Aggregator Deliveries
               </span>
             </div>
 
             {deliveryOrders.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px 20px', color: '#A89F91' }}>
-                <ShoppingBag size={36} style={{ color: '#38261C', marginBottom: 12 }} />
-                <p style={{ margin: 0, fontSize: 14 }}>No aggregator orders recorded yet.</p>
+              <div style={{ textAlign: 'center', padding: '40px 20px', color: '#6b7280' }}>
+                <ShoppingBag size={36} style={{ color: '#d1d5db', marginBottom: 12 }} />
+                <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: '#374151' }}>No aggregator orders recorded yet.</p>
                 <p style={{ margin: '4px 0 0', fontSize: 12 }}>
                   Click "Simulate Inbound Aggregator Webhook" above to trigger a live test order.
                 </p>
@@ -775,15 +739,15 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}>
                   <thead>
-                    <tr style={{ borderBottom: '1px solid #38261C', color: '#A89F91', fontSize: 11, textTransform: 'uppercase' }}>
-                      <th style={{ padding: '10px 14px' }}>Ext Order #</th>
-                      <th style={{ padding: '10px 14px' }}>Channel</th>
-                      <th style={{ padding: '10px 14px' }}>Customer / Diner</th>
-                      <th style={{ padding: '10px 14px' }}>Rider Info</th>
-                      <th style={{ padding: '10px 14px' }}>Status</th>
-                      <th style={{ padding: '10px 14px', textAlign: 'right' }}>Gross Total</th>
-                      <th style={{ padding: '10px 14px', textAlign: 'right' }}>Commission</th>
-                      <th style={{ padding: '10px 14px', textAlign: 'right' }}>Net Payout</th>
+                    <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e5e7eb', color: '#4b5563', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      <th style={{ padding: '12px 14px' }}>Ext Order #</th>
+                      <th style={{ padding: '12px 14px' }}>Channel</th>
+                      <th style={{ padding: '12px 14px' }}>Customer / Diner</th>
+                      <th style={{ padding: '12px 14px' }}>Rider Info</th>
+                      <th style={{ padding: '12px 14px' }}>Status</th>
+                      <th style={{ padding: '12px 14px', textAlign: 'right' }}>Gross Total</th>
+                      <th style={{ padding: '12px 14px', textAlign: 'right' }}>Commission</th>
+                      <th style={{ padding: '12px 14px', textAlign: 'right' }}>Net Payout</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -795,9 +759,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                       const chanColor = isZomato ? '#E23744' : isSwiggy ? '#FC8019' : '#3B82F6';
 
                       return (
-                        <tr key={order.id} style={{ borderBottom: '1px solid #2D1E16' }}>
+                        <tr key={order.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                           <td style={{ padding: '12px 14px', fontWeight: 600 }}>
-                            <code style={{ color: '#FAF6F0' }}>{order.externalOrderId || `#${order.orderNo}`}</code>
+                            <code style={{ color: '#0f172a' }}>{order.externalOrderId || `#${order.orderNo}`}</code>
                           </td>
                           <td style={{ padding: '12px 14px' }}>
                             <span style={{
@@ -805,7 +769,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                               borderRadius: 4,
                               fontSize: 11,
                               fontWeight: 700,
-                              background: `${chanColor}20`,
+                              background: `${chanColor}15`,
                               color: chanColor,
                               textTransform: 'uppercase'
                             }}>
@@ -813,17 +777,17 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                             </span>
                           </td>
                           <td style={{ padding: '12px 14px' }}>
-                            <div style={{ fontWeight: 600, color: '#FAF6F0' }}>{order.customerName || 'Delivery Guest'}</div>
-                            <div style={{ fontSize: 11, color: '#A89F91' }}>{order.phone || 'Phone hidden'}</div>
+                            <div style={{ fontWeight: 600, color: '#111827' }}>{order.customerName || 'Delivery Guest'}</div>
+                            <div style={{ fontSize: 11, color: '#6b7280' }}>{order.phone || 'Phone hidden'}</div>
                           </td>
                           <td style={{ padding: '12px 14px' }}>
                             {order.riderName ? (
                               <div>
-                                <div style={{ color: '#FAF6F0', fontWeight: 500 }}>{order.riderName}</div>
-                                <div style={{ fontSize: 11, color: '#A89F91' }}>{order.riderPhone}</div>
+                                <div style={{ color: '#111827', fontWeight: 500 }}>{order.riderName}</div>
+                                <div style={{ fontSize: 11, color: '#6b7280' }}>{order.riderPhone}</div>
                               </div>
                             ) : (
-                              <span style={{ color: '#6B7280', fontSize: 11 }}>Assigning rider...</span>
+                              <span style={{ color: '#9ca3af', fontSize: 11 }}>Assigning rider...</span>
                             )}
                           </td>
                           <td style={{ padding: '12px 14px' }}>
@@ -832,20 +796,20 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                               borderRadius: 12,
                               fontSize: 10,
                               fontWeight: 700,
-                              background: '#22C55E20',
-                              color: '#22C55E',
+                              background: '#22C55E15',
+                              color: '#16a34a',
                               textTransform: 'uppercase'
                             }}>
                               {order.status}
                             </span>
                           </td>
-                          <td style={{ padding: '12px 14px', textAlign: 'right', fontWeight: 600, color: '#FAF6F0' }}>
+                          <td style={{ padding: '12px 14px', textAlign: 'right', fontWeight: 600, color: '#111827' }}>
                             ₹{order.total?.toFixed(2)}
                           </td>
-                          <td style={{ padding: '12px 14px', textAlign: 'right', color: '#EF4444', fontWeight: 500 }}>
+                          <td style={{ padding: '12px 14px', textAlign: 'right', color: '#dc2626', fontWeight: 500 }}>
                             -₹{comm.toFixed(2)}
                           </td>
-                          <td style={{ padding: '12px 14px', textAlign: 'right', fontWeight: 700, color: '#22C55E' }}>
+                          <td style={{ padding: '12px 14px', textAlign: 'right', fontWeight: 700, color: '#16a34a' }}>
                             ₹{net.toFixed(2)}
                           </td>
                         </tr>
@@ -868,18 +832,19 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {/* Connection Credentials Form */}
             <form onSubmit={handleSaveWhatsAppConfig} style={{
-              background: '#241711',
-              borderRadius: 14,
+              background: '#ffffff',
+              borderRadius: 16,
               padding: 24,
-              border: '1px solid #38261C',
+              border: '1px solid #e5e7eb',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
               display: 'flex',
               flexDirection: 'column',
               gap: 16
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <MessageSquare size={20} color="#22C55E" />
-                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#FAF6F0' }}>
+                  <MessageSquare size={20} color="#16a34a" />
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#111827' }}>
                     Meta WhatsApp Cloud Settings
                   </h3>
                 </div>
@@ -888,9 +853,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   borderRadius: 12,
                   fontSize: 10,
                   fontWeight: 700,
-                  background: waConfig.status === 'active' ? '#22C55E20' : '#EAB30820',
-                  color: waConfig.status === 'active' ? '#22C55E' : '#EAB308',
-                  border: `1px solid ${waConfig.status === 'active' ? '#22C55E' : '#EAB308'}`,
+                  background: waConfig.status === 'active' ? '#22C55E15' : '#EAB30815',
+                  color: waConfig.status === 'active' ? '#16a34a' : '#d97706',
+                  border: `1px solid ${waConfig.status === 'active' ? '#22C55E40' : '#EAB30840'}`,
                   textTransform: 'uppercase'
                 }}>
                   {waConfig.status === 'active' ? '● Live Meta Cloud' : '● Deterministic Simulator'}
@@ -898,7 +863,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#4b5563', marginBottom: 6 }}>
                   Phone Number ID (Meta Graph API)
                 </label>
                 <input
@@ -908,9 +873,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   onChange={e => setWaConfig({ ...waConfig, phoneNumberId: e.target.value })}
                   style={{
                     width: '100%',
-                    background: '#1A120C',
-                    border: '1px solid #38261C',
-                    color: '#FAF6F0',
+                    background: '#ffffff',
+                    border: '1px solid #d1d5db',
+                    color: '#111827',
                     borderRadius: 8,
                     padding: '9px 12px',
                     fontSize: 13
@@ -919,7 +884,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#4b5563', marginBottom: 6 }}>
                   WhatsApp Business Account (WABA) ID
                 </label>
                 <input
@@ -929,9 +894,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   onChange={e => setWaConfig({ ...waConfig, wabaId: e.target.value })}
                   style={{
                     width: '100%',
-                    background: '#1A120C',
-                    border: '1px solid #38261C',
-                    color: '#FAF6F0',
+                    background: '#ffffff',
+                    border: '1px solid #d1d5db',
+                    color: '#111827',
                     borderRadius: 8,
                     padding: '9px 12px',
                     fontSize: 13
@@ -940,7 +905,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#4b5563', marginBottom: 6 }}>
                   System User Access Token
                 </label>
                 <input
@@ -950,21 +915,21 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   onChange={e => setWaConfig({ ...waConfig, accessToken: e.target.value })}
                   style={{
                     width: '100%',
-                    background: '#1A120C',
-                    border: '1px solid #38261C',
-                    color: '#FAF6F0',
+                    background: '#ffffff',
+                    border: '1px solid #d1d5db',
+                    color: '#111827',
                     borderRadius: 8,
                     padding: '9px 12px',
                     fontSize: 13
                   }}
                 />
-                <span style={{ fontSize: 11, color: '#6B7280', marginTop: 4, display: 'block' }}>
-                  Leave empty to operate in zero-latency deterministic mock mode with realistic message IDs.
+                <span style={{ fontSize: 11, color: '#6b7280', marginTop: 4, display: 'block' }}>
+                  Leave empty to operate in zero-latency sandbox simulator mode with verified delivery receipts.
                 </span>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#4b5563', marginBottom: 6 }}>
                   Webhook Verification Token
                 </label>
                 <input
@@ -974,9 +939,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   onChange={e => setWaConfig({ ...waConfig, webhookVerifyToken: e.target.value })}
                   style={{
                     width: '100%',
-                    background: '#1A120C',
-                    border: '1px solid #38261C',
-                    color: '#FAF6F0',
+                    background: '#ffffff',
+                    border: '1px solid #d1d5db',
+                    color: '#111827',
                     borderRadius: 8,
                     padding: '9px 12px',
                     fontSize: 13
@@ -986,45 +951,45 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
               {/* Automated Event Triggers */}
               <div style={{
-                background: '#1A120C',
-                borderRadius: 10,
+                background: '#f8fafc',
+                borderRadius: 12,
                 padding: 16,
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 12,
-                border: '1px solid #2D1E16'
+                border: '1px solid #e2e8f0'
               }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#EA7A33', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#176B50', textTransform: 'uppercase' }}>
                   Automated Customer Triggers
                 </span>
 
                 <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
-                  <span style={{ fontSize: 13, color: '#FAF6F0' }}>⚡ Order Confirmation & Receipt</span>
+                  <span style={{ fontSize: 13, color: '#1f2937', fontWeight: 500 }}>⚡ Order Confirmation & Receipt</span>
                   <input
                     type="checkbox"
                     checked={waConfig.autoOrderConfirmation !== false}
                     onChange={e => setWaConfig({ ...waConfig, autoOrderConfirmation: e.target.checked })}
-                    style={{ accentColor: '#EA7A33', width: 16, height: 16 }}
+                    style={{ accentColor: '#176B50', width: 16, height: 16 }}
                   />
                 </label>
 
                 <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
-                  <span style={{ fontSize: 13, color: '#FAF6F0' }}>🔔 Kitchen Order Ready & Table Alert</span>
+                  <span style={{ fontSize: 13, color: '#1f2937', fontWeight: 500 }}>🔔 Kitchen Order Ready & Table Alert</span>
                   <input
                     type="checkbox"
                     checked={waConfig.autoOrderReady !== false}
                     onChange={e => setWaConfig({ ...waConfig, autoOrderReady: e.target.checked })}
-                    style={{ accentColor: '#EA7A33', width: 16, height: 16 }}
+                    style={{ accentColor: '#176B50', width: 16, height: 16 }}
                   />
                 </label>
 
                 <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
-                  <span style={{ fontSize: 13, color: '#FAF6F0' }}>🎁 Loyalty Reward Unlocked Notification</span>
+                  <span style={{ fontSize: 13, color: '#1f2937', fontWeight: 500 }}>🎁 Loyalty Reward Unlocked Notification</span>
                   <input
                     type="checkbox"
                     checked={waConfig.autoLoyaltyAlerts !== false}
                     onChange={e => setWaConfig({ ...waConfig, autoLoyaltyAlerts: e.target.checked })}
-                    style={{ accentColor: '#EA7A33', width: 16, height: 16 }}
+                    style={{ accentColor: '#176B50', width: 16, height: 16 }}
                   />
                 </label>
               </div>
@@ -1032,20 +997,17 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
               <button
                 type="submit"
                 disabled={waSaving}
+                className="crm-btn-primary"
                 style={{
-                  background: 'linear-gradient(135deg, #22C55E, #16A34A)',
-                  color: '#FAF6F0',
-                  border: 'none',
-                  borderRadius: 8,
                   padding: '12px 18px',
+                  borderRadius: 10,
                   fontSize: 13,
                   fontWeight: 700,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: 8,
-                  boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)'
+                  gap: 8
                 }}
               >
                 {waSaving ? <RefreshCw size={15} className="spin" /> : <Check size={15} />}
@@ -1058,36 +1020,38 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {/* Live Test Dispatcher Box */}
             <div style={{
-              background: '#241711',
-              borderRadius: 14,
+              background: '#ffffff',
+              borderRadius: 16,
               padding: 24,
-              border: '1px solid #38261C',
+              border: '1px solid #e5e7eb',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
               display: 'flex',
               flexDirection: 'column',
               gap: 16
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <Send size={18} color="#EA7A33" />
-                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#FAF6F0' }}>
+                <Send size={18} color="#176B50" />
+                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#111827' }}>
                   Live WhatsApp Dispatcher Simulator
                 </h3>
               </div>
-              <p style={{ margin: 0, fontSize: 12, color: '#A89F91' }}>
+              <p style={{ margin: 0, fontSize: 12, color: '#6b7280' }}>
                 Dispatch a real-time transactional WhatsApp message using templated dynamic placeholders.
               </p>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#4b5563', marginBottom: 6 }}>
                   Recipient Mobile (10-Digit India)
                 </label>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{
-                    background: '#1A120C',
-                    border: '1px solid #38261C',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
                     padding: '9px 12px',
                     borderRadius: 8,
                     fontSize: 13,
-                    color: '#A89F91'
+                    fontWeight: 600,
+                    color: '#4b5563'
                   }}>
                     +91
                   </span>
@@ -1098,9 +1062,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                     placeholder="9876543210"
                     style={{
                       flex: 1,
-                      background: '#1A120C',
-                      border: '1px solid #38261C',
-                      color: '#FAF6F0',
+                      background: '#ffffff',
+                      border: '1px solid #d1d5db',
+                      color: '#111827',
                       borderRadius: 8,
                       padding: '9px 12px',
                       fontSize: 13
@@ -1110,7 +1074,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#4b5563', marginBottom: 6 }}>
                   Message Template
                 </label>
                 <select
@@ -1118,9 +1082,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   onChange={e => setTestTemplate(e.target.value)}
                   style={{
                     width: '100%',
-                    background: '#1A120C',
-                    border: '1px solid #38261C',
-                    color: '#FAF6F0',
+                    background: '#ffffff',
+                    border: '1px solid #d1d5db',
+                    color: '#111827',
                     borderRadius: 8,
                     padding: '9px 12px',
                     fontSize: 13
@@ -1134,15 +1098,15 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
               {/* Template Preview Box */}
               <div style={{
-                background: '#1A120C',
+                background: '#f8fafc',
                 borderRadius: 8,
                 padding: 12,
-                border: '1px dashed #38261C',
+                border: '1px dashed #cbd5e1',
                 fontSize: 12,
-                color: '#A89F91',
+                color: '#4b5563',
                 lineHeight: 1.5
               }}>
-                <span style={{ color: '#22C55E', fontWeight: 600 }}>Preview: </span>
+                <span style={{ color: '#16a34a', fontWeight: 700 }}>Preview: </span>
                 {testTemplate === 'order_confirmed' && (
                   <span>☕ Gusstora: Your order #PB-9012 for ₹480 has been placed! Our roastery baristas are brewing it now.</span>
                 )}
@@ -1158,20 +1122,17 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                 type="button"
                 onClick={handleDispatchTestWhatsApp}
                 disabled={testingWa}
+                className="crm-btn-primary"
                 style={{
-                  background: 'linear-gradient(135deg, #EA7A33, #C85A1B)',
-                  color: '#FAF6F0',
-                  border: 'none',
-                  borderRadius: 8,
                   padding: '11px 18px',
+                  borderRadius: 10,
                   fontSize: 13,
                   fontWeight: 700,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: 8,
-                  boxShadow: '0 4px 12px rgba(234, 122, 51, 0.3)'
+                  gap: 8
                 }}
               >
                 {testingWa ? <RefreshCw size={15} className="spin" /> : <Send size={15} />}
@@ -1180,15 +1141,15 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
               {waTestResult && (
                 <div style={{
-                  background: '#14532D',
-                  border: '1px solid #22C55E',
+                  background: '#f0fdf4',
+                  border: '1px solid #86efac',
                   borderRadius: 8,
                   padding: 12,
                   fontSize: 12,
-                  color: '#DCFCE7'
+                  color: '#166534'
                 }}>
                   <div style={{ fontWeight: 700, marginBottom: 4 }}>✓ Dispatched Successfully!</div>
-                  <div>Message ID: <code>{waTestResult.messageId}</code></div>
+                  <div>Message ID: <code style={{ color: '#14532d' }}>{waTestResult.messageId}</code></div>
                   <div>Mode: <b>{waTestResult.provider?.toUpperCase()}</b></div>
                 </div>
               )}
@@ -1196,35 +1157,37 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
             {/* Audit Log Card */}
             <div style={{
-              background: '#241711',
-              borderRadius: 14,
+              background: '#ffffff',
+              borderRadius: 16,
               padding: 24,
-              border: '1px solid #38261C'
+              border: '1px solid #e5e7eb',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
             }}>
-              <h4 style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 700, color: '#FAF6F0' }}>
+              <h4 style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 700, color: '#111827' }}>
                 Recent WhatsApp Dispatches
               </h4>
               {waAuditLogs.length === 0 ? (
-                <div style={{ fontSize: 12, color: '#A89F91' }}>
+                <div style={{ fontSize: 12, color: '#6b7280' }}>
                   No test dispatches sent during this session.
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {waAuditLogs.map((log, idx) => (
                     <div key={idx} style={{
-                      background: '#1A120C',
-                      borderRadius: 6,
+                      background: '#f8fafc',
+                      borderRadius: 8,
                       padding: '8px 12px',
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
-                      fontSize: 11
+                      fontSize: 11,
+                      border: '1px solid #e2e8f0'
                     }}>
                       <div>
-                        <b style={{ color: '#FAF6F0' }}>+91 {log.phone}</b>
-                        <span style={{ color: '#A89F91', marginLeft: 8 }}>{log.template}</span>
+                        <b style={{ color: '#111827' }}>+91 {log.phone}</b>
+                        <span style={{ color: '#6b7280', marginLeft: 8 }}>{log.template}</span>
                       </div>
-                      <span style={{ color: '#22C55E', fontWeight: 600 }}>{log.provider} • {log.timestamp}</span>
+                      <span style={{ color: '#16a34a', fontWeight: 600 }}>{log.provider} • {log.timestamp}</span>
                     </div>
                   ))}
                 </div>
@@ -1241,10 +1204,11 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           {/* Brand Header Overview */}
           <div style={{
-            background: '#241711',
-            borderRadius: 14,
+            background: '#ffffff',
+            borderRadius: 16,
             padding: 24,
-            border: '1px solid #38261C',
+            border: '1px solid #e5e7eb',
+            boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -1256,10 +1220,10 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                 width: 48,
                 height: 48,
                 borderRadius: 12,
-                background: 'linear-gradient(135deg, #EA7A33, #C85A1B)',
+                background: 'linear-gradient(135deg, #176B50, #123D32)',
                 display: 'grid',
                 placeItems: 'center',
-                color: '#FAF6F0',
+                color: '#ffffff',
                 fontWeight: 800,
                 fontSize: 20
               }}>
@@ -1267,13 +1231,13 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
               </div>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: '#FAF6F0' }}>
+                  <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: '#111827' }}>
                     {brandOverview?.brand?.name || 'Gusstora Roasters Chain'}
                   </h2>
                   <span style={{
-                    background: '#22C55E20',
-                    color: '#22C55E',
-                    border: '1px solid #22C55E40',
+                    background: '#ecfdf5',
+                    color: '#059669',
+                    border: '1px solid #a7f3d0',
                     borderRadius: 20,
                     padding: '2px 8px',
                     fontSize: 11,
@@ -1282,8 +1246,8 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                     CHAIN ACTIVE
                   </span>
                 </div>
-                <p style={{ margin: '4px 0 0', fontSize: 13, color: '#A89F91' }}>
-                  Headquarters: <b>{brandOverview?.brand?.headquarters || 'Bandra West, Mumbai'}</b> • {brandOverview?.outlets?.length || 1} Outlets Connected
+                <p style={{ margin: '4px 0 0', fontSize: 13, color: '#6b7280' }}>
+                  Headquarters: <b style={{ color: '#111827' }}>{brandOverview?.brand?.headquarters || 'Bandra West, Mumbai'}</b> • {brandOverview?.outlets?.length || 1} Outlets Connected
                 </p>
               </div>
             </div>
@@ -1294,9 +1258,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                 onClick={handleSyncMasterMenu}
                 disabled={syncingMenu}
                 style={{
-                  background: '#2D1E16',
-                  color: '#FAF6F0',
-                  border: '1px solid #38261C',
+                  background: '#ffffff',
+                  color: '#374151',
+                  border: '1px solid #d1d5db',
                   borderRadius: 8,
                   padding: '10px 16px',
                   fontSize: 13,
@@ -1307,7 +1271,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   gap: 8
                 }}
               >
-                <Layers size={15} color="#EA7A33" />
+                <Layers size={15} color="#176B50" />
                 <span>{syncingMenu ? 'Syncing...' : 'Sync Master Menu to All Outlets'}</span>
               </button>
 
@@ -1315,8 +1279,8 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                 type="button"
                 onClick={() => setOutletModalOpen(true)}
                 style={{
-                  background: 'linear-gradient(135deg, #EA7A33, #C85A1B)',
-                  color: '#FAF6F0',
+                  background: 'linear-gradient(135deg, #176B50, #123D32)',
+                  color: '#ffffff',
                   border: 'none',
                   borderRadius: 8,
                   padding: '10px 16px',
@@ -1326,7 +1290,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 8,
-                  boxShadow: '0 4px 12px rgba(234, 122, 51, 0.3)'
+                  boxShadow: '0 4px 12px rgba(23, 107, 80, 0.25)'
                 }}
               >
                 <Plus size={15} />
@@ -1342,10 +1306,11 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
             gap: 16
           }}>
             <div style={{
-              background: '#241711',
-              borderRadius: 12,
+              background: '#ffffff',
+              borderRadius: 16,
               padding: 20,
-              border: '1px solid #38261C',
+              border: '1px solid #e5e7eb',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
               display: 'flex',
               alignItems: 'center',
               gap: 14
@@ -1354,26 +1319,27 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                 width: 44,
                 height: 44,
                 borderRadius: 10,
-                background: 'rgba(34, 197, 94, 0.15)',
-                color: '#22C55E',
+                background: '#ecfdf5',
+                color: '#059669',
                 display: 'grid',
                 placeItems: 'center'
               }}>
                 <DollarSign size={22} />
               </div>
               <div>
-                <span style={{ fontSize: 12, color: '#A89F91' }}>Chain Gross Revenue</span>
-                <h3 style={{ margin: '2px 0 0', fontSize: 22, fontWeight: 800, color: '#FAF6F0' }}>
+                <span style={{ fontSize: 12, color: '#6b7280' }}>Chain Gross Revenue</span>
+                <h3 style={{ margin: '2px 0 0', fontSize: 22, fontWeight: 800, color: '#111827' }}>
                   ₹{(brandOverview?.totalRevenue || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </h3>
               </div>
             </div>
 
             <div style={{
-              background: '#241711',
-              borderRadius: 12,
+              background: '#ffffff',
+              borderRadius: 16,
               padding: 20,
-              border: '1px solid #38261C',
+              border: '1px solid #e5e7eb',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
               display: 'flex',
               alignItems: 'center',
               gap: 14
@@ -1382,26 +1348,27 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                 width: 44,
                 height: 44,
                 borderRadius: 10,
-                background: 'rgba(234, 122, 51, 0.15)',
-                color: '#EA7A33',
+                background: '#e6f4ea',
+                color: '#176B50',
                 display: 'grid',
                 placeItems: 'center'
               }}>
                 <ShoppingBag size={22} />
               </div>
               <div>
-                <span style={{ fontSize: 12, color: '#A89F91' }}>Total Chain Orders</span>
-                <h3 style={{ margin: '2px 0 0', fontSize: 22, fontWeight: 800, color: '#FAF6F0' }}>
+                <span style={{ fontSize: 12, color: '#6b7280' }}>Total Chain Orders</span>
+                <h3 style={{ margin: '2px 0 0', fontSize: 22, fontWeight: 800, color: '#111827' }}>
                   {brandOverview?.totalOrders || 0}
                 </h3>
               </div>
             </div>
 
             <div style={{
-              background: '#241711',
-              borderRadius: 12,
+              background: '#ffffff',
+              borderRadius: 16,
               padding: 20,
-              border: '1px solid #38261C',
+              border: '1px solid #e5e7eb',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
               display: 'flex',
               alignItems: 'center',
               gap: 14
@@ -1410,16 +1377,16 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                 width: 44,
                 height: 44,
                 borderRadius: 10,
-                background: 'rgba(59, 130, 246, 0.15)',
-                color: '#3B82F6',
+                background: '#eff6ff',
+                color: '#2563eb',
                 display: 'grid',
                 placeItems: 'center'
               }}>
                 <Store size={22} />
               </div>
               <div>
-                <span style={{ fontSize: 12, color: '#A89F91' }}>Active Operating Outlets</span>
-                <h3 style={{ margin: '2px 0 0', fontSize: 22, fontWeight: 800, color: '#FAF6F0' }}>
+                <span style={{ fontSize: 12, color: '#6b7280' }}>Active Operating Outlets</span>
+                <h3 style={{ margin: '2px 0 0', fontSize: 22, fontWeight: 800, color: '#111827' }}>
                   {brandOverview?.outlets?.length || 1}
                 </h3>
               </div>
@@ -1428,19 +1395,20 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
           {/* Outlets Matrix Table */}
           <div style={{
-            background: '#241711',
-            borderRadius: 14,
+            background: '#ffffff',
+            borderRadius: 16,
             padding: 24,
-            border: '1px solid #38261C'
+            border: '1px solid #e5e7eb',
+            boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
           }}>
-            <h4 style={{ margin: '0 0 16px', fontSize: 16, fontWeight: 700, color: '#FAF6F0' }}>
+            <h4 style={{ margin: '0 0 16px', fontSize: 16, fontWeight: 700, color: '#111827' }}>
               Outlets Performance & One-Click Context Switch
             </h4>
 
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}>
                 <thead>
-                  <tr style={{ borderBottom: '1px solid #38261C', color: '#A89F91', fontSize: 11, textTransform: 'uppercase' }}>
+                  <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e5e7eb', color: '#4b5563', fontSize: 11, textTransform: 'uppercase' }}>
                     <th style={{ padding: '10px 14px' }}>Outlet Name</th>
                     <th style={{ padding: '10px 14px' }}>Slug / Domain</th>
                     <th style={{ padding: '10px 14px' }}>Tables</th>
@@ -1458,41 +1426,41 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
                     return (
                       <tr key={ot.id} style={{
-                        borderBottom: '1px solid #2D1E16',
-                        background: isActive ? 'rgba(234, 122, 51, 0.05)' : 'transparent'
+                        borderBottom: '1px solid #f1f5f9',
+                        background: isActive ? '#f0fdf4' : 'transparent'
                       }}>
-                        <td style={{ padding: '14px', fontWeight: 700, color: '#FAF6F0' }}>
+                        <td style={{ padding: '14px', fontWeight: 700, color: '#111827' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                             <span style={{
                               width: 8,
                               height: 8,
                               borderRadius: '50%',
-                              background: isActive ? '#22C55E' : '#6B7280'
+                              background: isActive ? '#10b981' : '#9ca3af'
                             }} />
                             <span>{ot.name}</span>
                           </div>
                         </td>
-                        <td style={{ padding: '14px', color: '#A89F91' }}>
-                          <code>/c/{ot.slug}</code>
+                        <td style={{ padding: '14px', color: '#6b7280' }}>
+                          <code style={{ background: '#f3f4f6', padding: '2px 6px', borderRadius: 4, color: '#374151' }}>/c/{ot.slug}</code>
                         </td>
-                        <td style={{ padding: '14px', color: '#FAF6F0' }}>
+                        <td style={{ padding: '14px', color: '#111827' }}>
                           {ot.tables || 10}
                         </td>
-                        <td style={{ padding: '14px', textAlign: 'right', fontWeight: 700, color: '#FAF6F0' }}>
+                        <td style={{ padding: '14px', textAlign: 'right', fontWeight: 700, color: '#111827' }}>
                           ₹{ot.revenue?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </td>
-                        <td style={{ padding: '14px', textAlign: 'right', color: '#A89F91' }}>
+                        <td style={{ padding: '14px', textAlign: 'right', color: '#6b7280' }}>
                           {ot.ordersCount}
                         </td>
-                        <td style={{ padding: '14px', textAlign: 'right', color: '#EA7A33', fontWeight: 600 }}>
+                        <td style={{ padding: '14px', textAlign: 'right', color: '#176B50', fontWeight: 600 }}>
                           ₹{aov}
                         </td>
                         <td style={{ padding: '14px', textAlign: 'center' }}>
                           {isActive ? (
                             <span style={{
-                              background: '#22C55E20',
-                              color: '#22C55E',
-                              border: '1px solid #22C55E50',
+                              background: '#ecfdf5',
+                              color: '#059669',
+                              border: '1px solid #a7f3d0',
                               borderRadius: 20,
                               padding: '2px 10px',
                               fontSize: 10,
@@ -1501,12 +1469,12 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                               ACTIVE OUTLET
                             </span>
                           ) : (
-                            <span style={{ color: '#6B7280', fontSize: 11 }}>Sister Outlet</span>
+                            <span style={{ color: '#9ca3af', fontSize: 11 }}>Sister Outlet</span>
                           )}
                         </td>
                         <td style={{ padding: '14px', textAlign: 'right' }}>
                           {isActive ? (
-                            <span style={{ fontSize: 12, color: '#A89F91', fontStyle: 'italic' }}>
+                            <span style={{ fontSize: 12, color: '#6b7280', fontStyle: 'italic' }}>
                               Currently Managing
                             </span>
                           ) : (
@@ -1515,9 +1483,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                               onClick={() => handleSwitchOutletContext(ot.id)}
                               disabled={switchingOutletId === ot.id}
                               style={{
-                                background: '#2D1E16',
-                                border: '1px solid #EA7A33',
-                                color: '#EA7A33',
+                                background: '#ffffff',
+                                border: '1px solid #176B50',
+                                color: '#176B50',
                                 borderRadius: 6,
                                 padding: '6px 12px',
                                 fontSize: 12,
@@ -1550,7 +1518,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
         <div style={{
           position: 'fixed',
           inset: 0,
-          background: 'rgba(0,0,0,0.75)',
+          background: 'rgba(0,0,0,0.5)',
           backdropFilter: 'blur(4px)',
           zIndex: 10000,
           display: 'grid',
@@ -1558,26 +1526,26 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
           padding: 20
         }}>
           <div style={{
-            background: '#241711',
-            border: '1px solid #38261C',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
             borderRadius: 16,
             width: '100%',
             maxWidth: 520,
             padding: 28,
-            boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
-            color: '#FAF6F0'
+            boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
+            color: '#111827'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <Play size={20} color="#EA7A33" />
-                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>
+                <Play size={20} color="#176B50" />
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#111827' }}>
                   Simulate Delivery Aggregator Order
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setSimModalOpen(false)}
-                style={{ background: 'none', border: 'none', color: '#A89F91', cursor: 'pointer', fontSize: 18 }}
+                style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: 18 }}
               >
                 ✕
               </button>
@@ -1585,7 +1553,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
             <form onSubmit={handleSimulateAggregatorOrder} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, color: '#6b7280', marginBottom: 6 }}>
                   Delivery Platform
                 </label>
                 <select
@@ -1593,9 +1561,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   onChange={e => setSimChannel(e.target.value)}
                   style={{
                     width: '100%',
-                    background: '#1A120C',
-                    border: '1px solid #38261C',
-                    color: '#FAF6F0',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
+                    color: '#111827',
                     borderRadius: 8,
                     padding: '9px 12px',
                     fontSize: 13
@@ -1609,7 +1577,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 12, color: '#6b7280', marginBottom: 6 }}>
                     Customer Name
                   </label>
                   <input
@@ -1619,9 +1587,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                     required
                     style={{
                       width: '100%',
-                      background: '#1A120C',
-                      border: '1px solid #38261C',
-                      color: '#FAF6F0',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
+                      color: '#111827',
                       borderRadius: 8,
                       padding: '9px 12px',
                       fontSize: 13
@@ -1629,7 +1597,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 12, color: '#6b7280', marginBottom: 6 }}>
                     Customer Phone
                   </label>
                   <input
@@ -1639,9 +1607,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                     required
                     style={{
                       width: '100%',
-                      background: '#1A120C',
-                      border: '1px solid #38261C',
-                      color: '#FAF6F0',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
+                      color: '#111827',
                       borderRadius: 8,
                       padding: '9px 12px',
                       fontSize: 13
@@ -1652,7 +1620,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 12, color: '#6b7280', marginBottom: 6 }}>
                     Rider Name
                   </label>
                   <input
@@ -1661,9 +1629,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                     onChange={e => setSimRiderName(e.target.value)}
                     style={{
                       width: '100%',
-                      background: '#1A120C',
-                      border: '1px solid #38261C',
-                      color: '#FAF6F0',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
+                      color: '#111827',
                       borderRadius: 8,
                       padding: '9px 12px',
                       fontSize: 13
@@ -1671,7 +1639,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 12, color: '#6b7280', marginBottom: 6 }}>
                     Rider Phone
                   </label>
                   <input
@@ -1680,9 +1648,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                     onChange={e => setSimRiderPhone(e.target.value)}
                     style={{
                       width: '100%',
-                      background: '#1A120C',
-                      border: '1px solid #38261C',
-                      color: '#FAF6F0',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
+                      color: '#111827',
                       borderRadius: 8,
                       padding: '9px 12px',
                       fontSize: 13
@@ -1693,7 +1661,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 12, color: '#6b7280', marginBottom: 6 }}>
                     Dish / Drink
                   </label>
                   <input
@@ -1703,9 +1671,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                     required
                     style={{
                       width: '100%',
-                      background: '#1A120C',
-                      border: '1px solid #38261C',
-                      color: '#FAF6F0',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
+                      color: '#111827',
                       borderRadius: 8,
                       padding: '9px 12px',
                       fontSize: 13
@@ -1713,7 +1681,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 12, color: '#6b7280', marginBottom: 6 }}>
                     Price (₹)
                   </label>
                   <input
@@ -1723,9 +1691,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                     required
                     style={{
                       width: '100%',
-                      background: '#1A120C',
-                      border: '1px solid #38261C',
-                      color: '#FAF6F0',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
+                      color: '#111827',
                       borderRadius: 8,
                       padding: '9px 12px',
                       fontSize: 13
@@ -1733,7 +1701,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 12, color: '#6b7280', marginBottom: 6 }}>
                     Qty
                   </label>
                   <input
@@ -1743,9 +1711,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                     required
                     style={{
                       width: '100%',
-                      background: '#1A120C',
-                      border: '1px solid #38261C',
-                      color: '#FAF6F0',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
+                      color: '#111827',
                       borderRadius: 8,
                       padding: '9px 12px',
                       fontSize: 13
@@ -1755,13 +1723,14 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
               </div>
 
               <div style={{
-                background: '#1A120C',
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
                 borderRadius: 8,
                 padding: 12,
                 fontSize: 12,
-                color: '#A89F91'
+                color: '#6b7280'
               }}>
-                Calculated Gross: <b style={{ color: '#FAF6F0' }}>₹{((Number(simItemPrice) || 250) * (Number(simQuantity) || 1)) + 65}</b> (incl. tax & fees).
+                Calculated Gross: <b style={{ color: '#111827' }}>₹{((Number(simItemPrice) || 250) * (Number(simQuantity) || 1)) + 65}</b> (incl. tax & fees).
               </div>
 
               <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
@@ -1770,9 +1739,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   onClick={() => setSimModalOpen(false)}
                   style={{
                     flex: 1,
-                    background: '#2D1E16',
-                    border: '1px solid #38261C',
-                    color: '#FAF6F0',
+                    background: '#f3f4f6',
+                    border: '1px solid #d1d5db',
+                    color: '#374151',
                     borderRadius: 8,
                     padding: '10px',
                     fontSize: 13,
@@ -1786,14 +1755,15 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   disabled={loading}
                   style={{
                     flex: 2,
-                    background: 'linear-gradient(135deg, #EA7A33, #C85A1B)',
-                    color: '#FAF6F0',
+                    background: 'linear-gradient(135deg, #176B50, #123D32)',
+                    color: '#ffffff',
                     border: 'none',
                     borderRadius: 8,
                     padding: '10px',
                     fontSize: 13,
                     fontWeight: 700,
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(23, 107, 80, 0.25)'
                   }}
                 >
                   Send Inbound Webhook
@@ -1811,7 +1781,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
         <div style={{
           position: 'fixed',
           inset: 0,
-          background: 'rgba(0,0,0,0.75)',
+          background: 'rgba(0,0,0,0.5)',
           backdropFilter: 'blur(4px)',
           zIndex: 10000,
           display: 'grid',
@@ -1819,26 +1789,26 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
           padding: 20
         }}>
           <div style={{
-            background: '#241711',
-            border: '1px solid #38261C',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
             borderRadius: 16,
             width: '100%',
             maxWidth: 480,
             padding: 28,
-            boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
-            color: '#FAF6F0'
+            boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
+            color: '#111827'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <Plus size={20} color="#EA7A33" />
-                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>
+                <Plus size={20} color="#176B50" />
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#111827' }}>
                   Add Sister Roastery Outlet
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setOutletModalOpen(false)}
-                style={{ background: 'none', border: 'none', color: '#A89F91', cursor: 'pointer', fontSize: 18 }}
+                style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: 18 }}
               >
                 ✕
               </button>
@@ -1846,7 +1816,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
 
             <form onSubmit={handleCreateSisterOutlet} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, color: '#6b7280', marginBottom: 6 }}>
                   Outlet Name
                 </label>
                 <input
@@ -1857,9 +1827,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   required
                   style={{
                     width: '100%',
-                    background: '#1A120C',
-                    border: '1px solid #38261C',
-                    color: '#FAF6F0',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
+                    color: '#111827',
                     borderRadius: 8,
                     padding: '9px 12px',
                     fontSize: 13
@@ -1868,7 +1838,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, color: '#6b7280', marginBottom: 6 }}>
                   Custom URL Slug
                 </label>
                 <input
@@ -1878,9 +1848,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   onChange={e => setNewOutletSlug(e.target.value)}
                   style={{
                     width: '100%',
-                    background: '#1A120C',
-                    border: '1px solid #38261C',
-                    color: '#FAF6F0',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
+                    color: '#111827',
                     borderRadius: 8,
                     padding: '9px 12px',
                     fontSize: 13
@@ -1889,7 +1859,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, color: '#A89F91', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, color: '#6b7280', marginBottom: 6 }}>
                   Number of Dine-In Tables
                 </label>
                 <input
@@ -1899,9 +1869,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   required
                   style={{
                     width: '100%',
-                    background: '#1A120C',
-                    border: '1px solid #38261C',
-                    color: '#FAF6F0',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
+                    color: '#111827',
                     borderRadius: 8,
                     padding: '9px 12px',
                     fontSize: 13
@@ -1915,9 +1885,9 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   onClick={() => setOutletModalOpen(false)}
                   style={{
                     flex: 1,
-                    background: '#2D1E16',
-                    border: '1px solid #38261C',
-                    color: '#FAF6F0',
+                    background: '#f3f4f6',
+                    border: '1px solid #d1d5db',
+                    color: '#374151',
                     borderRadius: 8,
                     padding: '10px',
                     fontSize: 13,
@@ -1931,14 +1901,15 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                   disabled={creatingOutlet}
                   style={{
                     flex: 2,
-                    background: 'linear-gradient(135deg, #EA7A33, #C85A1B)',
-                    color: '#FAF6F0',
+                    background: 'linear-gradient(135deg, #176B50, #123D32)',
+                    color: '#ffffff',
                     border: 'none',
                     borderRadius: 8,
                     padding: '10px',
                     fontSize: 13,
                     fontWeight: 700,
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(23, 107, 80, 0.25)'
                   }}
                 >
                   {creatingOutlet ? 'Provisioning...' : 'Provision Sister Outlet'}

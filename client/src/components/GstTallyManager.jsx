@@ -295,84 +295,64 @@ export default function GstTallyManager({ cafe, token }) {
   const b2bInvoicesCount = orders.filter(o => o.isB2B).length;
 
   return (
-    <div className="gst-tally-container" style={{ padding: '24px', maxWidth: '1440px', margin: '0 auto', color: '#e5e7eb' }}>
+    <div className="gst-tally-container" style={{ padding: '24px', maxWidth: '1440px', margin: '0 auto', color: '#111827' }}>
       {/* 1. Header Banner */}
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(36, 24, 16, 0.9) 0%, rgba(18, 12, 8, 0.95) 100%)',
-        border: '1px solid rgba(234, 122, 51, 0.25)',
-        borderRadius: '16px',
-        padding: '24px 32px',
-        marginBottom: '24px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        <div style={{ zIndex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-            <div style={{
-              background: 'linear-gradient(135deg, #ea7a33 0%, #c85a1b 100%)',
-              width: '42px',
-              height: '42px',
-              borderRadius: '10px',
-              display: 'grid',
-              placeItems: 'center',
-              boxShadow: '0 4px 12px rgba(234, 122, 51, 0.35)'
-            }}>
-              <Receipt size={22} color="#fff" />
-            </div>
-            <div>
-              <h1 style={{ fontSize: '24px', fontWeight: '800', margin: 0, color: '#fff', letterSpacing: '-0.5px' }}>
+      <div className="crm-orders-header-card" style={{ marginBottom: 24 }}>
+        <div className="crm-orders-header-left">
+          <div className="crm-orders-brand-emblem">
+            <Receipt size={24} color="#ffffff" />
+          </div>
+          <div className="crm-orders-brand-info">
+            <div className="crm-orders-title-row">
+              <h1 className="crm-orders-title">
                 Indian GST Invoicing & Tally ERP Sync
               </h1>
-              <p style={{ margin: 0, fontSize: '13px', color: '#a89f91' }}>
-                Full GSTN regulatory compliance, SAC/HSN Table 12, GSTR-1/3B audit summaries & Tally Prime XML import.
-              </p>
+              <span className="crm-orders-live-badge">
+                <span className="crm-orders-live-pulse" />
+                GSTN COMPLIANT
+              </span>
             </div>
+            <p className="crm-orders-subtitle">
+              Full GSTN regulatory compliance, SAC/HSN Table 12, GSTR-1/3B audit summaries & Tally Prime XML import.
+            </p>
           </div>
         </div>
 
         {/* Cafe GST Profile Badge */}
-        <div style={{
+        <div className="gst-profile-badge" style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '16px',
-          background: 'rgba(234, 122, 51, 0.08)',
-          border: '1px solid rgba(234, 122, 51, 0.2)',
-          padding: '12px 20px',
+          gap: '14px',
+          background: 'rgba(255, 255, 255, 0.12)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          padding: '10px 18px',
           borderRadius: '12px',
-          zIndex: 1
+          color: '#ffffff'
         }}>
-          <div>
-            <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.8px', color: '#ea7a33', fontWeight: 700 }}>
+          <div className="gst-profile-details">
+            <div className="gst-profile-label" style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.8px', color: '#86efac', fontWeight: 700 }}>
               Registered GSTIN
             </div>
-            <div style={{ fontSize: '15px', fontWeight: 700, color: '#fff', fontFamily: 'monospace' }}>
+            <div className="gst-profile-value" style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff', fontFamily: 'monospace' }}>
               {gstConfig.gstin || '27AABCU9603R1ZM'}
             </div>
-            <div style={{ fontSize: '11px', color: '#8c8279' }}>
+            <div className="gst-profile-state" style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.8)' }}>
               State Code: {gstConfig.stateCode || '27'} ({gstConfig.stateName || 'Maharashtra'})
             </div>
           </div>
           <button
             type="button"
             onClick={() => setActiveSubTab('settings')}
+            className="crm-btn-secondary"
             style={{
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#f3f4f6',
-              padding: '6px 12px',
-              borderRadius: '8px',
-              cursor: 'pointer',
+              padding: '8px 14px',
               fontSize: '12px',
               display: 'flex',
               alignItems: 'center',
               gap: '6px'
             }}
           >
-            <Settings size={13} />
+            <Settings size={14} />
             <span>Config</span>
           </button>
         </div>
@@ -382,15 +362,15 @@ export default function GstTallyManager({ cafe, token }) {
       {notice && (
         <div style={{
           background: notice.isErr ? '#ef4444' : '#10b981',
-          color: '#fff',
+          color: '#ffffff',
           padding: '12px 20px',
-          borderRadius: '10px',
+          borderRadius: '12px',
           marginBottom: '20px',
           display: 'flex',
           alignItems: 'center',
           gap: '10px',
           fontSize: '14px',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
           animation: 'fadeIn 0.3s ease'
         }}>
           {notice.isErr ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
@@ -401,9 +381,8 @@ export default function GstTallyManager({ cafe, token }) {
       {/* 2. Sub-Tabs Bar */}
       <div style={{
         display: 'flex',
-        gap: '8px',
-        borderBottom: '1px solid rgba(255,255,255,0.1)',
-        paddingBottom: '12px',
+        gap: '10px',
+        flexWrap: 'wrap',
         marginBottom: '24px'
       }}>
         {[
@@ -425,14 +404,15 @@ export default function GstTallyManager({ cafe, token }) {
                 alignItems: 'center',
                 gap: '8px',
                 padding: '10px 18px',
-                borderRadius: '10px',
+                borderRadius: '9999px',
                 fontSize: '13px',
                 fontWeight: isActive ? '700' : '500',
-                background: isActive ? 'linear-gradient(135deg, rgba(234, 122, 51, 0.2) 0%, rgba(200, 90, 27, 0.1) 100%)' : 'transparent',
-                color: isActive ? '#ea7a33' : '#a89f91',
-                border: isActive ? '1px solid rgba(234, 122, 51, 0.4)' : '1px solid transparent',
+                background: isActive ? '#176B50' : '#ffffff',
+                color: isActive ? '#ffffff' : '#4b5563',
+                border: isActive ? '1px solid #176B50' : '1px solid #e5e7eb',
+                boxShadow: isActive ? '0 4px 12px rgba(23, 107, 80, 0.25)' : '0 1px 2px rgba(0, 0, 0, 0.05)',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.15s ease'
               }}
             >
               <Icon size={16} />
@@ -454,34 +434,58 @@ export default function GstTallyManager({ cafe, token }) {
             gap: '16px',
             marginBottom: '24px'
           }}>
-            <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '18px' }}>
-              <div style={{ fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>Total Invoices Recorded</div>
-              <div style={{ fontSize: '24px', fontWeight: '800', color: '#fff' }}>{ordersTotal}</div>
-              <div style={{ fontSize: '11px', color: '#10b981', marginTop: '4px' }}>B2B Corporate: {b2bInvoicesCount}</div>
+            <div style={{
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: '16px',
+              padding: '20px',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
+            }}>
+              <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>Total Invoices Recorded</div>
+              <div style={{ fontSize: '24px', fontWeight: '800', color: '#111827' }}>{ordersTotal}</div>
+              <div style={{ fontSize: '11px', color: '#059669', marginTop: '4px', fontWeight: 600 }}>B2B Corporate: {b2bInvoicesCount}</div>
             </div>
 
-            <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '18px' }}>
-              <div style={{ fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>Taxable Sales Turnover</div>
-              <div style={{ fontSize: '24px', fontWeight: '800', color: '#ea7a33' }}>
+            <div style={{
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: '16px',
+              padding: '20px',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
+            }}>
+              <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>Taxable Sales Turnover</div>
+              <div style={{ fontSize: '24px', fontWeight: '800', color: '#176B50' }}>
                 ₹{totalTaxableCalculated.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
               </div>
-              <div style={{ fontSize: '11px', color: '#a89f91', marginTop: '4px' }}>Net of GST Base</div>
+              <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '4px' }}>Net of GST Base</div>
             </div>
 
-            <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '18px' }}>
-              <div style={{ fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>Total GST Collected</div>
-              <div style={{ fontSize: '24px', fontWeight: '800', color: '#10b981' }}>
+            <div style={{
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: '16px',
+              padding: '20px',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
+            }}>
+              <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>Total GST Collected</div>
+              <div style={{ fontSize: '24px', fontWeight: '800', color: '#059669' }}>
                 ₹{totalTaxCalculated.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
               </div>
-              <div style={{ fontSize: '11px', color: '#a89f91', marginTop: '4px' }}>CGST + SGST + IGST Output</div>
+              <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '4px' }}>CGST + SGST + IGST Output</div>
             </div>
 
-            <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '18px' }}>
-              <div style={{ fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>Next Sequential Invoice #</div>
-              <div style={{ fontSize: '24px', fontWeight: '800', color: '#f59e0b', fontFamily: 'monospace' }}>
+            <div style={{
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: '16px',
+              padding: '20px',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
+            }}>
+              <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>Next Sequential Invoice #</div>
+              <div style={{ fontSize: '24px', fontWeight: '800', color: '#d97706', fontFamily: 'monospace' }}>
                 {gstConfig.invoicePrefix}{String(gstConfig.nextInvoiceSeq).padStart(4, '0')}
               </div>
-              <div style={{ fontSize: '11px', color: '#a89f91', marginTop: '4px' }}>Automated sequential counter</div>
+              <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '4px' }}>Automated sequential counter</div>
             </div>
           </div>
 
@@ -505,11 +509,12 @@ export default function GstTallyManager({ cafe, token }) {
                     borderRadius: '8px',
                     fontSize: '12px',
                     fontWeight: filterB2B === f ? 700 : 500,
-                    background: filterB2B === f ? 'rgba(234, 122, 51, 0.2)' : 'rgba(255,255,255,0.04)',
-                    color: filterB2B === f ? '#ea7a33' : '#a89f91',
-                    border: filterB2B === f ? '1px solid rgba(234, 122, 51, 0.4)' : '1px solid rgba(255,255,255,0.08)',
+                    background: filterB2B === f ? '#176B50' : '#ffffff',
+                    color: filterB2B === f ? '#ffffff' : '#4b5563',
+                    border: filterB2B === f ? '1px solid #176B50' : '1px solid #d1d5db',
                     cursor: 'pointer',
-                    textTransform: 'uppercase'
+                    textTransform: 'uppercase',
+                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)'
                   }}
                 >
                   {f === 'all' ? 'All Orders' : f === 'b2b' ? 'B2B GSTIN Only' : 'B2C Retail'}
@@ -519,7 +524,7 @@ export default function GstTallyManager({ cafe, token }) {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{ position: 'relative' }}>
-                <Search size={14} style={{ position: 'absolute', left: '12px', top: '11px', color: '#6b7280' }} />
+                <Search size={14} style={{ position: 'absolute', left: '12px', top: '11px', color: '#9ca3af' }} />
                 <input
                   type="text"
                   placeholder="Search Order / Invoice / GSTIN..."
@@ -527,12 +532,12 @@ export default function GstTallyManager({ cafe, token }) {
                   onChange={e => setInvoiceSearch(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') fetchOrdersList(); }}
                   style={{
-                    background: '#18110b',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#ffffff',
+                    border: '1px solid #d1d5db',
                     borderRadius: '8px',
                     padding: '8px 12px 8px 34px',
                     fontSize: '13px',
-                    color: '#fff',
+                    color: '#111827',
                     width: '260px'
                   }}
                 />
@@ -541,16 +546,17 @@ export default function GstTallyManager({ cafe, token }) {
                 type="button"
                 onClick={fetchOrdersList}
                 style={{
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: '#ffffff',
+                  border: '1px solid #d1d5db',
                   borderRadius: '8px',
                   padding: '8px 14px',
-                  color: '#fff',
+                  color: '#374151',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  fontSize: '12px'
+                  fontSize: '12px',
+                  fontWeight: 600
                 }}
               >
                 <RefreshCw size={14} className={loading ? 'spin' : ''} />
@@ -561,14 +567,15 @@ export default function GstTallyManager({ cafe, token }) {
 
           {/* Orders / Invoices Table */}
           <div style={{
-            background: '#18110b',
-            border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '12px',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
+            borderRadius: '16px',
+            boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
             overflow: 'hidden'
           }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
               <thead>
-                <tr style={{ background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(255,255,255,0.08)', color: '#a89f91' }}>
+                <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e5e7eb', color: '#4b5563' }}>
                   <th style={{ padding: '14px 16px' }}>Invoice / Order #</th>
                   <th style={{ padding: '14px 16px' }}>Date</th>
                   <th style={{ padding: '14px 16px' }}>Customer & GSTIN</th>
@@ -591,26 +598,26 @@ export default function GstTallyManager({ cafe, token }) {
                     const isB2B = Boolean(order.isB2B);
                     const invNo = order.invoiceNumber || order.orderNo;
                     return (
-                      <tr key={order.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.2s' }}>
+                      <tr key={order.id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s' }}>
                         <td style={{ padding: '14px 16px' }}>
-                          <div style={{ fontWeight: 700, color: '#fff', fontFamily: 'monospace' }}>{invNo}</div>
+                          <div style={{ fontWeight: 700, color: '#111827', fontFamily: 'monospace' }}>{invNo}</div>
                           {order.invoiceNumber && (
-                            <span style={{ fontSize: '10px', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '2px 6px', borderRadius: '4px' }}>
+                            <span style={{ fontSize: '10px', background: '#ecfdf5', color: '#059669', border: '1px solid #a7f3d0', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>
                               Tax Invoice Issued
                             </span>
                           )}
                         </td>
-                        <td style={{ padding: '14px 16px', color: '#9ca3af' }}>
+                        <td style={{ padding: '14px 16px', color: '#6b7280' }}>
                           {new Date(order.invoiceDate || order.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                         </td>
                         <td style={{ padding: '14px 16px' }}>
-                          <div style={{ fontWeight: 600, color: '#e5e7eb' }}>
+                          <div style={{ fontWeight: 600, color: '#111827' }}>
                             {order.customerLegalName || order.customerName || 'Walk-in Diner'}
                           </div>
                           {order.customerGstin ? (
-                            <div style={{ fontSize: '11px', fontFamily: 'monospace', color: '#ea7a33', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <div style={{ fontSize: '11px', fontFamily: 'monospace', color: '#176B50', display: 'flex', alignItems: 'center', gap: '4px' }}>
                               <span>{order.customerGstin}</span>
-                              <span style={{ fontSize: '9px', background: '#374151', color: '#d1d5db', padding: '1px 4px', borderRadius: '3px' }}>
+                              <span style={{ fontSize: '9px', background: '#e5e7eb', color: '#374151', padding: '1px 4px', borderRadius: '3px' }}>
                                 POS: {order.customerStateCode || '27'}
                               </span>
                             </div>
@@ -624,23 +631,24 @@ export default function GstTallyManager({ cafe, token }) {
                             fontWeight: 700,
                             padding: '3px 8px',
                             borderRadius: '6px',
-                            background: isB2B ? 'rgba(234, 122, 51, 0.15)' : 'rgba(59, 130, 246, 0.15)',
-                            color: isB2B ? '#ea7a33' : '#60a5fa'
+                            background: isB2B ? '#ecfdf5' : '#eff6ff',
+                            color: isB2B ? '#059669' : '#2563eb',
+                            border: isB2B ? '1px solid #a7f3d0' : '1px solid #bfdbfe'
                           }}>
                             {isB2B ? 'B2B (ITC)' : 'B2C Retail'}
                           </span>
                         </td>
-                        <td style={{ padding: '14px 16px', textAlign: 'right', fontFamily: 'monospace' }}>
+                        <td style={{ padding: '14px 16px', textAlign: 'right', fontFamily: 'monospace', color: '#111827' }}>
                           ₹{Number(order.taxableAmount || (order.total / 1.05)).toFixed(2)}
                         </td>
-                        <td style={{ padding: '14px 16px', textAlign: 'right', fontFamily: 'monospace', color: '#10b981' }}>
+                        <td style={{ padding: '14px 16px', textAlign: 'right', fontFamily: 'monospace', color: '#059669', fontWeight: 600 }}>
                           {order.isInterState ? (
                             <span>IGST: ₹{Number(order.igstAmount || 0).toFixed(2)}</span>
                           ) : (
                             <span>₹{Number((order.cgstAmount || 0) + (order.sgstAmount || 0)).toFixed(2)}</span>
                           )}
                         </td>
-                        <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: 700, color: '#fff', fontFamily: 'monospace' }}>
+                        <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: 700, color: '#111827', fontFamily: 'monospace' }}>
                           ₹{Number(order.total).toFixed(2)}
                         </td>
                         <td style={{ padding: '14px 16px', textAlign: 'center' }}>
@@ -650,16 +658,17 @@ export default function GstTallyManager({ cafe, token }) {
                               onClick={() => openInvoiceView(order.id)}
                               title="View & Print Official Tax Invoice"
                               style={{
-                                background: 'rgba(234, 122, 51, 0.15)',
-                                border: '1px solid rgba(234, 122, 51, 0.3)',
-                                color: '#ea7a33',
+                                background: '#ffffff',
+                                border: '1px solid #176B50',
+                                color: '#176B50',
                                 padding: '6px 10px',
                                 borderRadius: '6px',
                                 cursor: 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '4px',
-                                fontSize: '11px'
+                                fontSize: '11px',
+                                fontWeight: 600
                               }}
                             >
                               <Eye size={13} />
@@ -672,16 +681,17 @@ export default function GstTallyManager({ cafe, token }) {
                                 onClick={() => openIssueModal(order)}
                                 title="Issue Official Tax Invoice with B2B GSTIN"
                                 style={{
-                                  background: 'rgba(255,255,255,0.06)',
-                                  border: '1px solid rgba(255,255,255,0.1)',
-                                  color: '#e5e7eb',
+                                  background: '#f8fafc',
+                                  border: '1px solid #d1d5db',
+                                  color: '#374151',
                                   padding: '6px 10px',
                                   borderRadius: '6px',
                                   cursor: 'pointer',
                                   display: 'flex',
                                   alignItems: 'center',
                                   gap: '4px',
-                                  fontSize: '11px'
+                                  fontSize: '11px',
+                                  fontWeight: 600
                                 }}
                               >
                                 <Plus size={13} />
@@ -707,10 +717,11 @@ export default function GstTallyManager({ cafe, token }) {
         <div>
           {/* Period Selector & Report Switcher */}
           <div style={{
-            background: '#18110b',
-            border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '12px',
-            padding: '18px 24px',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
+            borderRadius: '16px',
+            boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
+            padding: '20px 24px',
             marginBottom: '24px',
             display: 'flex',
             justifyContent: 'space-between',
@@ -728,9 +739,9 @@ export default function GstTallyManager({ cafe, token }) {
                     borderRadius: '8px',
                     fontSize: '13px',
                     fontWeight: reportType === 'gstr1' ? 700 : 500,
-                    background: reportType === 'gstr1' ? '#ea7a33' : 'rgba(255,255,255,0.04)',
-                    color: '#fff',
-                    border: 'none',
+                    background: reportType === 'gstr1' ? '#176B50' : '#f3f4f6',
+                    color: reportType === 'gstr1' ? '#ffffff' : '#374151',
+                    border: reportType === 'gstr1' ? '1px solid #176B50' : '1px solid #d1d5db',
                     cursor: 'pointer'
                   }}
                 >
@@ -744,9 +755,9 @@ export default function GstTallyManager({ cafe, token }) {
                     borderRadius: '8px',
                     fontSize: '13px',
                     fontWeight: reportType === 'gstr3b' ? 700 : 500,
-                    background: reportType === 'gstr3b' ? '#ea7a33' : 'rgba(255,255,255,0.04)',
-                    color: '#fff',
-                    border: 'none',
+                    background: reportType === 'gstr3b' ? '#176B50' : '#f3f4f6',
+                    color: reportType === 'gstr3b' ? '#ffffff' : '#374151',
+                    border: reportType === 'gstr3b' ? '1px solid #176B50' : '1px solid #d1d5db',
                     cursor: 'pointer'
                   }}
                 >
@@ -755,17 +766,17 @@ export default function GstTallyManager({ cafe, token }) {
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Calendar size={15} color="#a89f91" />
+                <Calendar size={15} color="#6b7280" />
                 <input
                   type="date"
                   value={reportStartDate}
                   onChange={e => setReportStartDate(e.target.value)}
                   style={{
-                    background: '#241810',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
                     borderRadius: '6px',
                     padding: '6px 10px',
-                    color: '#fff',
+                    color: '#111827',
                     fontSize: '12px'
                   }}
                 />
@@ -775,11 +786,11 @@ export default function GstTallyManager({ cafe, token }) {
                   value={reportEndDate}
                   onChange={e => setReportEndDate(e.target.value)}
                   style={{
-                    background: '#241810',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
                     borderRadius: '6px',
                     padding: '6px 10px',
-                    color: '#fff',
+                    color: '#111827',
                     fontSize: '12px'
                   }}
                 />
@@ -795,14 +806,14 @@ export default function GstTallyManager({ cafe, token }) {
                   border: 'none',
                   borderRadius: '8px',
                   padding: '9px 18px',
-                  color: '#fff',
+                  color: '#ffffff',
                   fontSize: '13px',
                   fontWeight: 600,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)'
                 }}
               >
                 <Download size={15} />
@@ -816,45 +827,69 @@ export default function GstTallyManager({ cafe, token }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {/* Summary Cards */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
-                <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '18px' }}>
-                  <div style={{ fontSize: '12px', color: '#a89f91' }}>Table 4: B2B Invoices</div>
-                  <div style={{ fontSize: '24px', fontWeight: '800', color: '#ea7a33', margin: '6px 0' }}>
+                <div style={{
+                  background: '#ffffff',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
+                }}>
+                  <div style={{ fontSize: '12px', color: '#6b7280' }}>Table 4: B2B Invoices</div>
+                  <div style={{ fontSize: '24px', fontWeight: '800', color: '#176B50', margin: '6px 0' }}>
                     {gstr1Data.table4_b2b?.length || 0}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#10b981' }}>
+                  <div style={{ fontSize: '12px', color: '#059669', fontWeight: 600 }}>
                     Taxable: ₹{(gstr1Data.table4_b2b?.reduce((s, i) => s + i.taxableValue, 0) || 0).toFixed(2)}
                   </div>
                 </div>
 
-                <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '18px' }}>
-                  <div style={{ fontSize: '12px', color: '#a89f91' }}>Table 7: B2C Small Supplies</div>
-                  <div style={{ fontSize: '24px', fontWeight: '800', color: '#60a5fa', margin: '6px 0' }}>
+                <div style={{
+                  background: '#ffffff',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
+                }}>
+                  <div style={{ fontSize: '12px', color: '#6b7280' }}>Table 7: B2C Small Supplies</div>
+                  <div style={{ fontSize: '24px', fontWeight: '800', color: '#2563eb', margin: '6px 0' }}>
                     {gstr1Data.summary?.b2cCount || 0}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#10b981' }}>
+                  <div style={{ fontSize: '12px', color: '#059669', fontWeight: 600 }}>
                     Taxable: ₹{(gstr1Data.table7_b2c_small?.reduce((s, i) => s + i.taxableValue, 0) || 0).toFixed(2)}
                   </div>
                 </div>
 
-                <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '18px' }}>
-                  <div style={{ fontSize: '12px', color: '#a89f91' }}>Total Taxable Turnover</div>
-                  <div style={{ fontSize: '24px', fontWeight: '800', color: '#fff', margin: '6px 0' }}>
+                <div style={{
+                  background: '#ffffff',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
+                }}>
+                  <div style={{ fontSize: '12px', color: '#6b7280' }}>Total Taxable Turnover</div>
+                  <div style={{ fontSize: '24px', fontWeight: '800', color: '#111827', margin: '6px 0' }}>
                     ₹{(gstr1Data.summary?.totalTaxableValue || 0).toFixed(2)}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#f59e0b' }}>
+                  <div style={{ fontSize: '12px', color: '#d97706', fontWeight: 600 }}>
                     Total GST: ₹{(gstr1Data.summary?.totalTax || 0).toFixed(2)}
                   </div>
                 </div>
               </div>
 
               {/* Table 12: HSN Summary */}
-              <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', overflow: 'hidden' }}>
-                <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)', fontWeight: 700, color: '#fff' }}>
+              <div style={{
+                background: '#ffffff',
+                border: '1px solid #e5e7eb',
+                borderRadius: '16px',
+                boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
+                overflow: 'hidden'
+              }}>
+                <div style={{ padding: '16px 20px', borderBottom: '1px solid #e5e7eb', fontWeight: 700, color: '#111827' }}>
                   Table 12: HSN/SAC Summary of Outward Supplies
                 </div>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
                   <thead>
-                    <tr style={{ background: 'rgba(0,0,0,0.3)', color: '#a89f91', textAlign: 'left' }}>
+                    <tr style={{ background: '#f8fafc', color: '#4b5563', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>
                       <th style={{ padding: '12px 16px' }}>HSN / SAC</th>
                       <th style={{ padding: '12px 16px' }}>Description</th>
                       <th style={{ padding: '12px 16px' }}>UQC</th>
@@ -867,17 +902,17 @@ export default function GstTallyManager({ cafe, token }) {
                   </thead>
                   <tbody>
                     {gstr1Data.table12_hsn?.map((h, i) => (
-                      <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                        <td style={{ padding: '12px 16px', fontFamily: 'monospace', fontWeight: 700, color: '#ea7a33' }}>
+                      <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '12px 16px', fontFamily: 'monospace', fontWeight: 700, color: '#176B50' }}>
                           {h.hsnCode}
                         </td>
-                        <td style={{ padding: '12px 16px', color: '#e5e7eb' }}>{h.description}</td>
-                        <td style={{ padding: '12px 16px', color: '#9ca3af' }}>{h.uqc || 'NOS'}</td>
-                        <td style={{ padding: '12px 16px', textAlign: 'right' }}>{h.totalQuantity}</td>
-                        <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: 'monospace' }}>₹{h.taxableValue.toFixed(2)}</td>
-                        <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: 'monospace' }}>₹{h.cgstAmount.toFixed(2)}</td>
-                        <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: 'monospace' }}>₹{h.sgstAmount.toFixed(2)}</td>
-                        <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: 'monospace' }}>₹{h.igstAmount.toFixed(2)}</td>
+                        <td style={{ padding: '12px 16px', color: '#111827', fontWeight: 600 }}>{h.description}</td>
+                        <td style={{ padding: '12px 16px', color: '#6b7280' }}>{h.uqc || 'NOS'}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'right', color: '#111827' }}>{h.totalQuantity}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: 'monospace', color: '#111827' }}>₹{h.taxableValue.toFixed(2)}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: 'monospace', color: '#059669' }}>₹{h.cgstAmount.toFixed(2)}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: 'monospace', color: '#059669' }}>₹{h.sgstAmount.toFixed(2)}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: 'monospace', color: '#2563eb' }}>₹{h.igstAmount.toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -885,13 +920,19 @@ export default function GstTallyManager({ cafe, token }) {
               </div>
 
               {/* Table 13: Documents Issued */}
-              <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', overflow: 'hidden' }}>
-                <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)', fontWeight: 700, color: '#fff' }}>
+              <div style={{
+                background: '#ffffff',
+                border: '1px solid #e5e7eb',
+                borderRadius: '16px',
+                boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
+                overflow: 'hidden'
+              }}>
+                <div style={{ padding: '16px 20px', borderBottom: '1px solid #e5e7eb', fontWeight: 700, color: '#111827' }}>
                   Table 13: Documents Issued During the Tax Period
                 </div>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
                   <thead>
-                    <tr style={{ background: 'rgba(0,0,0,0.3)', color: '#a89f91', textAlign: 'left' }}>
+                    <tr style={{ background: '#f8fafc', color: '#4b5563', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>
                       <th style={{ padding: '12px 16px' }}>Nature of Document</th>
                       <th style={{ padding: '12px 16px' }}>From Serial No.</th>
                       <th style={{ padding: '12px 16px' }}>To Serial No.</th>
@@ -902,13 +943,13 @@ export default function GstTallyManager({ cafe, token }) {
                   </thead>
                   <tbody>
                     {gstr1Data.table13_documents?.map((d, i) => (
-                      <tr key={i}>
-                        <td style={{ padding: '12px 16px', color: '#fff', fontWeight: 600 }}>{d.natureOfDocument}</td>
-                        <td style={{ padding: '12px 16px', fontFamily: 'monospace' }}>{d.fromSerial}</td>
-                        <td style={{ padding: '12px 16px', fontFamily: 'monospace' }}>{d.toSerial}</td>
-                        <td style={{ padding: '12px 16px', textAlign: 'right' }}>{d.totalNumber}</td>
-                        <td style={{ padding: '12px 16px', textAlign: 'right', color: '#ef4444' }}>{d.cancelledNumber}</td>
-                        <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 700, color: '#10b981' }}>{d.netIssued}</td>
+                      <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '12px 16px', color: '#111827', fontWeight: 600 }}>{d.natureOfDocument}</td>
+                        <td style={{ padding: '12px 16px', fontFamily: 'monospace', color: '#6b7280' }}>{d.fromSerial}</td>
+                        <td style={{ padding: '12px 16px', fontFamily: 'monospace', color: '#6b7280' }}>{d.toSerial}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'right', color: '#111827' }}>{d.totalNumber}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'right', color: '#ef4444', fontWeight: 600 }}>{d.cancelledNumber}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 700, color: '#059669' }}>{d.netIssued}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -919,15 +960,21 @@ export default function GstTallyManager({ cafe, token }) {
 
           {/* GSTR-3B View */}
           {reportType === 'gstr3b' && gstr3bData && (
-            <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '24px' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#fff', marginBottom: '16px' }}>
+            <div style={{
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: '16px',
+              padding: '24px',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
+            }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#111827', marginBottom: '16px' }}>
                 GSTR-3B: 3.1 Details of Outward Supplies and Inward Supplies Liable to Reverse Charge
               </h3>
 
               <div style={{ overflowX: 'auto', marginBottom: '24px' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
                   <thead>
-                    <tr style={{ background: 'rgba(0,0,0,0.3)', color: '#a89f91', textAlign: 'left' }}>
+                    <tr style={{ background: '#f8fafc', color: '#4b5563', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>
                       <th style={{ padding: '12px 16px' }}>Nature of Supplies</th>
                       <th style={{ padding: '12px 16px', textAlign: 'right' }}>Total Taxable Value</th>
                       <th style={{ padding: '12px 16px', textAlign: 'right' }}>Integrated Tax (IGST)</th>
@@ -937,23 +984,23 @@ export default function GstTallyManager({ cafe, token }) {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                      <td style={{ padding: '14px 16px', color: '#fff', fontWeight: 600 }}>
+                    <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '14px 16px', color: '#111827', fontWeight: 600 }}>
                         (a) Outward taxable supplies (other than zero rated, nil rated and exempted)
                       </td>
-                      <td style={{ padding: '14px 16px', textAlign: 'right', fontFamily: 'monospace' }}>
+                      <td style={{ padding: '14px 16px', textAlign: 'right', fontFamily: 'monospace', color: '#111827' }}>
                         ₹{gstr3bData.table3_1_a.taxableValue.toFixed(2)}
                       </td>
-                      <td style={{ padding: '14px 16px', textAlign: 'right', fontFamily: 'monospace' }}>
+                      <td style={{ padding: '14px 16px', textAlign: 'right', fontFamily: 'monospace', color: '#2563eb' }}>
                         ₹{gstr3bData.table3_1_a.integratedTax.toFixed(2)}
                       </td>
-                      <td style={{ padding: '14px 16px', textAlign: 'right', fontFamily: 'monospace' }}>
+                      <td style={{ padding: '14px 16px', textAlign: 'right', fontFamily: 'monospace', color: '#059669' }}>
                         ₹{gstr3bData.table3_1_a.centralTax.toFixed(2)}
                       </td>
-                      <td style={{ padding: '14px 16px', textAlign: 'right', fontFamily: 'monospace' }}>
+                      <td style={{ padding: '14px 16px', textAlign: 'right', fontFamily: 'monospace', color: '#059669' }}>
                         ₹{gstr3bData.table3_1_a.stateTax.toFixed(2)}
                       </td>
-                      <td style={{ padding: '14px 16px', textAlign: 'right', fontFamily: 'monospace', fontWeight: 700, color: '#10b981' }}>
+                      <td style={{ padding: '14px 16px', textAlign: 'right', fontFamily: 'monospace', fontWeight: 700, color: '#059669' }}>
                         ₹{gstr3bData.table3_1_a.totalTaxLiability.toFixed(2)}
                       </td>
                     </tr>
@@ -963,21 +1010,21 @@ export default function GstTallyManager({ cafe, token }) {
 
               {/* Net Payment Summary Card */}
               <div style={{
-                background: 'rgba(234, 122, 51, 0.08)',
-                border: '1px solid rgba(234, 122, 51, 0.25)',
-                borderRadius: '12px',
+                background: '#f0fdf4',
+                border: '1px solid #bbf7d0',
+                borderRadius: '16px',
                 padding: '20px 24px',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center'
               }}>
                 <div>
-                  <div style={{ fontSize: '13px', color: '#ea7a33', fontWeight: 700 }}>Total Net GST Liability</div>
-                  <div style={{ fontSize: '12px', color: '#a89f91', marginTop: '2px' }}>
+                  <div style={{ fontSize: '13px', color: '#176B50', fontWeight: 700 }}>Total Net GST Liability</div>
+                  <div style={{ fontSize: '12px', color: '#4b5563', marginTop: '2px' }}>
                     Central Tax: ₹{gstr3bData.netPayable.centralTax.toFixed(2)} | State Tax: ₹{gstr3bData.netPayable.stateTax.toFixed(2)}
                   </div>
                 </div>
-                <div style={{ fontSize: '28px', fontWeight: 800, color: '#fff', fontFamily: 'monospace' }}>
+                <div style={{ fontSize: '28px', fontWeight: 800, color: '#176B50', fontFamily: 'monospace' }}>
                   ₹{gstr3bData.netPayable.totalTaxPayable.toFixed(2)}
                 </div>
               </div>
@@ -993,20 +1040,26 @@ export default function GstTallyManager({ cafe, token }) {
         <div>
           <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '24px' }}>
             {/* Export Card */}
-            <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '24px' }}>
+            <div style={{
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: '16px',
+              padding: '24px',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
+            }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <Database size={20} color="#ea7a33" />
-                <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: '#fff' }}>
+                <Database size={20} color="#176B50" />
+                <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: '#111827' }}>
                   Tally Prime & Tally ERP 9 Direct XML Export
                 </h3>
               </div>
-              <p style={{ fontSize: '13px', color: '#a89f91', lineHeight: '1.5', marginBottom: '20px' }}>
+              <p style={{ fontSize: '13px', color: '#6b7280', lineHeight: '1.5', marginBottom: '20px' }}>
                 Export sales vouchers formatted with strict Tally XML schemas. Automatically balances Debits (Cash/Bank) and Credits (Sales + CGST + SGST + IGST) for instant ingestion without manual bookkeeping.
               </p>
 
               {/* Date Filter */}
               <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '8px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '8px' }}>
                   Select Sales Date Range:
                 </label>
                 <div style={{ display: 'flex', gap: '12px' }}>
@@ -1015,11 +1068,11 @@ export default function GstTallyManager({ cafe, token }) {
                     value={tallyStartDate}
                     onChange={e => setTallyStartDate(e.target.value)}
                     style={{
-                      background: '#241810',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
                       borderRadius: '8px',
                       padding: '10px 14px',
-                      color: '#fff',
+                      color: '#111827',
                       fontSize: '13px',
                       flex: 1
                     }}
@@ -1029,11 +1082,11 @@ export default function GstTallyManager({ cafe, token }) {
                     value={tallyEndDate}
                     onChange={e => setTallyEndDate(e.target.value)}
                     style={{
-                      background: '#241810',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
                       borderRadius: '8px',
                       padding: '10px 14px',
-                      color: '#fff',
+                      color: '#111827',
                       fontSize: '13px',
                       flex: 1
                     }}
@@ -1048,7 +1101,7 @@ export default function GstTallyManager({ cafe, token }) {
                 disabled={exportingTally}
                 style={{
                   width: '100%',
-                  background: 'linear-gradient(135deg, #ea7a33 0%, #c85a1b 100%)',
+                  background: 'linear-gradient(135deg, #176B50 0%, #123D32 100%)',
                   border: 'none',
                   borderRadius: '10px',
                   padding: '14px',
@@ -1060,7 +1113,7 @@ export default function GstTallyManager({ cafe, token }) {
                   justifyContent: 'center',
                   alignItems: 'center',
                   gap: '10px',
-                  boxShadow: '0 4px 16px rgba(234, 122, 51, 0.3)'
+                  boxShadow: '0 4px 16px rgba(23, 107, 80, 0.25)'
                 }}
               >
                 <Download size={16} />
@@ -1069,46 +1122,52 @@ export default function GstTallyManager({ cafe, token }) {
             </div>
 
             {/* Configured Tally Ledgers Review */}
-            <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '24px' }}>
+            <div style={{
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: '16px',
+              padding: '24px',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
+            }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ fontSize: '15px', fontWeight: 700, margin: 0, color: '#fff' }}>
+                <h3 style={{ fontSize: '15px', fontWeight: 700, margin: 0, color: '#111827' }}>
                   Target Tally Ledger Accounts
                 </h3>
                 <button
                   type="button"
                   onClick={() => setActiveSubTab('settings')}
-                  style={{ fontSize: '12px', color: '#ea7a33', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  style={{ fontSize: '12px', fontWeight: 600, color: '#176B50', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                 >
                   <Settings size={12} />
                   <span>Edit Mappings</span>
                 </button>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
-                  <span style={{ color: '#a89f91' }}>Company Name:</span>
-                  <span style={{ fontWeight: 600, color: '#fff' }}>{gstConfig.tallyCompany || 'Gusstora Roasters'}</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                  <span style={{ color: '#6b7280' }}>Company Name:</span>
+                  <span style={{ fontWeight: 600, color: '#111827' }}>{gstConfig.tallyCompany || 'Gusstora Roasters'}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
-                  <span style={{ color: '#a89f91' }}>Sales Credit Ledger:</span>
-                  <span style={{ fontWeight: 600, color: '#fff' }}>{gstConfig.tallySalesLedger}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                  <span style={{ color: '#6b7280' }}>Sales Credit Ledger:</span>
+                  <span style={{ fontWeight: 600, color: '#111827' }}>{gstConfig.tallySalesLedger}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
-                  <span style={{ color: '#a89f91' }}>CGST 2.5% Ledger:</span>
-                  <span style={{ fontWeight: 600, color: '#10b981' }}>{gstConfig.tallyCgstLedger}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                  <span style={{ color: '#6b7280' }}>CGST 2.5% Ledger:</span>
+                  <span style={{ fontWeight: 600, color: '#059669' }}>{gstConfig.tallyCgstLedger}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
-                  <span style={{ color: '#a89f91' }}>SGST 2.5% Ledger:</span>
-                  <span style={{ fontWeight: 600, color: '#10b981' }}>{gstConfig.tallySgstLedger}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                  <span style={{ color: '#6b7280' }}>SGST 2.5% Ledger:</span>
+                  <span style={{ fontWeight: 600, color: '#059669' }}>{gstConfig.tallySgstLedger}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
-                  <span style={{ color: '#a89f91' }}>IGST 5% Ledger:</span>
-                  <span style={{ fontWeight: 600, color: '#60a5fa' }}>{gstConfig.tallyIgstLedger}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                  <span style={{ color: '#6b7280' }}>IGST 5% Ledger:</span>
+                  <span style={{ fontWeight: 600, color: '#2563eb' }}>{gstConfig.tallyIgstLedger}</span>
                 </div>
               </div>
 
               {/* Instructions Guide */}
-              <div style={{ marginTop: '20px', padding: '14px', background: 'rgba(59, 130, 246, 0.08)', borderRadius: '8px', border: '1px solid rgba(59, 130, 246, 0.2)', fontSize: '12px', color: '#93c5fd', lineHeight: '1.5' }}>
+              <div style={{ marginTop: '20px', padding: '14px', background: '#eff6ff', borderRadius: '8px', border: '1px solid #bfdbfe', fontSize: '12px', color: '#1e40af', lineHeight: '1.5' }}>
                 <b>How to import into Tally Prime:</b>
                 <ol style={{ margin: '6px 0 0 16px', padding: 0 }}>
                   <li>Open Tally Prime and select company "{gstConfig.tallyCompany || 'Gusstora Roasters'}".</li>
@@ -1135,10 +1194,10 @@ export default function GstTallyManager({ cafe, token }) {
             gap: '12px'
           }}>
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: 700, margin: '0 0 4px', color: '#fff' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 700, margin: '0 0 4px', color: '#111827' }}>
                 Menu Item HSN / SAC & GST Rates
               </h3>
-              <p style={{ fontSize: '13px', color: '#a89f91', margin: 0 }}>
+              <p style={{ fontSize: '13px', color: '#6b7280', margin: 0 }}>
                 Map HSN codes (e.g., 996331 for Food/Beverage dining, 21011120 for packaged retail coffee) and individual tax rates.
               </p>
             </div>
@@ -1151,22 +1210,28 @@ export default function GstTallyManager({ cafe, token }) {
                 value={hsnSearch}
                 onChange={e => setHsnSearch(e.target.value)}
                 style={{
-                  background: '#18110b',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: '#f8fafc',
+                  border: '1px solid #d1d5db',
                   borderRadius: '8px',
                   padding: '8px 12px 8px 34px',
                   fontSize: '13px',
-                  color: '#fff',
+                  color: '#111827',
                   width: '240px'
                 }}
               />
             </div>
           </div>
 
-          <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', overflow: 'hidden' }}>
+          <div style={{
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
+            borderRadius: '16px',
+            overflow: 'hidden',
+            boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
+          }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
               <thead>
-                <tr style={{ background: 'rgba(0,0,0,0.3)', color: '#a89f91' }}>
+                <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e5e7eb', color: '#4b5563', fontWeight: 600 }}>
                   <th style={{ padding: '14px 16px' }}>Item Name</th>
                   <th style={{ padding: '14px 16px' }}>Category</th>
                   <th style={{ padding: '14px 16px' }}>HSN / SAC</th>
@@ -1179,16 +1244,17 @@ export default function GstTallyManager({ cafe, token }) {
                 {menuItems
                   .filter(i => !hsnSearch || i.name?.toLowerCase().includes(hsnSearch.toLowerCase()))
                   .map(item => (
-                    <tr key={item.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                      <td style={{ padding: '14px 16px', fontWeight: 600, color: '#fff' }}>{item.name}</td>
-                      <td style={{ padding: '14px 16px', color: '#9ca3af' }}>{item.category}</td>
-                      <td style={{ padding: '14px 16px', fontFamily: 'monospace', color: '#ea7a33', fontWeight: 700 }}>
+                    <tr key={item.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '14px 16px', fontWeight: 600, color: '#111827' }}>{item.name}</td>
+                      <td style={{ padding: '14px 16px', color: '#6b7280' }}>{item.category}</td>
+                      <td style={{ padding: '14px 16px', fontFamily: 'monospace', color: '#176B50', fontWeight: 700 }}>
                         {item.hsnCode || '996331'}
                       </td>
                       <td style={{ padding: '14px 16px' }}>
                         <span style={{
-                          background: item.gstRate > 0 ? 'rgba(16, 185, 129, 0.15)' : 'rgba(107, 114, 128, 0.15)',
-                          color: item.gstRate > 0 ? '#10b981' : '#9ca3af',
+                          background: item.gstRate > 0 ? '#ecfdf5' : '#f3f4f6',
+                          color: item.gstRate > 0 ? '#059669' : '#6b7280',
+                          border: item.gstRate > 0 ? '1px solid #a7f3d0' : '1px solid #e5e7eb',
                           padding: '3px 8px',
                           borderRadius: '6px',
                           fontWeight: 700,
@@ -1199,7 +1265,7 @@ export default function GstTallyManager({ cafe, token }) {
                       </td>
                       <td style={{ padding: '14px 16px' }}>
                         {item.taxExempt ? (
-                          <span style={{ color: '#f59e0b', fontSize: '12px' }}>Exempted</span>
+                          <span style={{ color: '#d97706', fontSize: '12px', fontWeight: 600 }}>Exempted</span>
                         ) : (
                           <span style={{ color: '#6b7280', fontSize: '12px' }}>Standard Tax</span>
                         )}
@@ -1214,13 +1280,14 @@ export default function GstTallyManager({ cafe, token }) {
                             setEditTaxExempt(Boolean(item.taxExempt));
                           }}
                           style={{
-                            background: 'rgba(255,255,255,0.06)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            color: '#fff',
+                            background: '#f8fafc',
+                            border: '1px solid #d1d5db',
+                            color: '#374151',
                             padding: '6px 12px',
                             borderRadius: '6px',
                             cursor: 'pointer',
-                            fontSize: '12px'
+                            fontSize: '12px',
+                            fontWeight: 600
                           }}
                         >
                           Edit Tax
@@ -1240,17 +1307,23 @@ export default function GstTallyManager({ cafe, token }) {
       {activeSubTab === 'settings' && (
         <form onSubmit={saveGstConfig} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
           {/* GSTIN & Business Details */}
-          <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '24px' }}>
+          <div style={{
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
+            borderRadius: '16px',
+            padding: '24px',
+            boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
+          }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-              <Shield size={20} color="#ea7a33" />
-              <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: '#fff' }}>
+              <Shield size={20} color="#176B50" />
+              <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: '#111827' }}>
                 GSTIN & Legal Entity Setup
               </h3>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
                   GSTIN (Goods and Services Tax Identification Number) *
                 </label>
                 <input
@@ -1261,11 +1334,11 @@ export default function GstTallyManager({ cafe, token }) {
                   maxLength={15}
                   style={{
                     width: '100%',
-                    background: '#241810',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#fff',
+                    color: '#111827',
                     fontFamily: 'monospace',
                     fontSize: '14px',
                     fontWeight: 700
@@ -1274,7 +1347,7 @@ export default function GstTallyManager({ cafe, token }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
                   Legal Business Name (as per GST Certificate)
                 </label>
                 <input
@@ -1284,11 +1357,11 @@ export default function GstTallyManager({ cafe, token }) {
                   placeholder="Gusstora Roasters LLP"
                   style={{
                     width: '100%',
-                    background: '#241810',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#fff',
+                    color: '#111827',
                     fontSize: '13px'
                   }}
                 />
@@ -1296,7 +1369,7 @@ export default function GstTallyManager({ cafe, token }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
                     State Code (First 2 Digits)
                   </label>
                   <input
@@ -1307,17 +1380,17 @@ export default function GstTallyManager({ cafe, token }) {
                     maxLength={2}
                     style={{
                       width: '100%',
-                      background: '#241810',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
                       borderRadius: '8px',
                       padding: '10px 14px',
-                      color: '#fff',
+                      color: '#111827',
                       fontSize: '13px'
                     }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
                     State Name
                   </label>
                   <input
@@ -1327,11 +1400,11 @@ export default function GstTallyManager({ cafe, token }) {
                     placeholder="Maharashtra"
                     style={{
                       width: '100%',
-                      background: '#241810',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
                       borderRadius: '8px',
                       padding: '10px 14px',
-                      color: '#fff',
+                      color: '#111827',
                       fontSize: '13px'
                     }}
                   />
@@ -1339,22 +1412,22 @@ export default function GstTallyManager({ cafe, token }) {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '13px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '13px', color: '#374151' }}>
                   <input
                     type="checkbox"
                     checked={gstConfig.taxInclusivePricing}
                     onChange={e => setGstConfig({ ...gstConfig, taxInclusivePricing: e.target.checked })}
-                    style={{ accentColor: '#ea7a33', width: '16px', height: '16px' }}
+                    style={{ accentColor: '#176B50', width: '16px', height: '16px' }}
                   />
                   <span><b>Tax-Inclusive Menu Pricing:</b> Menu prices already include 5% GST (Recommended for Indian Dining)</span>
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '13px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '13px', color: '#374151' }}>
                   <input
                     type="checkbox"
                     checked={gstConfig.gstCompositionScheme}
                     onChange={e => setGstConfig({ ...gstConfig, gstCompositionScheme: e.target.checked })}
-                    style={{ accentColor: '#ea7a33', width: '16px', height: '16px' }}
+                    style={{ accentColor: '#176B50', width: '16px', height: '16px' }}
                   />
                   <span>Composition Scheme (Flat rate without tax invoice credit)</span>
                 </label>
@@ -1363,10 +1436,16 @@ export default function GstTallyManager({ cafe, token }) {
           </div>
 
           {/* Sequential Invoicing & Tally Mappings */}
-          <div style={{ background: '#18110b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '24px' }}>
+          <div style={{
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
+            borderRadius: '16px',
+            padding: '24px',
+            boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)'
+          }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-              <Database size={20} color="#ea7a33" />
-              <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: '#fff' }}>
+              <Database size={20} color="#176B50" />
+              <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: '#111827' }}>
                 Sequential Invoicing & Tally Prime Ledgers
               </h3>
             </div>
@@ -1374,7 +1453,7 @@ export default function GstTallyManager({ cafe, token }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
                     Invoice Prefix
                   </label>
                   <input
@@ -1384,17 +1463,17 @@ export default function GstTallyManager({ cafe, token }) {
                     placeholder="GST-2627/"
                     style={{
                       width: '100%',
-                      background: '#241810',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
                       borderRadius: '8px',
                       padding: '10px 14px',
-                      color: '#fff',
+                      color: '#111827',
                       fontSize: '13px'
                     }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
                     Next Sequence #
                   </label>
                   <input
@@ -1403,11 +1482,11 @@ export default function GstTallyManager({ cafe, token }) {
                     onChange={e => setGstConfig({ ...gstConfig, nextInvoiceSeq: Number(e.target.value) })}
                     style={{
                       width: '100%',
-                      background: '#241810',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
                       borderRadius: '8px',
                       padding: '10px 14px',
-                      color: '#fff',
+                      color: '#111827',
                       fontSize: '13px'
                     }}
                   />
@@ -1415,7 +1494,7 @@ export default function GstTallyManager({ cafe, token }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
                   Tally Company Name
                 </label>
                 <input
@@ -1425,18 +1504,18 @@ export default function GstTallyManager({ cafe, token }) {
                   placeholder="Gusstora Roasters"
                   style={{
                     width: '100%',
-                    background: '#241810',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#fff',
+                    color: '#111827',
                     fontSize: '13px'
                   }}
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
                   Tally Sales Ledger
                 </label>
                 <input
@@ -1446,11 +1525,11 @@ export default function GstTallyManager({ cafe, token }) {
                   placeholder="Food & Beverage Sales"
                   style={{
                     width: '100%',
-                    background: '#241810',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#fff',
+                    color: '#111827',
                     fontSize: '13px'
                   }}
                 />
@@ -1458,7 +1537,7 @@ export default function GstTallyManager({ cafe, token }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
                     CGST Output Ledger (2.5%)
                   </label>
                   <input
@@ -1468,17 +1547,17 @@ export default function GstTallyManager({ cafe, token }) {
                     placeholder="CGST Output 2.5%"
                     style={{
                       width: '100%',
-                      background: '#241810',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
                       borderRadius: '8px',
                       padding: '10px 14px',
-                      color: '#fff',
+                      color: '#111827',
                       fontSize: '13px'
                     }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
                     SGST Output Ledger (2.5%)
                   </label>
                   <input
@@ -1488,11 +1567,11 @@ export default function GstTallyManager({ cafe, token }) {
                     placeholder="SGST Output 2.5%"
                     style={{
                       width: '100%',
-                      background: '#241810',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: '#f8fafc',
+                      border: '1px solid #d1d5db',
                       borderRadius: '8px',
                       padding: '10px 14px',
-                      color: '#fff',
+                      color: '#111827',
                       fontSize: '13px'
                     }}
                   />
@@ -1505,7 +1584,7 @@ export default function GstTallyManager({ cafe, token }) {
                   disabled={savingConfig}
                   style={{
                     width: '100%',
-                    background: 'linear-gradient(135deg, #ea7a33 0%, #c85a1b 100%)',
+                    background: 'linear-gradient(135deg, #176B50 0%, #123D32 100%)',
                     border: 'none',
                     borderRadius: '10px',
                     padding: '14px',
@@ -1513,7 +1592,7 @@ export default function GstTallyManager({ cafe, token }) {
                     fontSize: '14px',
                     fontWeight: 700,
                     cursor: 'pointer',
-                    boxShadow: '0 4px 16px rgba(234, 122, 51, 0.3)'
+                    boxShadow: '0 4px 16px rgba(23, 107, 80, 0.25)'
                   }}
                 >
                   {savingConfig ? 'Saving Configuration...' : 'Save GST & Tally Configuration'}
@@ -1531,7 +1610,8 @@ export default function GstTallyManager({ cafe, token }) {
         <div style={{
           position: 'fixed',
           inset: 0,
-          background: 'rgba(0,0,0,0.85)',
+          background: 'rgba(0,0,0,0.5)',
+          backdropFilter: 'blur(4px)',
           display: 'grid',
           placeItems: 'center',
           zIndex: 9999,
@@ -1544,8 +1624,8 @@ export default function GstTallyManager({ cafe, token }) {
             maxWidth: '820px',
             maxHeight: '90vh',
             overflowY: 'auto',
-            borderRadius: '14px',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+            borderRadius: '16px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
             position: 'relative'
           }}>
             {/* Modal Controls Bar */}
@@ -1565,7 +1645,7 @@ export default function GstTallyManager({ cafe, token }) {
                   type="button"
                   onClick={() => window.print()}
                   style={{
-                    background: '#ea7a33',
+                    background: '#176B50',
                     border: 'none',
                     borderRadius: '6px',
                     padding: '8px 14px',
@@ -1621,7 +1701,7 @@ export default function GstTallyManager({ cafe, token }) {
                     fontWeight: 800,
                     textTransform: 'uppercase',
                     letterSpacing: '1px',
-                    color: '#ea7a33',
+                    color: '#176B50',
                     marginBottom: '8px'
                   }}>
                     TAX INVOICE
@@ -1653,7 +1733,7 @@ export default function GstTallyManager({ cafe, token }) {
                   {selectedInvoice.buyer.customerLegalName || selectedInvoice.buyer.customerName || 'Walk-in Customer'}
                 </div>
                 {selectedInvoice.buyer.customerGstin && (
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#ea7a33', fontFamily: 'monospace', marginTop: '2px' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#176B50', fontFamily: 'monospace', marginTop: '2px' }}>
                     GSTIN: {selectedInvoice.buyer.customerGstin}
                   </div>
                 )}
@@ -1780,44 +1860,46 @@ export default function GstTallyManager({ cafe, token }) {
         <div style={{
           position: 'fixed',
           inset: 0,
-          background: 'rgba(0,0,0,0.85)',
+          background: 'rgba(0,0,0,0.5)',
+          backdropFilter: 'blur(4px)',
           display: 'grid',
           placeItems: 'center',
           zIndex: 9999,
           padding: '20px'
         }}>
           <div style={{
-            background: '#1a120c',
-            border: '1px solid rgba(234, 122, 51, 0.3)',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
             borderRadius: '16px',
             padding: '28px',
             width: '100%',
             maxWidth: '520px',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.6)'
+            boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
+            color: '#111827'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Receipt size={20} color="#ea7a33" />
-                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#fff' }}>
+                <Receipt size={20} color="#176B50" />
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#111827' }}>
                   Issue Official GST Tax Invoice
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIssueModalOpen(false)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af' }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280' }}
               >
                 <X size={18} />
               </button>
             </div>
 
-            <p style={{ fontSize: '13px', color: '#a89f91', marginBottom: '20px', lineHeight: 1.5 }}>
-              Assigns sequential Tax Invoice number <b>{gstConfig.invoicePrefix}{String(gstConfig.nextInvoiceSeq).padStart(4, '0')}</b> to Order #{targetOrderForIssue.orderNo} (Amount: ₹{targetOrderForIssue.total}).
+            <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '20px', lineHeight: 1.5 }}>
+              Assigns sequential Tax Invoice number <b style={{ color: '#111827' }}>{gstConfig.invoicePrefix}{String(gstConfig.nextInvoiceSeq).padStart(4, '0')}</b> to Order #{targetOrderForIssue.orderNo} (Amount: ₹{targetOrderForIssue.total}).
             </p>
 
             <form onSubmit={handleIssueInvoice} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
                   Customer GSTIN (Optional for B2B Input Tax Credit)
                 </label>
                 <input
@@ -1828,11 +1910,11 @@ export default function GstTallyManager({ cafe, token }) {
                   maxLength={15}
                   style={{
                     width: '100%',
-                    background: '#241810',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#fff',
+                    color: '#111827',
                     fontFamily: 'monospace',
                     fontSize: '14px',
                     fontWeight: 700
@@ -1841,7 +1923,7 @@ export default function GstTallyManager({ cafe, token }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
                   Customer Legal Registered Name
                 </label>
                 <input
@@ -1851,11 +1933,11 @@ export default function GstTallyManager({ cafe, token }) {
                   placeholder="Infosys Technologies Ltd"
                   style={{
                     width: '100%',
-                    background: '#241810',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#fff',
+                    color: '#111827',
                     fontSize: '13px'
                   }}
                 />
@@ -1866,13 +1948,14 @@ export default function GstTallyManager({ cafe, token }) {
                   type="button"
                   onClick={() => setIssueModalOpen(false)}
                   style={{
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#f3f4f6',
+                    border: '1px solid #d1d5db',
                     borderRadius: '8px',
                     padding: '10px 18px',
-                    color: '#fff',
+                    color: '#374151',
                     cursor: 'pointer',
-                    fontSize: '13px'
+                    fontSize: '13px',
+                    fontWeight: 600
                   }}
                 >
                   Cancel
@@ -1881,7 +1964,7 @@ export default function GstTallyManager({ cafe, token }) {
                   type="submit"
                   disabled={issuingInvoice}
                   style={{
-                    background: 'linear-gradient(135deg, #ea7a33 0%, #c85a1b 100%)',
+                    background: 'linear-gradient(135deg, #176B50 0%, #123D32 100%)',
                     border: 'none',
                     borderRadius: '8px',
                     padding: '10px 22px',
@@ -1889,7 +1972,7 @@ export default function GstTallyManager({ cafe, token }) {
                     fontWeight: 700,
                     cursor: 'pointer',
                     fontSize: '13px',
-                    boxShadow: '0 4px 12px rgba(234, 122, 51, 0.3)'
+                    boxShadow: '0 4px 12px rgba(23, 107, 80, 0.25)'
                   }}
                 >
                   {issuingInvoice ? 'Issuing Invoice...' : 'Generate Tax Invoice'}
@@ -1907,32 +1990,34 @@ export default function GstTallyManager({ cafe, token }) {
         <div style={{
           position: 'fixed',
           inset: 0,
-          background: 'rgba(0,0,0,0.85)',
+          background: 'rgba(0,0,0,0.5)',
+          backdropFilter: 'blur(4px)',
           display: 'grid',
           placeItems: 'center',
           zIndex: 9999,
           padding: '20px'
         }}>
           <div style={{
-            background: '#1a120c',
-            border: '1px solid rgba(234, 122, 51, 0.3)',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
             borderRadius: '16px',
             padding: '28px',
             width: '100%',
             maxWidth: '460px',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.6)'
+            boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
+            color: '#111827'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Tag size={20} color="#ea7a33" />
-                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#fff' }}>
+                <Tag size={20} color="#176B50" />
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#111827' }}>
                   Edit Tax: {editingItemHsn.name}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setEditingItemHsn(null)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af' }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280' }}
               >
                 <X size={18} />
               </button>
@@ -1940,7 +2025,7 @@ export default function GstTallyManager({ cafe, token }) {
 
             <form onSubmit={saveItemHsn} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
                   HSN / SAC Code (6-8 digits)
                 </label>
                 <input
@@ -1950,11 +2035,11 @@ export default function GstTallyManager({ cafe, token }) {
                   placeholder="996331"
                   style={{
                     width: '100%',
-                    background: '#241810',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#fff',
+                    color: '#111827',
                     fontFamily: 'monospace',
                     fontSize: '14px',
                     fontWeight: 700
@@ -1966,7 +2051,7 @@ export default function GstTallyManager({ cafe, token }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
                   GST Slab Rate (%)
                 </label>
                 <select
@@ -1974,11 +2059,11 @@ export default function GstTallyManager({ cafe, token }) {
                   onChange={e => setEditGstRate(Number(e.target.value))}
                   style={{
                     width: '100%',
-                    background: '#241810',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#f8fafc',
+                    border: '1px solid #d1d5db',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#fff',
+                    color: '#111827',
                     fontSize: '13px'
                   }}
                 >
@@ -1991,12 +2076,12 @@ export default function GstTallyManager({ cafe, token }) {
               </div>
 
               <div>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '13px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '13px', color: '#374151' }}>
                   <input
                     type="checkbox"
                     checked={editTaxExempt}
                     onChange={e => setEditTaxExempt(e.target.checked)}
-                    style={{ accentColor: '#ea7a33', width: '16px', height: '16px' }}
+                    style={{ accentColor: '#176B50', width: '16px', height: '16px' }}
                   />
                   <span>Mark as Tax-Exempt Item (Zero GST)</span>
                 </label>
@@ -2007,13 +2092,14 @@ export default function GstTallyManager({ cafe, token }) {
                   type="button"
                   onClick={() => setEditingItemHsn(null)}
                   style={{
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#f3f4f6',
+                    border: '1px solid #d1d5db',
                     borderRadius: '8px',
                     padding: '10px 18px',
-                    color: '#fff',
+                    color: '#374151',
                     cursor: 'pointer',
-                    fontSize: '13px'
+                    fontSize: '13px',
+                    fontWeight: 600
                   }}
                 >
                   Cancel
@@ -2022,14 +2108,15 @@ export default function GstTallyManager({ cafe, token }) {
                   type="submit"
                   disabled={savingHsn}
                   style={{
-                    background: 'linear-gradient(135deg, #ea7a33 0%, #c85a1b 100%)',
+                    background: 'linear-gradient(135deg, #176B50 0%, #123D32 100%)',
                     border: 'none',
                     borderRadius: '8px',
                     padding: '10px 22px',
                     color: '#fff',
                     fontWeight: 700,
                     cursor: 'pointer',
-                    fontSize: '13px'
+                    fontSize: '13px',
+                    boxShadow: '0 4px 12px rgba(23, 107, 80, 0.25)'
                   }}
                 >
                   {savingHsn ? 'Saving...' : 'Update Item Tax'}

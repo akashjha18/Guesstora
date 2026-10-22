@@ -192,8 +192,8 @@ export default function OfflineSyncModal({ isOpen, onClose, api, isOnline, onSyn
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                       <span
                         style={{
-                          background: 'rgba(234, 122, 51, 0.2)',
-                          color: '#ea7a33',
+                          background: 'rgba(23, 107, 80, 0.2)',
+                          color: '#176B50',
                           fontWeight: '700',
                           fontSize: '11px',
                           padding: '2px 8px',
@@ -227,7 +227,7 @@ export default function OfflineSyncModal({ isOpen, onClose, api, isOnline, onSyn
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: '16px', fontWeight: '700', color: '#ea7a33' }}>
+                      <div style={{ fontSize: '16px', fontWeight: '700', color: '#176B50' }}>
                         ₹{Number(o.total || 0).toLocaleString('en-IN')}
                       </div>
                       <div style={{ fontSize: '10px', color: '#10b981', textTransform: 'uppercase' }}>

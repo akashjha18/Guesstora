@@ -1,13 +1,27 @@
 export function createRateLimiter({ maxRequests = 20, windowMs = 60000 } = {}) {
-  const state = { calls: [], maxRequests, windowMs };
+  const callsByKey = new Map();
+  let requestsSinceCleanup = 0;
 
-  return function checkLimit() {
+  return function checkLimit(key = 'global') {
     const now = Date.now();
-    state.calls = state.calls.filter(ts => now - ts < state.windowMs);
-    if (state.calls.length >= state.maxRequests) {
+    const normalizedKey = String(key || 'unknown');
+    const calls = (callsByKey.get(normalizedKey) || []).filter(ts => now - ts < windowMs);
+    if (calls.length >= maxRequests) {
+      callsByKey.set(normalizedKey, calls);
       return false;
     }
-    state.calls.push(now);
+    calls.push(now);
+    callsByKey.set(normalizedKey, calls);
+
+    requestsSinceCleanup += 1;
+    if (requestsSinceCleanup >= 1000) {
+      requestsSinceCleanup = 0;
+      for (const [storedKey, timestamps] of callsByKey) {
+        const activeCalls = timestamps.filter(ts => now - ts < windowMs);
+        if (activeCalls.length) callsByKey.set(storedKey, activeCalls);
+        else callsByKey.delete(storedKey);
+      }
+    }
     return true;
   };
 }

@@ -52,7 +52,7 @@ export async function analyzeMenuEngineering({ cafeId, startDate = null, endDate
 
   // Fetch menu items and their recipes
   const menuItems = await MenuItem.findAll({
-    where: whereMenu,
+    where: { cafeId, ...whereMenu },
     include: [{
       model: RecipeItem,
       as: 'recipes',

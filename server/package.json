@@ -1,7 +1,13 @@
 {
   "name": "perkbyte-server",
   "type": "module",
-  "scripts": { "dev": "node --watch src/index.js", "start": "node src/index.js", "test": "node --test" },
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "test": "node scripts/run-isolated-tests.js",
+    "db:backup": "node scripts/backup-database.js",
+    "db:restore": "node scripts/restore-database.js"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",

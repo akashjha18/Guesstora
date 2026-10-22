@@ -1,11 +1,12 @@
 import 'dotenv/config';
 import express from 'express'; import cors from 'cors'; import morgan from 'morgan';
 import mysql from 'mysql2/promise';
+import { DataTypes } from 'sequelize';
 import { config, sequelize } from './db.js';
 import { validateAppConfig } from './config.js';
 import { buildBootstrapConnectionConfig, buildCreateDatabaseSql } from './database.js';
-import './models.js';
-import routes from './routes.js'; import { seed } from './seed.js';
+import { Cafe } from './models.js';
+import routes from './routes.js'; import { seed, shouldSeedDemoData } from './seed.js';
 import { createRateLimiter } from './security.js';
 import { runMigrations } from './migrations.js';
 import { ensureOmnichannelSchema } from './schemaOmnichannel.js';
@@ -16,6 +17,7 @@ import { ensureGstSchema } from './schemaGst.js';
 import { ensureCommissarySchema } from './schemaCommissary.js';
 import { ensureStaffOpsSchema } from './schemaStaffOps.js';
 import { ensureAiRoasterySchema } from './schemaAiRoastery.js';
+import { createHealthHandlers } from './health.js';
 
 try {
   validateAppConfig(process.env);
@@ -37,20 +39,7 @@ await bootstrapDb.end();
 
 await sequelize.authenticate();
 const migrations = [
-  { id: '001_initial_schema', up: async ({ queryInterface }) => {
-      await queryInterface.createTable('cafes', {
-        id: { type: 'CHAR(36)', allowNull: false, primaryKey: true },
-        name: { type: 'VARCHAR(255)', allowNull: true },
-        slug: { type: 'VARCHAR(255)', allowNull: true, unique: true },
-        phone: { type: 'VARCHAR(255)', allowNull: true },
-        address: { type: 'VARCHAR(255)', allowNull: true },
-        currency: { type: 'VARCHAR(255)', allowNull: true },
-        tables: { type: 'INTEGER', allowNull: true },
-        createdAt: { type: 'DATETIME', allowNull: false },
-        updatedAt: { type: 'DATETIME', allowNull: false },
-      }, { logging: false });
-    }
-  },
+  { id: '001_initial_schema', up: async () => {} },
   {
     id: '002_reward_claim_code',
     up: async ({ queryInterface }) => {
@@ -67,7 +56,7 @@ const migrations = [
             await queryInterface.addColumn('rewards', 'notes', { type: 'VARCHAR(255)', allowNull: true }).catch(() => {});
           }
           if (!table.cafeId) {
-            await queryInterface.addColumn('rewards', 'cafeId', { type: 'CHAR(36)', allowNull: true }).catch(() => {});
+            await queryInterface.addColumn('rewards', 'cafeId', { type: DataTypes.UUID, allowNull: true }).catch(() => {});
           }
         }
       } catch (err) {
@@ -124,7 +113,7 @@ const migrations = [
         const rulesTable = await queryInterface.describeTable('reminder_rules').catch(() => null);
         if (!rulesTable) {
           await queryInterface.createTable('reminder_rules', {
-            id: { type: 'CHAR(36)', allowNull: false, primaryKey: true },
+            id: { type: DataTypes.UUID, allowNull: false, primaryKey: true },
             name: { type: 'VARCHAR(255)', allowNull: false },
             triggerType: { type: 'VARCHAR(50)', defaultValue: 'near_reward' },
             daysThreshold: { type: 'INTEGER', defaultValue: 7 },
@@ -132,7 +121,7 @@ const migrations = [
             messageTemplate: { type: 'TEXT', allowNull: true },
             cooldownDays: { type: 'INTEGER', defaultValue: 7 },
             enabled: { type: 'BOOLEAN', defaultValue: true },
-            cafeId: { type: 'CHAR(36)', allowNull: true },
+            cafeId: { type: DataTypes.UUID, allowNull: true },
             createdAt: { type: 'DATETIME', allowNull: false },
             updatedAt: { type: 'DATETIME', allowNull: false },
           }, { logging: false }).catch(() => {});
@@ -141,18 +130,18 @@ const migrations = [
         const logsTable = await queryInterface.describeTable('notification_logs').catch(() => null);
         if (!logsTable) {
           await queryInterface.createTable('notification_logs', {
-            id: { type: 'CHAR(36)', allowNull: false, primaryKey: true },
-            customerId: { type: 'CHAR(36)', allowNull: true },
+            id: { type: DataTypes.UUID, allowNull: false, primaryKey: true },
+            customerId: { type: DataTypes.UUID, allowNull: true },
             customerName: { type: 'VARCHAR(255)', allowNull: true },
             customerPhone: { type: 'VARCHAR(50)', allowNull: true },
-            reminderRuleId: { type: 'CHAR(36)', allowNull: true },
+            reminderRuleId: { type: DataTypes.UUID, allowNull: true },
             triggerType: { type: 'VARCHAR(50)', allowNull: true },
             channel: { type: 'VARCHAR(20)', defaultValue: 'whatsapp' },
             status: { type: 'VARCHAR(20)', defaultValue: 'sent' },
             messageContent: { type: 'TEXT', allowNull: true },
             metadata: { type: 'TEXT', allowNull: true },
             sentAt: { type: 'DATETIME', allowNull: false },
-            cafeId: { type: 'CHAR(36)', allowNull: true },
+            cafeId: { type: DataTypes.UUID, allowNull: true },
             createdAt: { type: 'DATETIME', allowNull: false },
             updatedAt: { type: 'DATETIME', allowNull: false },
           }, { logging: false }).catch(() => {});
@@ -182,7 +171,7 @@ const migrations = [
         const feedbackTable = await queryInterface.describeTable('feedbacks').catch(() => null);
         if (!feedbackTable) {
           await queryInterface.createTable('feedbacks', {
-            id: { type: 'CHAR(36)', allowNull: false, primaryKey: true },
+            id: { type: DataTypes.UUID, allowNull: false, primaryKey: true },
             rating: { type: 'INTEGER', allowNull: false },
             sentiment: { type: 'VARCHAR(20)', defaultValue: 'positive' },
             aspects: { type: 'JSON', allowNull: true },
@@ -194,9 +183,9 @@ const migrations = [
             resolutionNotes: { type: 'TEXT', allowNull: true },
             resolvedAt: { type: 'DATETIME', allowNull: true },
             resolvedBy: { type: 'VARCHAR(255)', allowNull: true },
-            orderId: { type: 'CHAR(36)', allowNull: true },
-            customerId: { type: 'CHAR(36)', allowNull: true },
-            cafeId: { type: 'CHAR(36)', allowNull: false },
+            orderId: { type: DataTypes.UUID, allowNull: true },
+            customerId: { type: DataTypes.UUID, allowNull: true },
+            cafeId: { type: DataTypes.UUID, allowNull: false },
             createdAt: { type: 'DATETIME', allowNull: false },
             updatedAt: { type: 'DATETIME', allowNull: false },
           }, { logging: false }).catch(() => {});
@@ -243,10 +232,10 @@ const migrations = [
         const hasRefresh = await queryInterface.describeTable('refresh_tokens').catch(() => null);
         if (!hasRefresh) {
           await queryInterface.createTable('refresh_tokens', {
-            id: { type: 'CHAR(36)', allowNull: false, primaryKey: true },
+            id: { type: DataTypes.UUID, allowNull: false, primaryKey: true },
             tokenHash: { type: 'VARCHAR(128)', allowNull: false, unique: true },
-            userId: { type: 'CHAR(36)', allowNull: false },
-            cafeId: { type: 'CHAR(36)', allowNull: true },
+            userId: { type: DataTypes.UUID, allowNull: false },
+            cafeId: { type: DataTypes.UUID, allowNull: true },
             family: { type: 'VARCHAR(64)', allowNull: false },
             isRevoked: { type: 'TINYINT(1)', defaultValue: 0 },
             expiresAt: { type: 'DATETIME', allowNull: false },
@@ -260,9 +249,9 @@ const migrations = [
         const hasAudit = await queryInterface.describeTable('audit_logs').catch(() => null);
         if (!hasAudit) {
           await queryInterface.createTable('audit_logs', {
-            id: { type: 'CHAR(36)', allowNull: false, primaryKey: true },
-            cafeId: { type: 'CHAR(36)', allowNull: true },
-            userId: { type: 'CHAR(36)', allowNull: true },
+            id: { type: DataTypes.UUID, allowNull: false, primaryKey: true },
+            cafeId: { type: DataTypes.UUID, allowNull: true },
+            userId: { type: DataTypes.UUID, allowNull: true },
             userName: { type: 'VARCHAR(255)', defaultValue: 'System' },
             userRole: { type: 'VARCHAR(50)', defaultValue: 'system' },
             action: { type: 'VARCHAR(100)', allowNull: false },
@@ -287,14 +276,14 @@ const migrations = [
         const hasTables = await queryInterface.describeTable('cafe_tables').catch(() => null);
         if (!hasTables) {
           await queryInterface.createTable('cafe_tables', {
-            id: { type: 'CHAR(36)', allowNull: false, primaryKey: true },
-            cafeId: { type: 'CHAR(36)', allowNull: false },
+            id: { type: DataTypes.UUID, allowNull: false, primaryKey: true },
+            cafeId: { type: DataTypes.UUID, allowNull: false },
             tableNumber: { type: 'VARCHAR(50)', allowNull: false },
             name: { type: 'VARCHAR(255)', allowNull: true },
             capacity: { type: 'INTEGER', defaultValue: 4 },
             section: { type: 'VARCHAR(50)', defaultValue: 'Main Floor' },
             status: { type: 'VARCHAR(50)', defaultValue: 'available' },
-            currentBookingId: { type: 'CHAR(36)', allowNull: true },
+            currentBookingId: { type: DataTypes.UUID, allowNull: true },
             isActive: { type: 'TINYINT(1)', defaultValue: 1 },
             createdAt: { type: 'DATETIME', allowNull: false },
             updatedAt: { type: 'DATETIME', allowNull: false },
@@ -307,7 +296,7 @@ const migrations = [
             await queryInterface.addColumn('bookings', 'durationMinutes', { type: 'INTEGER', defaultValue: 90 }).catch(() => {});
           }
           if (!bookingsTable.tableId) {
-            await queryInterface.addColumn('bookings', 'tableId', { type: 'CHAR(36)', allowNull: true }).catch(() => {});
+            await queryInterface.addColumn('bookings', 'tableId', { type: DataTypes.UUID, allowNull: true }).catch(() => {});
           }
           if (!bookingsTable.tableNumber) {
             await queryInterface.addColumn('bookings', 'tableNumber', { type: 'VARCHAR(50)', allowNull: true }).catch(() => {});
@@ -394,9 +383,9 @@ const migrations = [
         const shiftsTable = await queryInterface.describeTable('register_shifts').catch(() => null);
         if (!shiftsTable) {
           await queryInterface.createTable('register_shifts', {
-            id: { type: 'CHAR(36)', allowNull: false, primaryKey: true },
-            cafeId: { type: 'CHAR(36)', allowNull: false },
-            userId: { type: 'CHAR(36)', allowNull: false },
+            id: { type: DataTypes.UUID, allowNull: false, primaryKey: true },
+            cafeId: { type: DataTypes.UUID, allowNull: false },
+            userId: { type: DataTypes.UUID, allowNull: false },
             staffName: { type: 'VARCHAR(100)', allowNull: false },
             status: { type: 'VARCHAR(20)', defaultValue: 'open' },
             openedAt: { type: 'DATETIME', allowNull: false },
@@ -415,8 +404,8 @@ const migrations = [
         const promoTable = await queryInterface.describeTable('promo_codes').catch(() => null);
         if (!promoTable) {
           await queryInterface.createTable('promo_codes', {
-            id: { type: 'CHAR(36)', allowNull: false, primaryKey: true },
-            cafeId: { type: 'CHAR(36)', allowNull: false },
+            id: { type: DataTypes.UUID, allowNull: false, primaryKey: true },
+            cafeId: { type: DataTypes.UUID, allowNull: false },
             code: { type: 'VARCHAR(50)', allowNull: false },
             discountType: { type: 'VARCHAR(20)', defaultValue: 'percent' },
             discountValue: { type: 'FLOAT', allowNull: false },
@@ -434,7 +423,7 @@ const migrations = [
         const ordersTable = await queryInterface.describeTable('orders').catch(() => null);
         if (ordersTable) {
           if (!ordersTable.shiftId) {
-            await queryInterface.addColumn('orders', 'shiftId', { type: 'CHAR(36)', allowNull: true }).catch(() => {});
+            await queryInterface.addColumn('orders', 'shiftId', { type: DataTypes.UUID, allowNull: true }).catch(() => {});
           }
           if (!ordersTable.discountType) {
             await queryInterface.addColumn('orders', 'discountType', { type: 'VARCHAR(30)', allowNull: true }).catch(() => {});
@@ -505,10 +494,23 @@ const migrations = [
       await ensureAiRoasterySchema();
     }
   },
+  {
+    id: '023_complete_cafe_schema',
+    up: async ({ queryInterface }) => {
+      const existingColumns = await queryInterface.describeTable('cafes').catch(() => null);
+      if (!existingColumns) return;
+
+      for (const [name, attribute] of Object.entries(Cafe.getAttributes())) {
+        if (existingColumns[name]) continue;
+        const { type, allowNull, defaultValue } = attribute;
+        await queryInterface.addColumn('cafes', name, { type, allowNull, defaultValue });
+      }
+    }
+  },
 ];
 await runMigrations({ sequelize, migrations });
 await sequelize.sync();
-await seed();
+if (shouldSeedDemoData()) await seed();
 
 const app = express();
 const loginLimiter = createRateLimiter({ maxRequests: 10, windowMs: 60000 });
@@ -520,7 +522,8 @@ const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin) || /^http:\/\/localhost:\d+$/.test(origin)) {
+    if (!origin || allowedOrigins.includes(origin) ||
+        (process.env.NODE_ENV !== 'production' && /^http:\/\/localhost:\d+$/.test(origin))) {
       callback(null, true);
       return;
     }
@@ -528,17 +531,26 @@ app.use(cors({
   },
   credentials: true,
 }));
-app.use(express.json({ limit: '10mb' }));
-app.use(morgan('dev'));
-app.get('/api/health', (_q, r) => r.json({ ok: true }));
+app.set('trust proxy', config.trustProxyHops);
+app.use(express.json({
+  limit: '10mb',
+  verify: (req, _res, buffer) => {
+    req.rawBody = Buffer.from(buffer);
+  },
+}));
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+const health = createHealthHandlers({ authenticate: () => sequelize.authenticate() });
+app.get('/api/health', health.live);
+app.get('/api/health/live', health.live);
+app.get('/api/health/ready', health.ready);
 app.use('/api/auth/login', (req, res, next) => {
-  if (!loginLimiter()) {
+  if (!loginLimiter(req.ip)) {
     return res.status(429).json({ message: 'Too many login attempts. Please wait a minute and try again.' });
   }
   next();
 });
 app.use('/api/public/cafes/:slug/orders', (req, res, next) => {
-  if (!orderLimiter()) {
+  if (!orderLimiter(req.ip)) {
     return res.status(429).json({ message: 'Too many order attempts. Please wait a minute and try again.' });
   }
   next();
@@ -546,4 +558,34 @@ app.use('/api/public/cafes/:slug/orders', (req, res, next) => {
 app.use('/api', routes);
 app.use((err, _q, res, _n) => { console.error(err); res.status(500).json({ message: 'Something went wrong.' }); });
 
-app.listen(config.port, () => console.log(`Gusstora API on :${config.port}`));
+const server = app.listen(config.port, () => console.log(`Gusstora API on :${config.port}`));
+let shutdownStarted = false;
+const shutdown = signal => {
+  if (shutdownStarted) return;
+  shutdownStarted = true;
+  console.log(`Received ${signal}; stopping API gracefully.`);
+
+  const forceClose = setTimeout(() => {
+    console.error('Graceful shutdown timed out; closing active HTTP connections.');
+    server.closeAllConnections();
+  }, 10000);
+  forceClose.unref();
+
+  server.close(async error => {
+    clearTimeout(forceClose);
+    if (error) {
+      console.error('HTTP server shutdown failed:', error);
+      process.exitCode = 1;
+    }
+    try {
+      await sequelize.close();
+      console.log('Database connections closed.');
+    } catch (closeError) {
+      console.error('Database shutdown failed:', closeError);
+      process.exitCode = 1;
+    }
+  });
+};
+
+process.once('SIGINT', () => shutdown('SIGINT'));
+process.once('SIGTERM', () => shutdown('SIGTERM'));

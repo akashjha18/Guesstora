@@ -3,8 +3,8 @@ services:
     image: mysql:8.4
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: change-this-secret-before-production
-      MYSQL_DATABASE: cafe_loyalty
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in your environment}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-cafe_loyalty}
     ports:
       - "3306:3306"
     volumes:
@@ -24,16 +24,23 @@ services:
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
       MYSQL_USER: root
-      MYSQL_PASSWORD: change-this-secret-before-production
-      MYSQL_DATABASE: cafe_loyalty
-      JWT_SECRET: change-this-secret-before-production
-      CLIENT_URL: http://localhost:5173
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in your environment}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-cafe_loyalty}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in your environment}
+      CLIENT_URL: ${CLIENT_URL:-http://localhost:5173}
       PORT: 5000
+      NODE_ENV: development
     ports:
       - "5000:5000"
     depends_on:
       mysql:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5000/api/health/ready').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
   web:
     image: node:22-alpine
     working_dir: /app

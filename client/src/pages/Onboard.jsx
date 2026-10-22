@@ -30,7 +30,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { api, BASE, setAuthSession } from '../api';
 
 const COLOR_PRESETS = [
-  { name: 'Warm Orange Roast', hex: '#ea7a33', bg: '#fff7ed', border: '#fed7aa', label: 'Signature Roastery' },
+  { name: 'Forest Emerald', hex: '#176B50', bg: '#F1F7F2', border: '#DCEFE4', label: 'Artisan Sage & Forest' },
   { name: 'Cognac & Chestnut', hex: '#7b3d22', bg: '#fbf5ef', border: '#ebd9c8', label: 'Artisan Coffee Bar' },
   { name: 'Dark Roast Espresso', hex: '#241b14', bg: '#fbf8f5', border: '#ded4c9', label: 'Heritage Espresso' },
   { name: 'Golden Crema', hex: '#d4af37', bg: '#fefce8', border: '#fef08a', label: 'Specialty & Honey' },
@@ -64,7 +64,7 @@ export default function Onboard() {
   const [tables, setTables] = useState(12);
 
   // Step 2: Branding & Social
-  const [brandColor, setBrandColor] = useState('#ea7a33');
+  const [brandColor, setBrandColor] = useState('#176B50');
   const [tagline, setTagline] = useState('Specialty Brews, Artisanal Bakes & Warm Moments');
   const [logo, setLogo] = useState('');
   const [wifiSsid, setWifiSsid] = useState('');
@@ -460,7 +460,7 @@ export default function Onboard() {
                         value={brandColor}
                         onChange={e => setBrandColor(e.target.value)}
                         className="onboard-input hex-input"
-                        placeholder="#ea7a33"
+                        placeholder="#176B50"
                       />
                     </div>
                   </div>
@@ -515,7 +515,7 @@ export default function Onboard() {
                   <div className="onboard-field-half">
                     <label className="onboard-label">
                       <span>Google Maps Review URL</span>
-                      <span className="onboard-label-tip">For Phase 7 Review Booster</span>
+                      <span className="onboard-label-tip">For Automated Review Booster</span>
                     </label>
                     <input
                       type="url"

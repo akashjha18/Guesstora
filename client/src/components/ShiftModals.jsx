@@ -59,7 +59,7 @@ export default function ShiftModals({
 
               <div className="form-group" style={{ marginBottom: 16 }}>
                 <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#332211', marginBottom: 6 }}>
-                  Opening Cash Float (₹) <span style={{ color: '#ea7a33' }}>*</span>
+                  Opening Cash Float (₹) <span style={{ color: '#176B50' }}>*</span>
                 </label>
                 <input
                   type="number"
@@ -161,8 +161,8 @@ export default function ShiftModals({
                     <span className="drawer-stat-val">₹{(currentShiftData.summary?.onlineCollected || (currentShiftData.summary?.netSales || 0) - (currentShiftData.summary?.cashCollected || 0)).toLocaleString('en-IN')}</span>
                   </div>
                   <div className="drawer-stat-box" style={{ background: '#fff7ed', borderColor: '#fdba74' }}>
-                    <span className="drawer-stat-label" style={{ color: '#ea7a33' }}>Expected in Drawer</span>
-                    <span className="drawer-stat-val" style={{ color: '#ea7a33' }}>
+                    <span className="drawer-stat-label" style={{ color: '#176B50' }}>Expected in Drawer</span>
+                    <span className="drawer-stat-val" style={{ color: '#176B50' }}>
                       ₹{((currentShiftData.openingFloat || 0) + (currentShiftData.summary?.cashCollected || 0)).toLocaleString('en-IN')}
                     </span>
                   </div>
@@ -172,7 +172,7 @@ export default function ShiftModals({
               <div className="form-group" style={{ marginBottom: 16 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                   <label style={{ fontSize: 13, fontWeight: 700, color: '#332211', margin: 0 }}>
-                    Counted Physical Cash (₹) <span style={{ color: '#ea7a33' }}>*</span>
+                    Counted Physical Cash (₹) <span style={{ color: '#176B50' }}>*</span>
                   </label>
                   {closingCountedInput !== '' && (() => {
                     const expected = (currentShiftData.openingFloat || 0) + (currentShiftData.summary?.cashCollected || 0);
@@ -452,7 +452,7 @@ export default function ShiftModals({
           <div className="theme-modal-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '780px' }}>
             <div className="modal-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#f5ebe0', display: 'grid', placeItems: 'center', color: '#ea7a33' }}>
+                <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#f5ebe0', display: 'grid', placeItems: 'center', color: '#176B50' }}>
                   <History size={18} />
                 </div>
                 <div>

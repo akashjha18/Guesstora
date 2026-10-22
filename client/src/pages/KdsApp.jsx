@@ -738,7 +738,7 @@ export default function KdsApp() {
                           className="kds-mini-icon-btn"
                           onClick={() => setKotPrintOrder(order)}
                           title="Print Kitchen Ticket (KOT)"
-                          style={{ background: '#251b14', border: '1px solid #4a3325', color: '#ea7a33', padding: '3px 6px', borderRadius: '6px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '11px', fontWeight: 'bold' }}
+                          style={{ background: '#251b14', border: '1px solid #4a3325', color: '#176B50', padding: '3px 6px', borderRadius: '6px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '11px', fontWeight: 'bold' }}
                         >
                           <Printer size={11} />
                           <span>KOT</span>

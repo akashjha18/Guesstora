@@ -759,7 +759,7 @@ export default function CaptainApp() {
             disabled={isPinAuthenticating}
           >
             <Zap size={16} />
-            <span>Quick Unlock (Demo PIN: 1234)</span>
+            <span>Quick Unlock (Default PIN: 1234)</span>
           </button>
         </div>
       </div>

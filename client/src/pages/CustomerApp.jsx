@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Award,
@@ -64,6 +64,7 @@ import {
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { api, BASE } from '../api';
+import { loadPaymentSdk } from '../paymentGateways';
 
 function DietaryBadge({ isVeg, size = 14, className = '' }) {
   return (
@@ -253,6 +254,11 @@ export default function CustomerApp() {
   const [faveSettingsModalOpen, setFaveSettingsModalOpen] = useState(false);
   const [faveCopiedLink, setFaveCopiedLink] = useState(false);
   const [activePaymentModal, setActivePaymentModal] = useState(null);
+  const [razorpayReady, setRazorpayReady] = useState(false);
+  const [stripePaymentReady, setStripePaymentReady] = useState(false);
+  const paymentElementContainer = useRef(null);
+  const stripeClient = useRef(null);
+  const stripeElements = useRef(null);
   const [promoCodeInput, setPromoCodeInput] = useState('');
   const [appliedPromo, setAppliedPromo] = useState(null);
   const [promoValidating, setPromoValidating] = useState(false);
@@ -560,7 +566,7 @@ export default function CustomerApp() {
 
     let active = true;
     const cafeId = cafe._id || cafe.id;
-    api(`/api/ai-roastery/upsell?cafeId=${cafeId}&itemIds=${itemIds.join(',')}`)
+    api(`/ai-roastery/upsell?cafeId=${cafeId}&itemIds=${itemIds.join(',')}`)
       .then(res => {
         if (active && res && Array.isArray(res.suggestions)) {
           const inCartIds = new Set(itemIds.map(String));
@@ -989,7 +995,6 @@ export default function CustomerApp() {
         order: orderObj,
         gateway,
         intent,
-        txnInput: '',
         verifying: false,
       });
     } catch (err) {
@@ -997,11 +1002,77 @@ export default function CustomerApp() {
     }
   }
 
-  async function handleConfirmGatewayPayment(customTxnId) {
+  useEffect(() => {
+    if (activePaymentModal?.gateway === 'razorpay') {
+      let cancelled = false;
+      setRazorpayReady(false);
+      loadPaymentSdk({
+        globalName: 'Razorpay',
+        src: 'https://checkout.razorpay.com/v1/checkout.js',
+      })
+        .then(() => {
+          if (!cancelled) setRazorpayReady(true);
+        })
+        .catch(error => {
+          if (!cancelled) setNotice(error.message || 'Could not load secure checkout.');
+        });
+      return () => {
+        cancelled = true;
+        setRazorpayReady(false);
+      };
+    }
+    setRazorpayReady(false);
+
+    if (activePaymentModal?.gateway !== 'stripe') {
+      setStripePaymentReady(false);
+      return undefined;
+    }
+
+    const { publishableKey, clientSecret } = activePaymentModal.intent || {};
+    if (!publishableKey || !clientSecret || !paymentElementContainer.current) return undefined;
+
+    let cancelled = false;
+    let paymentElement;
+    setStripePaymentReady(false);
+
+    loadPaymentSdk({ globalName: 'Stripe', src: 'https://js.stripe.com/v3/' })
+      .then(Stripe => {
+        if (cancelled) return;
+        const stripe = Stripe(publishableKey);
+        const elements = stripe.elements({ clientSecret });
+        paymentElement = elements.create('payment');
+        paymentElement.on('ready', () => {
+          if (!cancelled) setStripePaymentReady(true);
+        });
+        paymentElement.mount(paymentElementContainer.current);
+        stripeClient.current = stripe;
+        stripeElements.current = elements;
+      })
+      .catch(error => {
+        if (!cancelled) setNotice(error.message || 'Could not load secure card checkout.');
+      });
+
+    return () => {
+      cancelled = true;
+      paymentElement?.unmount();
+      stripeClient.current = null;
+      stripeElements.current = null;
+      setStripePaymentReady(false);
+    };
+  }, [
+    activePaymentModal?.gateway,
+    activePaymentModal?.intent?.clientSecret,
+    activePaymentModal?.intent?.publishableKey,
+  ]);
+
+  async function handleConfirmGatewayPayment(transactionId, meta = {}) {
     if (!activePaymentModal) return;
-    const { order: currentOrder, gateway, txnInput } = activePaymentModal;
+    const { order: currentOrder, gateway } = activePaymentModal;
     const orderId = currentOrder.id || currentOrder._id;
-    const finalTxnId = customTxnId || txnInput.trim() || `TXN_${gateway.toUpperCase()}_${Date.now()}`;
+    if (!transactionId) {
+      setNotice('A payment provider confirmation is required.');
+      return;
+    }
 
     setActivePaymentModal(prev => ({ ...prev, verifying: true }));
     try {
@@ -1009,8 +1080,8 @@ export default function CustomerApp() {
         method: 'POST',
         body: JSON.stringify({
           gateway,
-          transactionId: finalTxnId,
-          meta: { mode: 'diner_checkout_intent', clientTimestamp: Date.now() },
+          transactionId,
+          meta,
         }),
       });
 
@@ -1018,7 +1089,7 @@ export default function CustomerApp() {
         ...prev,
         paymentStatus: 'paid',
         paymentMethod: gateway,
-        paymentTransactionId: finalTxnId,
+        paymentTransactionId: transactionId,
       }));
 
       try {
@@ -1035,6 +1106,76 @@ export default function CustomerApp() {
     } catch (err) {
       setNotice(err.message || 'Payment confirmation failed.');
       setActivePaymentModal(prev => ({ ...prev, verifying: false }));
+    }
+  }
+
+  async function startRazorpayCheckout() {
+    if (!activePaymentModal || activePaymentModal.gateway !== 'razorpay') return;
+    if (!razorpayReady) {
+      setNotice('Secure checkout is still loading. Please try again.');
+      return;
+    }
+    setActivePaymentModal(previous => ({ ...previous, verifying: true }));
+    try {
+      const Razorpay = await loadPaymentSdk({
+        globalName: 'Razorpay',
+        src: 'https://checkout.razorpay.com/v1/checkout.js',
+      });
+      const { intent } = activePaymentModal;
+      if (!intent?.keyId || !intent?.razorpayOrderId) {
+        throw new Error('Razorpay checkout is not configured for this order.');
+      }
+      const checkout = new Razorpay({
+        key: intent.keyId,
+        amount: intent.amount,
+        currency: intent.currency,
+        name: intent.name,
+        description: intent.description,
+        order_id: intent.razorpayOrderId,
+        prefill: intent.prefill,
+        handler: response => handleConfirmGatewayPayment(response.razorpay_payment_id, {
+          razorpayOrderId: response.razorpay_order_id,
+          razorpaySignature: response.razorpay_signature,
+        }),
+        modal: {
+          ondismiss: () => setActivePaymentModal(previous => previous
+            ? { ...previous, verifying: false }
+            : previous),
+        },
+      });
+      checkout.on('payment.failed', response => {
+        setNotice(response.error?.description || 'Razorpay payment failed. You can try again.');
+      });
+      checkout.open();
+    } catch (error) {
+      setActivePaymentModal(previous => previous ? { ...previous, verifying: false } : previous);
+      setNotice(error.message || 'Could not open Razorpay checkout.');
+    }
+  }
+
+  async function startStripeCheckout() {
+    if (!activePaymentModal || activePaymentModal.gateway !== 'stripe') return;
+    if (!stripeClient.current || !stripeElements.current) {
+      setNotice('Secure card checkout is still loading. Please try again.');
+      return;
+    }
+    setActivePaymentModal(previous => ({ ...previous, verifying: true }));
+    try {
+      const { error, paymentIntent } = await stripeClient.current.confirmPayment({
+        elements: stripeElements.current,
+        confirmParams: { return_url: window.location.href },
+        redirect: 'if_required',
+      });
+      if (error) throw new Error(error.message || 'Stripe payment could not be confirmed.');
+      if (paymentIntent?.status === 'succeeded') {
+        await handleConfirmGatewayPayment(paymentIntent.id);
+      } else {
+        setActivePaymentModal(previous => previous ? { ...previous, verifying: false } : previous);
+        setNotice('Payment is still processing. The order will update when the provider confirms it.');
+      }
+    } catch (error) {
+      setActivePaymentModal(previous => previous ? { ...previous, verifying: false } : previous);
+      setNotice(error.message || 'Stripe payment could not be completed.');
     }
   }
 
@@ -3047,7 +3188,13 @@ export default function CustomerApp() {
               <div className="customizer-scroll-body">
                 {/* Visual Header */}
                 <div className="customizer-hero-banner">
-                  <img src={itemImg} alt={item.name} />
+                  <img
+                    className="customizer-hero-image-backdrop"
+                    src={itemImg}
+                    alt=""
+                    aria-hidden="true"
+                  />
+                  <img className="customizer-hero-image" src={itemImg} alt={item.name} />
                   <div className="customizer-hero-overlay">
                     <span className={`dietary-badge ${item.veg ? 'veg' : 'non-veg'}`}>
                       <span className="diet-dot"></span>
@@ -3227,7 +3374,15 @@ export default function CustomerApp() {
 
               <div className="item-modal-visual">
                 {item.image ? (
-                  <img src={item.image} alt={item.name} />
+                  <>
+                    <img
+                      className="item-modal-image-backdrop"
+                      src={item.image}
+                      alt=""
+                      aria-hidden="true"
+                    />
+                    <img className="item-modal-image" src={item.image} alt={item.name} />
+                  </>
                 ) : (
                   <div className="item-modal-placeholder">
                     <Coffee size={48} />
@@ -3654,7 +3809,6 @@ export default function CustomerApp() {
                     <option value="razorpay">Credit/Debit Cards & Netbanking (Razorpay)</option>
                     <option value="stripe">International Cards / Apple Pay (Stripe)</option>
                     <option value="cash">Pay at Counter (Cash / UPI / Card)</option>
-                    <option value="demo_online">Online Payment (Instant Demo)</option>
                   </select>
                 </div>
 
@@ -3765,7 +3919,7 @@ export default function CustomerApp() {
 
                   {devOtpHint && (
                     <div className="dev-otp-helper">
-                      <span>Demo Mode Code:</span>
+                      <span>Verification Code:</span>
                       <button
                         type="button"
                         className="dev-otp-chip"
@@ -4113,7 +4267,7 @@ export default function CustomerApp() {
               <div>
                 <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#8C7E72', fontWeight: 600 }}>Amount Payable</span>
                 <div style={{ fontSize: 22, fontWeight: 700, color: '#1A120C' }}>
-                  {money(activePaymentModal.intent?.amount || activePaymentModal.order?.total || 0)}
+                  {money(activePaymentModal.intent?.displayAmount || activePaymentModal.intent?.amount || activePaymentModal.order?.total || 0)}
                 </div>
               </div>
               <span className={`status-pill payment ${activePaymentModal.order?.paymentStatus === 'paid' ? 'paid' : 'pending'}`}>
@@ -4126,14 +4280,8 @@ export default function CustomerApp() {
                 <>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '16px', background: '#FFFFFF', borderRadius: 12, border: '1px solid #EAE3D9' }}>
                     <div style={{ padding: 12, background: '#FFFFFF', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-                      {activePaymentModal.intent?.upi?.qrDataUrl ? (
-                        <img
-                          src={activePaymentModal.intent.upi.qrDataUrl}
-                          alt="UPI QR Code"
-                          style={{ width: 180, height: 180, display: 'block' }}
-                        />
-                      ) : activePaymentModal.intent?.upi?.upiUrl ? (
-                        <QRCodeSVG value={activePaymentModal.intent.upi.upiUrl} size={180} />
+                      {activePaymentModal.intent?.upiString ? (
+                        <QRCodeSVG value={activePaymentModal.intent.upiString} size={180} />
                       ) : (
                         <div style={{ width: 180, height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <QrCode size={64} color="#C4B9A9" />
@@ -4144,15 +4292,17 @@ export default function CustomerApp() {
                       Scan with Google Pay, PhonePe, Paytm or BHIM
                     </span>
                     <span style={{ fontSize: 11, color: '#9E8E81', marginTop: 2 }}>
-                      UPI VPA: <strong>{activePaymentModal.intent?.upi?.vpa || 'gusstora@okaxis'}</strong>
+                      UPI VPA: <strong>{activePaymentModal.intent?.vpa}</strong>
                     </span>
                   </div>
 
-                  {activePaymentModal.intent?.upi?.upiUrl && (
+                  {activePaymentModal.intent?.upiString && (
                     <a
-                      href={activePaymentModal.intent.upi.upiUrl}
+                      href={activePaymentModal.intent.upiString}
                       className="theme-btn-primary full-width"
                       style={{ justifyContent: 'center', textDecoration: 'none' }}
+                      target="_blank"
+                      rel="noreferrer"
                     >
                       <Smartphone size={16} />
                       <span>Open in UPI App (Mobile)</span>
@@ -4160,61 +4310,27 @@ export default function CustomerApp() {
                     </a>
                   )}
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: '#4A3B32' }}>
-                      Enter 12-digit UTR / UPI Transaction Reference (Optional)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 429381749281"
-                      value={activePaymentModal.txnInput || ''}
-                      onChange={e => {
-                        const val = e.target.value;
-                        setActivePaymentModal(prev => ({ ...prev, txnInput: val }));
-                      }}
-                      style={{
-                        padding: '10px 12px',
-                        borderRadius: 8,
-                        border: '1px solid #D5C9BD',
-                        fontSize: 14,
-                        fontFamily: 'monospace'
-                      }}
-                    />
-                  </div>
-
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button
-                      type="button"
-                      className="theme-btn-primary"
-                      style={{ flex: 1, justifyContent: 'center' }}
-                      disabled={activePaymentModal.verifying}
-                      onClick={() => handleConfirmGatewayPayment()}
-                    >
-                      <CheckCircle2 size={16} />
-                      <span>{activePaymentModal.verifying ? 'Verifying…' : 'I Have Paid'}</span>
-                    </button>
-                    <button
-                      type="button"
-                      className="theme-btn-secondary"
-                      style={{ fontSize: 11, padding: '8px 12px' }}
-                      disabled={activePaymentModal.verifying}
-                      onClick={() => handleConfirmGatewayPayment(`SIMULATED_UPI_${Date.now()}`)}
-                      title="Simulate instant automated webhook/UTR payment confirmation"
-                    >
-                      <Zap size={14} />
-                      <span>Simulate Success</span>
-                    </button>
-                  </div>
+                  <p style={{ fontSize: 12, color: '#6B584C', textAlign: 'center', margin: 0 }}>
+                    UPI transfers cannot be verified automatically. Your order remains pending until café staff confirms receipt.
+                  </p>
+                  <button
+                    type="button"
+                    className="theme-btn-secondary full-width"
+                    style={{ justifyContent: 'center' }}
+                    onClick={() => setActivePaymentModal(null)}
+                  >
+                    Done
+                  </button>
                 </>
               ) : activePaymentModal.gateway === 'razorpay' ? (
                 <>
                   <div style={{ padding: 16, background: '#FFFFFF', borderRadius: 12, border: '1px solid #EAE3D9', display: 'flex', flexDirection: 'column', gap: 10 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: '#1A120C' }}>Razorpay Standard Checkout</span>
-                      <span style={{ fontSize: 11, background: '#EEF2FF', color: '#4F46E5', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>Test Mode</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: '#1A120C' }}>Razorpay Secure Checkout</span>
+                      <span style={{ fontSize: 11, background: '#EEF2FF', color: '#4F46E5', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>Sandbox supported</span>
                     </div>
                     <p style={{ fontSize: 12, color: '#6B584C', margin: 0 }}>
-                      Razorpay Order ID: <code style={{ background: '#F5F0EA', padding: '2px 4px', borderRadius: 4 }}>{activePaymentModal.intent?.razorpay?.orderId || 'order_simulated'}</code>
+                      Razorpay Order ID: <code style={{ background: '#F5F0EA', padding: '2px 4px', borderRadius: 4 }}>{activePaymentModal.intent?.razorpayOrderId}</code>
                     </p>
                     <div style={{ padding: 10, background: '#FAF7F2', borderRadius: 8, fontSize: 12, color: '#5C4E43' }}>
                       Accepts Credit/Debit Cards, Net Banking, UPI, and PayLater wallets.
@@ -4226,11 +4342,11 @@ export default function CustomerApp() {
                       type="button"
                       className="theme-btn-primary full-width"
                       style={{ justifyContent: 'center' }}
-                      disabled={activePaymentModal.verifying}
-                      onClick={() => handleConfirmGatewayPayment(`pay_rzp_${Date.now()}`)}
+                      disabled={activePaymentModal.verifying || !razorpayReady}
+                      onClick={startRazorpayCheckout}
                     >
                       <CheckCircle2 size={16} />
-                      <span>{activePaymentModal.verifying ? 'Processing…' : `Pay ${money(activePaymentModal.intent?.amount || activePaymentModal.order?.total || 0)} (Razorpay Test)`}</span>
+                      <span>{activePaymentModal.verifying ? 'Processing…' : !razorpayReady ? 'Loading secure checkout…' : `Pay ${money(activePaymentModal.intent?.displayAmount || activePaymentModal.order?.total || 0)} (Razorpay)`}</span>
                     </button>
                   </div>
                 </>
@@ -4238,27 +4354,25 @@ export default function CustomerApp() {
                 <>
                   <div style={{ padding: 16, background: '#FFFFFF', borderRadius: 12, border: '1px solid #EAE3D9', display: 'flex', flexDirection: 'column', gap: 10 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: '#1A120C' }}>Stripe Elements Checkout</span>
-                      <span style={{ fontSize: 11, background: '#F0FDF4', color: '#16A34A', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>Global Cards</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: '#1A120C' }}>Stripe Secure Checkout</span>
+                      <span style={{ fontSize: 11, background: '#F0FDF4', color: '#16A34A', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>Sandbox supported</span>
                     </div>
                     <p style={{ fontSize: 12, color: '#6B584C', margin: 0 }}>
                       Supports Visa, Mastercard, AMEX, Apple Pay, and Google Pay worldwide.
                     </p>
-                    <div style={{ padding: 10, background: '#FAF7F2', borderRadius: 8, fontSize: 12, color: '#5C4E43' }}>
-                      Client Secret generated securely: <code style={{ fontSize: 10 }}>{activePaymentModal.intent?.stripe?.clientSecret?.slice(0, 15)}...</code>
-                    </div>
                   </div>
 
+                  <div ref={paymentElementContainer} />
                   <div style={{ display: 'flex', gap: 8 }}>
                     <button
                       type="button"
                       className="theme-btn-primary full-width"
                       style={{ justifyContent: 'center' }}
-                      disabled={activePaymentModal.verifying}
-                      onClick={() => handleConfirmGatewayPayment(`ch_stripe_${Date.now()}`)}
+                      disabled={activePaymentModal.verifying || !stripePaymentReady}
+                      onClick={startStripeCheckout}
                     >
                       <CheckCircle2 size={16} />
-                      <span>{activePaymentModal.verifying ? 'Processing…' : `Pay ${money(activePaymentModal.intent?.amount || activePaymentModal.order?.total || 0)} (Stripe Test)`}</span>
+                      <span>{activePaymentModal.verifying ? 'Processing…' : `Pay ${money(activePaymentModal.intent?.displayAmount || activePaymentModal.order?.total || 0)} (Stripe)`}</span>
                     </button>
                   </div>
                 </>
@@ -4269,10 +4383,10 @@ export default function CustomerApp() {
                     className="theme-btn-primary full-width"
                     style={{ justifyContent: 'center' }}
                     disabled={activePaymentModal.verifying}
-                    onClick={() => handleConfirmGatewayPayment()}
+                    onClick={() => setActivePaymentModal(null)}
                   >
                     <CheckCircle2 size={16} />
-                    <span>{activePaymentModal.verifying ? 'Processing…' : 'Complete Online Payment'}</span>
+                    <span>Close</span>
                   </button>
                 </div>
               )}

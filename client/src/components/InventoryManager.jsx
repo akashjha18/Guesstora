@@ -438,7 +438,7 @@ export default function InventoryManager({ cafe, token }) {
               height: 40,
               borderRadius: 10,
               background: '#1A120C',
-              color: '#EA7A33',
+              color: '#176B50',
               display: 'grid',
               placeItems: 'center'
             }}>
@@ -464,7 +464,7 @@ export default function InventoryManager({ cafe, token }) {
               display: 'flex',
               alignItems: 'center',
               gap: 6,
-              background: '#FAF6F0',
+              background: '#F1F7F2',
               border: '1px solid #d4c8bc',
               borderRadius: 8,
               padding: '8px 14px',
@@ -498,7 +498,7 @@ export default function InventoryManager({ cafe, token }) {
               display: 'flex',
               alignItems: 'center',
               gap: 6,
-              background: '#EA7A33',
+              background: '#176B50',
               color: '#fff',
               border: 'none',
               borderRadius: 8,
@@ -506,7 +506,7 @@ export default function InventoryManager({ cafe, token }) {
               fontSize: 13,
               fontWeight: 700,
               cursor: 'pointer',
-              boxShadow: '0 2px 6px rgba(234, 122, 51, 0.25)'
+              boxShadow: '0 2px 6px rgba(23, 107, 80, 0.25)'
             }}
           >
             <Plus size={16} />
@@ -532,7 +532,7 @@ export default function InventoryManager({ cafe, token }) {
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: '#7a6a5d' }}>Total Ingredients</span>
-            <div style={{ padding: 6, borderRadius: 8, background: '#f5efe8', color: '#1A120C' }}>
+            <div style={{ padding: 6, borderRadius: 8, background: '#DCEFE4', color: '#1A120C' }}>
               <Layers size={16} />
             </div>
           </div>
@@ -602,7 +602,7 @@ export default function InventoryManager({ cafe, token }) {
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: '#7a6a5d' }}>Stock Valuation</span>
-            <div style={{ padding: 6, borderRadius: 8, background: '#f5efe8', color: '#1A120C' }}>
+            <div style={{ padding: 6, borderRadius: 8, background: '#DCEFE4', color: '#1A120C' }}>
               <DollarSign size={16} />
             </div>
           </div>
@@ -631,8 +631,8 @@ export default function InventoryManager({ cafe, token }) {
             fontWeight: 700,
             background: 'none',
             border: 'none',
-            borderBottom: activeTab === 'stock' ? '3px solid #EA7A33' : '3px solid transparent',
-            color: activeTab === 'stock' ? '#EA7A33' : '#6b5c51',
+            borderBottom: activeTab === 'stock' ? '3px solid #176B50' : '3px solid transparent',
+            color: activeTab === 'stock' ? '#176B50' : '#6b5c51',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -644,7 +644,7 @@ export default function InventoryManager({ cafe, token }) {
           <span>Stock Master</span>
           <span style={{
             fontSize: 11,
-            background: activeTab === 'stock' ? '#EA7A33' : '#e8dfd5',
+            background: activeTab === 'stock' ? '#176B50' : '#e8dfd5',
             color: activeTab === 'stock' ? '#fff' : '#4a3b32',
             padding: '2px 7px',
             borderRadius: 10,
@@ -663,8 +663,8 @@ export default function InventoryManager({ cafe, token }) {
             fontWeight: 700,
             background: 'none',
             border: 'none',
-            borderBottom: activeTab === 'recipes' ? '3px solid #EA7A33' : '3px solid transparent',
-            color: activeTab === 'recipes' ? '#EA7A33' : '#6b5c51',
+            borderBottom: activeTab === 'recipes' ? '3px solid #176B50' : '3px solid transparent',
+            color: activeTab === 'recipes' ? '#176B50' : '#6b5c51',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -685,8 +685,8 @@ export default function InventoryManager({ cafe, token }) {
             fontWeight: 700,
             background: 'none',
             border: 'none',
-            borderBottom: activeTab === 'ledger' ? '3px solid #EA7A33' : '3px solid transparent',
-            color: activeTab === 'ledger' ? '#EA7A33' : '#6b5c51',
+            borderBottom: activeTab === 'ledger' ? '3px solid #176B50' : '3px solid transparent',
+            color: activeTab === 'ledger' ? '#176B50' : '#6b5c51',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -805,7 +805,7 @@ export default function InventoryManager({ cafe, token }) {
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}>
                 <thead>
-                  <tr style={{ background: '#FAF6F0', borderBottom: '1px solid #e8dfd5', color: '#6b5c51' }}>
+                  <tr style={{ background: '#F1F7F2', borderBottom: '1px solid #e8dfd5', color: '#6b5c51' }}>
                     <th style={{ padding: '12px 16px', fontWeight: 700 }}>Ingredient / Material</th>
                     <th style={{ padding: '12px 14px', fontWeight: 700 }}>Category</th>
                     <th style={{ padding: '12px 16px', fontWeight: 700 }}>Live Stock Level</th>
@@ -989,7 +989,7 @@ export default function InventoryManager({ cafe, token }) {
                                 title="Edit Material"
                                 onClick={() => openEditModal(item)}
                                 style={{
-                                  background: '#f5efe8',
+                                  background: '#DCEFE4',
                                   color: '#4a3b32',
                                   border: '1px solid #d4c8bc',
                                   borderRadius: 6,
@@ -1039,15 +1039,15 @@ export default function InventoryManager({ cafe, token }) {
                     style={{
                       padding: '10px 12px',
                       borderRadius: 8,
-                      border: isSelected ? '2px solid #EA7A33' : '1px solid #e8dfd5',
-                      background: isSelected ? '#FAF6F0' : '#fff',
+                      border: isSelected ? '2px solid #176B50' : '1px solid #e8dfd5',
+                      background: isSelected ? '#F1F7F2' : '#fff',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease'
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ fontWeight: 700, fontSize: 13, color: '#1A120C' }}>{item.name}</div>
-                      <div style={{ fontWeight: 700, fontSize: 13, color: '#EA7A33' }}>
+                      <div style={{ fontWeight: 700, fontSize: 13, color: '#176B50' }}>
                         {money(item.price)}
                       </div>
                     </div>
@@ -1124,7 +1124,7 @@ export default function InventoryManager({ cafe, token }) {
                       alignItems: 'center',
                       gap: 6,
                       background: '#1A120C',
-                      color: '#FAF6F0',
+                      color: '#F1F7F2',
                       border: 'none',
                       borderRadius: 8,
                       padding: '8px 14px',
@@ -1144,7 +1144,7 @@ export default function InventoryManager({ cafe, token }) {
                     display: 'grid',
                     gridTemplateColumns: 'repeat(4, 1fr)',
                     gap: 12,
-                    background: '#FAF6F0',
+                    background: '#F1F7F2',
                     border: '1px solid #e8dfd5',
                     borderRadius: 10,
                     padding: 16,
@@ -1172,7 +1172,7 @@ export default function InventoryManager({ cafe, token }) {
                       <div style={{ fontSize: 11, fontWeight: 600, color: '#7a6a5d', textTransform: 'uppercase' }}>
                         Profit Margin (%)
                       </div>
-                      <div style={{ fontSize: 20, fontWeight: 800, color: '#EA7A33', marginTop: 2 }}>
+                      <div style={{ fontSize: 20, fontWeight: 800, color: '#176B50', marginTop: 2 }}>
                         {recipeDetail.costAnalysis.profitMarginPct}%
                       </div>
                     </div>
@@ -1198,14 +1198,14 @@ export default function InventoryManager({ cafe, token }) {
                   Bill of Materials (Raw Ingredients Required)
                 </h4>
                 {(!recipeDetail?.recipe || recipeDetail.recipe.length === 0) ? (
-                  <div style={{ padding: 30, textAlign: 'center', background: '#faf6f0', borderRadius: 8, color: '#8a7b6f' }}>
+                  <div style={{ padding: 30, textAlign: 'center', background: '#F1F7F2', borderRadius: 8, color: '#8a7b6f' }}>
                     No ingredients mapped yet. Click "Add Ingredient" above to create this item's recipe!
                   </div>
                 ) : (
                   <div style={{ border: '1px solid #e8dfd5', borderRadius: 8, overflow: 'hidden' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}>
                       <thead>
-                        <tr style={{ background: '#f5efe8', borderBottom: '1px solid #e8dfd5', color: '#6b5c51' }}>
+                        <tr style={{ background: '#DCEFE4', borderBottom: '1px solid #e8dfd5', color: '#6b5c51' }}>
                           <th style={{ padding: '10px 14px', fontWeight: 700 }}>Raw Material</th>
                           <th style={{ padding: '10px 12px', fontWeight: 700 }}>Required / Serving</th>
                           <th style={{ padding: '10px 12px', fontWeight: 700 }}>Unit Cost</th>
@@ -1230,7 +1230,7 @@ export default function InventoryManager({ cafe, token }) {
                               <td style={{ padding: '12px 12px', color: '#6b5c51' }}>
                                 {money(stockItem?.costPerUnit)} / {stockItem?.unit}
                               </td>
-                              <td style={{ padding: '12px 12px', fontWeight: 700, color: '#EA7A33' }}>
+                              <td style={{ padding: '12px 12px', fontWeight: 700, color: '#176B50' }}>
                                 {money(item.costInCup || 0)}
                               </td>
                               <td style={{ padding: '12px 12px' }}>
@@ -1376,7 +1376,7 @@ export default function InventoryManager({ cafe, token }) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 6,
-                background: '#FAF6F0',
+                background: '#F1F7F2',
                 border: '1px solid #d4c8bc',
                 borderRadius: 8,
                 padding: '6px 12px',
@@ -1399,7 +1399,7 @@ export default function InventoryManager({ cafe, token }) {
           }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}>
               <thead>
-                <tr style={{ background: '#FAF6F0', borderBottom: '1px solid #e8dfd5', color: '#6b5c51' }}>
+                <tr style={{ background: '#F1F7F2', borderBottom: '1px solid #e8dfd5', color: '#6b5c51' }}>
                   <th style={{ padding: '12px 16px', fontWeight: 700 }}>Timestamp</th>
                   <th style={{ padding: '12px 14px', fontWeight: 700 }}>Ingredient</th>
                   <th style={{ padding: '12px 14px', fontWeight: 700 }}>Change Type</th>
@@ -1506,7 +1506,7 @@ export default function InventoryManager({ cafe, token }) {
           <div className="theme-modal-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '500px' }}>
             <div className="modal-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#f5efe8', display: 'grid', placeItems: 'center', color: '#EA7A33' }}>
+                <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#DCEFE4', display: 'grid', placeItems: 'center', color: '#176B50' }}>
                   <Boxes size={18} />
                 </div>
                 <div>
@@ -1664,7 +1664,7 @@ export default function InventoryManager({ cafe, token }) {
                     padding: '8px 18px',
                     borderRadius: 6,
                     border: 'none',
-                    background: '#EA7A33',
+                    background: '#176B50',
                     color: '#fff',
                     fontSize: 13,
                     fontWeight: 700,
@@ -1702,7 +1702,7 @@ export default function InventoryManager({ cafe, token }) {
 
             <form onSubmit={handleRestockSubmit} style={{ padding: 20 }}>
               <div style={{
-                background: '#FAF6F0',
+                background: '#F1F7F2',
                 padding: '12px 14px',
                 borderRadius: 8,
                 marginBottom: 16,
@@ -1831,7 +1831,7 @@ export default function InventoryManager({ cafe, token }) {
 
             <form onSubmit={handleWasteSubmit} style={{ padding: 20 }}>
               <div style={{
-                background: '#FAF6F0',
+                background: '#F1F7F2',
                 padding: '12px 14px',
                 borderRadius: 8,
                 marginBottom: 16,
@@ -1932,7 +1932,7 @@ export default function InventoryManager({ cafe, token }) {
           <div className="theme-modal-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '460px' }}>
             <div className="modal-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#FAF6F0', display: 'grid', placeItems: 'center', color: '#EA7A33' }}>
+                <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#F1F7F2', display: 'grid', placeItems: 'center', color: '#176B50' }}>
                   <Coffee size={18} />
                 </div>
                 <div>
@@ -2031,7 +2031,7 @@ export default function InventoryManager({ cafe, token }) {
                     padding: '8px 18px',
                     borderRadius: 6,
                     border: 'none',
-                    background: '#EA7A33',
+                    background: '#176B50',
                     color: '#fff',
                     fontSize: 13,
                     fontWeight: 700,

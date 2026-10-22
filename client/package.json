@@ -3,7 +3,22 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "scripts": { "dev": "vite --host 0.0.0.0", "build": "vite build", "preview": "vite preview" },
-  "dependencies": { "@vitejs/plugin-react": "latest", "vite": "latest", "react": "latest", "react-dom": "latest", "react-router-dom": "latest", "lucide-react": "latest", "qrcode.react": "latest" },
-  "devDependencies": {}
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:e2e": "node scripts/run-browser-tests.js"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "lucide-react": "latest",
+    "qrcode.react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-router-dom": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1"
+  }
 }

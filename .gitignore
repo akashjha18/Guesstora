@@ -20,6 +20,7 @@ yarn-error.log*
 scratch/
 tmp/
 temp/
+server/backups/
 
 # OS and IDE files
 .DS_Store

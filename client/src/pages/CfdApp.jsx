@@ -55,7 +55,7 @@ export default function CfdApp() {
           setCafeConfig({
             name: 'Gusstora Artisan Roastery',
             slug,
-            brandColor: '#ea580c',
+            brandColor: '#176B50',
             currency: 'INR',
             cfdWelcomeTitle: 'Gusstora Specialty Coffee',
             cfdWelcomeSubtitle: 'Handcrafted Roasts & Fresh Sourdough Bakes',

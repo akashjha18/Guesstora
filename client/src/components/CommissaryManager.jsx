@@ -427,7 +427,7 @@ export default function CommissaryManager({ cafe, token }) {
   };
 
   return (
-    <div style={{ padding: '0 20px', maxWidth: 1400, margin: '0 auto', color: '#f3ece4' }}>
+    <div style={{ padding: '0 20px', maxWidth: 1400, margin: '0 auto', color: '#111827' }}>
       {/* Toast Notice */}
       {notice && (
         <div
@@ -439,7 +439,7 @@ export default function CommissaryManager({ cafe, token }) {
             color: '#fff',
             padding: '12px 20px',
             borderRadius: 8,
-            boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
             zIndex: 9999,
             display: 'flex',
             alignItems: 'center',
@@ -454,52 +454,26 @@ export default function CommissaryManager({ cafe, token }) {
       )}
 
       {/* Top Banner Header */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #1f1815 0%, #2b1f1a 100%)',
-          border: '1px solid #3d2d24',
-          borderRadius: 16,
-          padding: '24px 28px',
-          marginBottom: 24,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 16,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-        }}
-      >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
-            <div
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: 10,
-                background: 'rgba(234, 122, 51, 0.15)',
-                color: '#ea7a33',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Truck size={24} />
-            </div>
-            <div>
-              <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: '#f9f6f0' }}>
-                Central Commissary & Multi-Store Inventory
-              </h1>
-              <span style={{ fontSize: '12px', color: '#c4a482', letterSpacing: '0.5px' }}>
-                PHASE 10 • ROASTERY BATCHING • INTER-STORE INDENTS & STN • WASTAGE AUDITING • ROP POs
+      <div className="crm-orders-header-card">
+        <div className="crm-orders-header-left">
+          <div className="crm-orders-brand-emblem">
+            <Truck size={28} />
+          </div>
+          <div>
+            <div className="crm-orders-title-row">
+              <h1 className="crm-orders-title">Central Commissary & Multi-Store Inventory</h1>
+              <span className="crm-orders-live-badge">
+                <span className="crm-orders-live-pulse" />
+                CENTRAL COMMISSARY
               </span>
             </div>
+            <p className="crm-orders-subtitle">
+              Master roastery batching with roast shrinkage tracking, inter-store indents with STN dispatch & GRN variance detection, financial spoilage auditing, and automated supplier reorder points.
+            </p>
           </div>
-          <p style={{ margin: 0, fontSize: '13px', color: '#a89a8e', maxWidth: 750 }}>
-            Master roastery batching with roast shrinkage tracking, inter-store indents with STN dispatch & GRN variance detection, financial spoilage auditing, and automated supplier reorder points.
-          </p>
         </div>
 
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div className="crm-orders-header-right">
           <button
             onClick={() => {
               if (activeTab === 'batches') fetchBatches();
@@ -508,19 +482,8 @@ export default function CommissaryManager({ cafe, token }) {
               if (activeTab === 'rop_orders') fetchRopAndPOs();
             }}
             disabled={loading}
-            style={{
-              background: '#2b221d',
-              color: '#d4c5b9',
-              border: '1px solid #4a382e',
-              padding: '10px 16px',
-              borderRadius: 8,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              fontSize: '13px',
-              fontWeight: 600,
-            }}
+            className="crm-btn-secondary"
+            style={{ display: 'flex', alignItems: 'center', gap: 8 }}
           >
             <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
             <span>Refresh</span>
@@ -529,15 +492,7 @@ export default function CommissaryManager({ cafe, token }) {
       </div>
 
       {/* Main Tab Navigation */}
-      <div
-        style={{
-          display: 'flex',
-          gap: 8,
-          borderBottom: '1px solid #3d2d24',
-          marginBottom: 24,
-          paddingBottom: 2,
-        }}
-      >
+      <div style={{ display: 'flex', gap: 10, marginBottom: 24, flexWrap: 'wrap' }}>
         {[
           { id: 'batches', label: 'Roastery Production Batches', icon: Flame, badge: batches.length },
           { id: 'indents', label: 'Inter-Store Indents & STN/GRN', icon: Truck, badge: indents.length },
@@ -551,17 +506,18 @@ export default function CommissaryManager({ cafe, token }) {
               key={t.id}
               onClick={() => setActiveTab(t.id)}
               style={{
-                background: isActive ? '#ea7a33' : 'transparent',
-                color: isActive ? '#fff' : '#b3a598',
-                border: 'none',
-                padding: '10px 18px',
-                borderRadius: '8px 8px 0 0',
-                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
+                padding: '9px 18px',
+                borderRadius: '9999px',
+                border: isActive ? '1px solid #176B50' : '1px solid #e5e7eb',
+                background: isActive ? '#176B50' : '#ffffff',
+                color: isActive ? '#ffffff' : '#4b5563',
                 fontSize: '13px',
-                fontWeight: isActive ? 700 : 500,
+                fontWeight: isActive ? 600 : 500,
+                cursor: 'pointer',
+                boxShadow: isActive ? '0 4px 12px rgba(23,107,80,0.25)' : '0 1px 2px rgba(0,0,0,0.03)',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -570,8 +526,8 @@ export default function CommissaryManager({ cafe, token }) {
               {t.badge !== undefined && (
                 <span
                   style={{
-                    background: t.badgeWarn ? '#dc2626' : (isActive ? 'rgba(0,0,0,0.25)' : '#332720'),
-                    color: '#fff',
+                    background: t.badgeWarn ? '#dc2626' : (isActive ? 'rgba(255,255,255,0.25)' : '#e5e7eb'),
+                    color: t.badgeWarn ? '#fff' : (isActive ? '#fff' : '#374151'),
                     padding: '2px 8px',
                     borderRadius: 12,
                     fontSize: '11px',
@@ -594,10 +550,10 @@ export default function CommissaryManager({ cafe, token }) {
           {/* Action Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: '#f5eee6' }}>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: '#111827' }}>
                 Master Production Runs & Roast Profiles
               </h3>
-              <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#9d8e82' }}>
+              <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#6b7280' }}>
                 Converts green beans, packaging & raw ingredients into finished retail / espresso stock with moisture loss tracking.
               </p>
             </div>
@@ -616,7 +572,7 @@ export default function CommissaryManager({ cafe, token }) {
                 setBatchModalOpen(true);
               }}
               style={{
-                background: '#ea7a33',
+                background: '#176B50',
                 color: '#fff',
                 border: 'none',
                 padding: '10px 18px',
@@ -627,6 +583,7 @@ export default function CommissaryManager({ cafe, token }) {
                 gap: 8,
                 fontSize: '13px',
                 fontWeight: 600,
+                boxShadow: '0 2px 6px rgba(23,107,80,0.25)',
               }}
             >
               <Plus size={16} />
@@ -643,20 +600,21 @@ export default function CommissaryManager({ cafe, token }) {
                 <div
                   key={b.id}
                   style={{
-                    background: '#231b17',
-                    border: '1px solid #3a2b22',
-                    borderRadius: 12,
+                    background: '#ffffff',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: 16,
                     padding: '20px',
                     position: 'relative',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                    boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
                     <div>
                       <span
                         style={{
-                          background: '#332720',
-                          color: '#ea7a33',
+                          background: '#ecfdf5',
+                          color: '#065f46',
+                          border: '1px solid #a7f3d0',
                           padding: '3px 8px',
                           borderRadius: 4,
                           fontSize: '11px',
@@ -666,10 +624,10 @@ export default function CommissaryManager({ cafe, token }) {
                       >
                         {b.batchNumber}
                       </span>
-                      <h4 style={{ margin: '8px 0 2px', fontSize: '16px', fontWeight: 600, color: '#f7f2ed' }}>
+                      <h4 style={{ margin: '8px 0 2px', fontSize: '16px', fontWeight: 600, color: '#111827' }}>
                         {b.recipeName}
                       </h4>
-                      <span style={{ fontSize: '12px', color: '#9e9084' }}>
+                      <span style={{ fontSize: '12px', color: '#6b7280' }}>
                         Yields: {b.outputItemName || 'Finished Stock Item'}
                       </span>
                     </div>
@@ -683,16 +641,22 @@ export default function CommissaryManager({ cafe, token }) {
                         textTransform: 'uppercase',
                         background:
                           b.status === 'completed'
-                            ? 'rgba(34, 197, 94, 0.15)'
+                            ? '#ecfdf5'
                             : b.status === 'in_progress'
-                            ? 'rgba(234, 122, 51, 0.15)'
-                            : 'rgba(156, 163, 175, 0.15)',
+                            ? '#eff6ff'
+                            : '#f3f4f6',
                         color:
                           b.status === 'completed'
-                            ? '#4ade80'
+                            ? '#047857'
                             : b.status === 'in_progress'
-                            ? '#ea7a33'
-                            : '#9ca3af',
+                            ? '#1d4ed8'
+                            : '#4b5563',
+                        border:
+                          b.status === 'completed'
+                            ? '1px solid #a7f3d0'
+                            : b.status === 'in_progress'
+                            ? '1px solid #bfdbfe'
+                            : '1px solid #e5e7eb',
                       }}
                     >
                       {b.status.replace('_', ' ')}
@@ -702,9 +666,9 @@ export default function CommissaryManager({ cafe, token }) {
                   {/* Planned vs Produced Metrics */}
                   <div
                     style={{
-                      background: '#1a1411',
-                      border: '1px solid #2d211a',
-                      borderRadius: 8,
+                      background: '#f8fafc',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: 10,
                       padding: '12px 14px',
                       marginBottom: 14,
                       display: 'grid',
@@ -714,43 +678,43 @@ export default function CommissaryManager({ cafe, token }) {
                     }}
                   >
                     <div>
-                      <span style={{ fontSize: '10px', color: '#8c7d71', textTransform: 'uppercase' }}>Planned Qty</span>
-                      <div style={{ fontSize: '15px', fontWeight: 700, color: '#f3ece4', marginTop: 2 }}>
+                      <span style={{ fontSize: '10px', color: '#6b7280', textTransform: 'uppercase', fontWeight: 600 }}>Planned Qty</span>
+                      <div style={{ fontSize: '15px', fontWeight: 700, color: '#111827', marginTop: 2 }}>
                         {b.plannedQuantity} {b.unit}
                       </div>
                     </div>
                     <div>
-                      <span style={{ fontSize: '10px', color: '#8c7d71', textTransform: 'uppercase' }}>Produced Yield</span>
-                      <div style={{ fontSize: '15px', fontWeight: 700, color: isCompleted ? '#4ade80' : '#8c7d71', marginTop: 2 }}>
+                      <span style={{ fontSize: '10px', color: '#6b7280', textTransform: 'uppercase', fontWeight: 600 }}>Produced Yield</span>
+                      <div style={{ fontSize: '15px', fontWeight: 700, color: isCompleted ? '#059669' : '#9ca3af', marginTop: 2 }}>
                         {isCompleted ? `${b.producedQuantity} ${b.unit}` : '—'}
                       </div>
                     </div>
                     <div>
-                      <span style={{ fontSize: '10px', color: '#8c7d71', textTransform: 'uppercase' }}>Roast Shrinkage</span>
-                      <div style={{ fontSize: '15px', fontWeight: 700, color: b.shrinkagePercent > 20 ? '#f87171' : '#f59e0b', marginTop: 2 }}>
+                      <span style={{ fontSize: '10px', color: '#6b7280', textTransform: 'uppercase', fontWeight: 600 }}>Roast Shrinkage</span>
+                      <div style={{ fontSize: '15px', fontWeight: 700, color: b.shrinkagePercent > 20 ? '#dc2626' : '#d97706', marginTop: 2 }}>
                         {isCompleted ? `${b.shrinkagePercent}%` : '—'}
                       </div>
                     </div>
                   </div>
 
                   {/* Cost & Operator details */}
-                  <div style={{ fontSize: '12px', color: '#baa89b', marginBottom: 14 }}>
+                  <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: 14 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                       <span>Raw Material Cost:</span>
-                      <b style={{ color: '#f3ece4' }}>₹{b.totalCost?.toFixed(2) || '0.00'}</b>
+                      <b style={{ color: '#111827' }}>₹{b.totalCost?.toFixed(2) || '0.00'}</b>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                       <span>Calculated COGS / Unit:</span>
-                      <b style={{ color: '#ea7a33' }}>₹{b.costPerUnit?.toFixed(2) || '0.00'}/{b.unit}</b>
+                      <b style={{ color: '#176B50' }}>₹{b.costPerUnit?.toFixed(2) || '0.00'}/{b.unit}</b>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span>Operator:</span>
-                      <span>{b.operatorName || 'Master Roaster'}</span>
+                      <span style={{ color: '#111827', fontWeight: 500 }}>{b.operatorName || 'Master Roaster'}</span>
                     </div>
                   </div>
 
                   {b.roasterNotes && (
-                    <div style={{ background: '#191310', padding: '8px 10px', borderRadius: 6, fontSize: '11px', color: '#8c7e73', marginBottom: 14 }}>
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '8px 10px', borderRadius: 6, fontSize: '11px', color: '#4b5563', marginBottom: 14 }}>
                       <i>"{b.roasterNotes}"</i>
                     </div>
                   )}
@@ -762,14 +726,15 @@ export default function CommissaryManager({ cafe, token }) {
                         onClick={() => handleStartBatch(b.id)}
                         style={{
                           flex: 1,
-                          background: '#2b201a',
-                          color: '#ea7a33',
-                          border: '1px solid #ea7a33',
+                          background: '#ffffff',
+                          color: '#176B50',
+                          border: '1px solid #176B50',
                           padding: '8px',
                           borderRadius: 6,
                           fontSize: '12px',
                           fontWeight: 600,
                           cursor: 'pointer',
+                          transition: 'all 0.15s ease',
                         }}
                       >
                         Start Roasting / Production
@@ -789,7 +754,7 @@ export default function CommissaryManager({ cafe, token }) {
                         }}
                         style={{
                           flex: 1,
-                          background: '#15803d',
+                          background: '#059669',
                           color: '#fff',
                           border: 'none',
                           padding: '8px',
@@ -797,13 +762,14 @@ export default function CommissaryManager({ cafe, token }) {
                           fontSize: '12px',
                           fontWeight: 600,
                           cursor: 'pointer',
+                          boxShadow: '0 2px 6px rgba(5,150,105,0.25)',
                         }}
                       >
                         Complete Batch & Yield Output
                       </button>
                     )}
                     {b.status === 'completed' && (
-                      <div style={{ width: '100%', textAlign: 'center', fontSize: '12px', color: '#4ade80', fontWeight: 600, padding: '6px 0' }}>
+                      <div style={{ width: '100%', textAlign: 'center', fontSize: '12px', color: '#059669', fontWeight: 600, padding: '6px 0' }}>
                         ✓ Stock Restocked & Ledger Logged
                       </div>
                     )}
@@ -812,7 +778,7 @@ export default function CommissaryManager({ cafe, token }) {
               );
             })}
             {batches.length === 0 && (
-              <div style={{ gridColumn: '1 / -1', padding: '40px', textAlign: 'center', color: '#8c7d71' }}>
+              <div style={{ gridColumn: '1 / -1', padding: '40px', textAlign: 'center', color: '#6b7280', background: '#ffffff', border: '1px dashed #d1d5db', borderRadius: 16 }}>
                 No commissary batches logged yet. Click "+ New Production Batch" above to start your first coffee roast or bakery prep batch.
               </div>
             )}
@@ -833,14 +799,16 @@ export default function CommissaryManager({ cafe, token }) {
                   key={f}
                   onClick={() => setIndentFilter(f)}
                   style={{
-                    background: indentFilter === f ? '#ea7a33' : '#231b17',
-                    color: indentFilter === f ? '#fff' : '#b0a094',
-                    border: '1px solid #3a2c23',
+                    background: indentFilter === f ? '#176B50' : '#ffffff',
+                    color: indentFilter === f ? '#fff' : '#4b5563',
+                    border: indentFilter === f ? '1px solid #176B50' : '1px solid #e5e7eb',
                     padding: '8px 14px',
                     borderRadius: 6,
                     fontSize: '12px',
                     fontWeight: 600,
                     cursor: 'pointer',
+                    boxShadow: indentFilter === f ? '0 2px 6px rgba(23,107,80,0.2)' : '0 1px 2px rgba(0,0,0,0.03)',
+                    transition: 'all 0.15s ease',
                   }}
                 >
                   {f === 'all' ? 'All Indents' : f === 'incoming' ? 'Incoming (To Fulfill)' : 'Outgoing (Requested)'}
@@ -867,7 +835,7 @@ export default function CommissaryManager({ cafe, token }) {
                 setIndentModalOpen(true);
               }}
               style={{
-                background: '#ea7a33',
+                background: '#176B50',
                 color: '#fff',
                 border: 'none',
                 padding: '10px 18px',
@@ -878,6 +846,7 @@ export default function CommissaryManager({ cafe, token }) {
                 gap: 8,
                 fontSize: '13px',
                 fontWeight: 600,
+                boxShadow: '0 2px 6px rgba(23,107,80,0.25)',
               }}
             >
               <Plus size={16} />
@@ -894,11 +863,11 @@ export default function CommissaryManager({ cafe, token }) {
                 <div
                   key={ind.id}
                   style={{
-                    background: '#231b17',
-                    border: '1px solid #3a2b22',
-                    borderRadius: 12,
+                    background: '#ffffff',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: 16,
                     padding: '20px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                    boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 14 }}>
@@ -906,8 +875,9 @@ export default function CommissaryManager({ cafe, token }) {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <span
                           style={{
-                            background: '#332720',
-                            color: '#ea7a33',
+                            background: '#ecfdf5',
+                            color: '#065f46',
+                            border: '1px solid #a7f3d0',
                             padding: '3px 8px',
                             borderRadius: 4,
                             fontSize: '12px',
@@ -924,18 +894,19 @@ export default function CommissaryManager({ cafe, token }) {
                             fontSize: '11px',
                             fontWeight: 600,
                             textTransform: 'uppercase',
-                            background: ind.priority === 'urgent' ? '#991b1b' : ind.priority === 'high' ? '#b45309' : '#332720',
-                            color: '#fff',
+                            background: ind.priority === 'urgent' ? '#fef2f2' : ind.priority === 'high' ? '#fffbeb' : '#ecfdf5',
+                            color: ind.priority === 'urgent' ? '#b91c1c' : ind.priority === 'high' ? '#b45309' : '#047857',
+                            border: ind.priority === 'urgent' ? '1px solid #fecaca' : ind.priority === 'high' ? '1px solid #fde68a' : '1px solid #a7f3d0',
                           }}
                         >
                           {ind.priority} priority
                         </span>
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, fontSize: '13px', color: '#d8cdc4' }}>
-                        <span><b>Requesting:</b> {ind.requestingCafeName || 'Local Store'}</span>
-                        <ArrowRight size={14} style={{ color: '#ea7a33' }} />
-                        <span><b>Supplying:</b> {ind.supplyingCafeName || 'Central Roastery'}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, fontSize: '13px', color: '#4b5563' }}>
+                        <span><b style={{ color: '#111827' }}>Requesting:</b> {ind.requestingCafeName || 'Local Store'}</span>
+                        <ArrowRight size={14} style={{ color: '#176B50' }} />
+                        <span><b style={{ color: '#111827' }}>Supplying:</b> {ind.supplyingCafeName || 'Central Roastery'}</span>
                       </div>
                     </div>
 
@@ -954,13 +925,13 @@ export default function CommissaryManager({ cafe, token }) {
                                 fontSize: '11px',
                                 fontWeight: 600,
                                 textTransform: 'capitalize',
-                                background: isReached ? '#ea7a33' : '#1e1613',
-                                color: isReached ? '#fff' : '#6b5c52',
+                                background: isReached ? '#176B50' : '#f3f4f6',
+                                color: isReached ? '#fff' : '#9ca3af',
                               }}
                             >
                               {step}
                             </div>
-                            {idx < 3 && <div style={{ width: 12, height: 2, background: isReached ? '#ea7a33' : '#33261f' }} />}
+                            {idx < 3 && <div style={{ width: 12, height: 2, background: isReached ? '#176B50' : '#e5e7eb' }} />}
                           </div>
                         );
                       })}
@@ -968,63 +939,65 @@ export default function CommissaryManager({ cafe, token }) {
                   </div>
 
                   {/* Line Items Table */}
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', marginBottom: 14 }}>
-                    <thead>
-                      <tr style={{ background: '#1c1512', color: '#9d8e82', textAlign: 'left' }}>
-                        <th style={{ padding: '8px 12px' }}>Item Name</th>
-                        <th style={{ padding: '8px 12px' }}>Category</th>
-                        <th style={{ padding: '8px 12px' }}>Requested</th>
-                        <th style={{ padding: '8px 12px' }}>Approved</th>
-                        <th style={{ padding: '8px 12px' }}>Dispatched (STN)</th>
-                        <th style={{ padding: '8px 12px' }}>Received (GRN)</th>
-                        <th style={{ padding: '8px 12px' }}>Variance</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(ind.items || []).map((li) => (
-                        <tr key={li.id} style={{ borderBottom: '1px solid #2d211a', color: '#e5ded6' }}>
-                          <td style={{ padding: '8px 12px', fontWeight: 600 }}>{li.itemName}</td>
-                          <td style={{ padding: '8px 12px', color: '#9e8e81' }}>{li.category}</td>
-                          <td style={{ padding: '8px 12px' }}>{li.requestedQty} {li.unit}</td>
-                          <td style={{ padding: '8px 12px' }}>{li.approvedQty} {li.unit}</td>
-                          <td style={{ padding: '8px 12px' }}>{li.dispatchedQty} {li.unit}</td>
-                          <td style={{ padding: '8px 12px' }}>{li.receivedQty} {li.unit}</td>
-                          <td style={{ padding: '8px 12px' }}>
-                            {li.varianceQty !== 0 ? (
-                              <span style={{ color: li.varianceQty < 0 ? '#f87171' : '#4ade80', fontWeight: 700 }}>
-                                {li.varianceQty > 0 ? `+${li.varianceQty}` : li.varianceQty} {li.unit}
-                                {li.varianceReason ? ` (${li.varianceReason})` : ''}
-                              </span>
-                            ) : (
-                              <span style={{ color: '#9e8e81' }}>0 (Match)</span>
-                            )}
-                          </td>
+                  <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden', marginBottom: 14 }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
+                      <thead>
+                        <tr style={{ background: '#f8fafc', color: '#4b5563', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>
+                          <th style={{ padding: '8px 12px' }}>Item Name</th>
+                          <th style={{ padding: '8px 12px' }}>Category</th>
+                          <th style={{ padding: '8px 12px' }}>Requested</th>
+                          <th style={{ padding: '8px 12px' }}>Approved</th>
+                          <th style={{ padding: '8px 12px' }}>Dispatched (STN)</th>
+                          <th style={{ padding: '8px 12px' }}>Received (GRN)</th>
+                          <th style={{ padding: '8px 12px' }}>Variance</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {(ind.items || []).map((li) => (
+                          <tr key={li.id} style={{ borderBottom: '1px solid #f1f5f9', color: '#111827' }}>
+                            <td style={{ padding: '8px 12px', fontWeight: 600 }}>{li.itemName}</td>
+                            <td style={{ padding: '8px 12px', color: '#6b7280' }}>{li.category}</td>
+                            <td style={{ padding: '8px 12px' }}>{li.requestedQty} {li.unit}</td>
+                            <td style={{ padding: '8px 12px' }}>{li.approvedQty} {li.unit}</td>
+                            <td style={{ padding: '8px 12px' }}>{li.dispatchedQty} {li.unit}</td>
+                            <td style={{ padding: '8px 12px' }}>{li.receivedQty} {li.unit}</td>
+                            <td style={{ padding: '8px 12px' }}>
+                              {li.varianceQty !== 0 ? (
+                                <span style={{ color: li.varianceQty < 0 ? '#dc2626' : '#059669', fontWeight: 700 }}>
+                                  {li.varianceQty > 0 ? `+${li.varianceQty}` : li.varianceQty} {li.unit}
+                                  {li.varianceReason ? ` (${li.varianceReason})` : ''}
+                                </span>
+                              ) : (
+                                <span style={{ color: '#9ca3af' }}>0 (Match)</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
 
                   {/* STN Logistics Details if Dispatched */}
                   {ind.transfer && (
                     <div
                       style={{
-                        background: '#191310',
-                        border: '1px solid #2d211a',
+                        background: '#f8fafc',
+                        border: '1px solid #e2e8f0',
                         borderRadius: 8,
                         padding: '10px 14px',
                         marginBottom: 14,
                         fontSize: '12px',
                         display: 'flex',
                         gap: 20,
-                        color: '#bfae9f',
+                        color: '#4b5563',
                         flexWrap: 'wrap',
                       }}
                     >
-                      <span><b>STN Note:</b> <span style={{ color: '#ea7a33', fontFamily: 'monospace' }}>{ind.transfer.stnNumber}</span></span>
-                      <span><b>Transporter:</b> {ind.transfer.transporterName}</span>
-                      <span><b>Vehicle:</b> {ind.transfer.vehicleNumber}</span>
-                      <span><b>Driver Contact:</b> {ind.transfer.driverContact}</span>
-                      <span><b>Status:</b> {ind.transfer.status.toUpperCase()}</span>
+                      <span><b style={{ color: '#111827' }}>STN Note:</b> <span style={{ color: '#176B50', fontFamily: 'monospace', fontWeight: 600 }}>{ind.transfer.stnNumber}</span></span>
+                      <span><b style={{ color: '#111827' }}>Transporter:</b> {ind.transfer.transporterName}</span>
+                      <span><b style={{ color: '#111827' }}>Vehicle:</b> {ind.transfer.vehicleNumber}</span>
+                      <span><b style={{ color: '#111827' }}>Driver Contact:</b> {ind.transfer.driverContact}</span>
+                      <span><b style={{ color: '#111827' }}>Status:</b> <span style={{ color: '#059669', fontWeight: 600 }}>{ind.transfer.status.toUpperCase()}</span></span>
                     </div>
                   )}
 
@@ -1034,7 +1007,7 @@ export default function CommissaryManager({ cafe, token }) {
                       <button
                         onClick={() => handleApproveIndent(ind.id)}
                         style={{
-                          background: '#ea7a33',
+                          background: '#176B50',
                           color: '#fff',
                           border: 'none',
                           padding: '8px 16px',
@@ -1042,6 +1015,7 @@ export default function CommissaryManager({ cafe, token }) {
                           fontSize: '12px',
                           fontWeight: 600,
                           cursor: 'pointer',
+                          boxShadow: '0 2px 6px rgba(23,107,80,0.25)',
                         }}
                       >
                         Approve Indent Quantities
@@ -1062,7 +1036,7 @@ export default function CommissaryManager({ cafe, token }) {
                           setDispatchModalOpen(true);
                         }}
                         style={{
-                          background: '#ea7a33',
+                          background: '#176B50',
                           color: '#fff',
                           border: 'none',
                           padding: '8px 16px',
@@ -1070,6 +1044,7 @@ export default function CommissaryManager({ cafe, token }) {
                           fontSize: '12px',
                           fontWeight: 600,
                           cursor: 'pointer',
+                          boxShadow: '0 2px 6px rgba(23,107,80,0.25)',
                         }}
                       >
                         Issue STN & Dispatch Stock
@@ -1091,7 +1066,7 @@ export default function CommissaryManager({ cafe, token }) {
                           setReceiveModalOpen(true);
                         }}
                         style={{
-                          background: '#15803d',
+                          background: '#059669',
                           color: '#fff',
                           border: 'none',
                           padding: '8px 16px',
@@ -1099,6 +1074,7 @@ export default function CommissaryManager({ cafe, token }) {
                           fontSize: '12px',
                           fontWeight: 600,
                           cursor: 'pointer',
+                          boxShadow: '0 2px 6px rgba(5,150,105,0.25)',
                         }}
                       >
                         Verify & Acknowledge GRN
@@ -1106,7 +1082,7 @@ export default function CommissaryManager({ cafe, token }) {
                     )}
 
                     {ind.status === 'received' && (
-                      <span style={{ fontSize: '12px', color: '#4ade80', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontSize: '12px', color: '#059669', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
                         <CheckCircle2 size={16} /> GRN Delivered & Replenished
                       </span>
                     )}
@@ -1115,7 +1091,7 @@ export default function CommissaryManager({ cafe, token }) {
               );
             })}
             {indents.length === 0 && (
-              <div style={{ padding: '40px', textAlign: 'center', color: '#8c7d71', background: '#1c1512', borderRadius: 8 }}>
+              <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280', background: '#ffffff', border: '1px dashed #d1d5db', borderRadius: 16 }}>
                 No inter-store indents found. Outlets can raise indent requests to commissary for fresh roasted beans and supplies.
               </div>
             )}
@@ -1130,34 +1106,34 @@ export default function CommissaryManager({ cafe, token }) {
         <div>
           {/* Top Stat Cards */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, marginBottom: 24 }}>
-            <div style={{ background: '#231b17', border: '1px solid #3a2b22', borderRadius: 12, padding: '18px' }}>
-              <span style={{ fontSize: '12px', color: '#9e8e81', textTransform: 'uppercase' }}>Total Financial Loss</span>
-              <h3 style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#f87171' }}>
+            <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, padding: '18px', boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
+              <span style={{ fontSize: '12px', color: '#6b7280', textTransform: 'uppercase', fontWeight: 600 }}>Total Financial Loss</span>
+              <h3 style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#dc2626' }}>
                 ₹{wastageSummary.totalLoss?.toFixed(2) || '0.00'}
               </h3>
-              <span style={{ fontSize: '11px', color: '#8c7d71' }}>Across all logged audit entries</span>
+              <span style={{ fontSize: '11px', color: '#9ca3af' }}>Across all logged audit entries</span>
             </div>
 
-            <div style={{ background: '#231b17', border: '1px solid #3a2b22', borderRadius: 12, padding: '18px' }}>
-              <span style={{ fontSize: '12px', color: '#9e8e81', textTransform: 'uppercase' }}>Logged Incidents</span>
-              <h3 style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#f5eee6' }}>
+            <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, padding: '18px', boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
+              <span style={{ fontSize: '12px', color: '#6b7280', textTransform: 'uppercase', fontWeight: 600 }}>Logged Incidents</span>
+              <h3 style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#111827' }}>
                 {wastageSummary.totalEntries || 0}
               </h3>
-              <span style={{ fontSize: '11px', color: '#8c7d71' }}>Verified by store management</span>
+              <span style={{ fontSize: '11px', color: '#9ca3af' }}>Verified by store management</span>
             </div>
 
-            <div style={{ background: '#231b17', border: '1px solid #3a2b22', borderRadius: 12, padding: '18px' }}>
-              <span style={{ fontSize: '12px', color: '#9e8e81', textTransform: 'uppercase' }}>Top Waste Factor</span>
-              <h3 style={{ margin: '8px 0 0', fontSize: '20px', fontWeight: 700, color: '#ea7a33' }}>
+            <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, padding: '18px', boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
+              <span style={{ fontSize: '12px', color: '#6b7280', textTransform: 'uppercase', fontWeight: 600 }}>Top Waste Factor</span>
+              <h3 style={{ margin: '8px 0 0', fontSize: '20px', fontWeight: 700, color: '#176B50' }}>
                 {Object.keys(wastageSummary.byReason || {})[0]?.replace('_', ' ').toUpperCase() || 'NONE'}
               </h3>
-              <span style={{ fontSize: '11px', color: '#8c7d71' }}>Primary operational loss reason</span>
+              <span style={{ fontSize: '11px', color: '#9ca3af' }}>Primary operational loss reason</span>
             </div>
           </div>
 
           {/* Action Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#f5eee6' }}>
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#111827' }}>
               Wastage & Spoilage Log Entries
             </h3>
             <button
@@ -1185,6 +1161,7 @@ export default function CommissaryManager({ cafe, token }) {
                 gap: 8,
                 fontSize: '13px',
                 fontWeight: 600,
+                boxShadow: '0 2px 6px rgba(220,38,38,0.25)',
               }}
             >
               <Plus size={16} />
@@ -1193,10 +1170,10 @@ export default function CommissaryManager({ cafe, token }) {
           </div>
 
           {/* Table */}
-          <div style={{ background: '#231b17', border: '1px solid #3a2b22', borderRadius: 12, overflow: 'hidden' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
               <thead>
-                <tr style={{ background: '#1c1512', color: '#a08f82', textAlign: 'left' }}>
+                <tr style={{ background: '#f8fafc', color: '#4b5563', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>
                   <th style={{ padding: '12px 16px' }}>Date</th>
                   <th style={{ padding: '12px 16px' }}>Item</th>
                   <th style={{ padding: '12px 16px' }}>Quantity</th>
@@ -1208,20 +1185,21 @@ export default function CommissaryManager({ cafe, token }) {
               </thead>
               <tbody>
                 {(wastageSummary.recentLogs || []).map((w) => (
-                  <tr key={w.id} style={{ borderBottom: '1px solid #2d211a', color: '#e5ded6' }}>
-                    <td style={{ padding: '12px 16px', color: '#9e8e81' }}>
+                  <tr key={w.id} style={{ borderBottom: '1px solid #f1f5f9', color: '#111827' }}>
+                    <td style={{ padding: '12px 16px', color: '#6b7280' }}>
                       {new Date(w.loggedAt).toLocaleDateString('en-IN')}
                     </td>
                     <td style={{ padding: '12px 16px', fontWeight: 600 }}>{w.itemName}</td>
                     <td style={{ padding: '12px 16px' }}>{w.quantity} {w.unit}</td>
-                    <td style={{ padding: '12px 16px', color: '#f87171', fontWeight: 700 }}>
+                    <td style={{ padding: '12px 16px', color: '#dc2626', fontWeight: 700 }}>
                       ₹{w.totalCost?.toFixed(2) || '0.00'}
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       <span
                         style={{
-                          background: '#33231f',
-                          color: '#f87171',
+                          background: '#fef2f2',
+                          color: '#b91c1c',
+                          border: '1px solid #fecaca',
                           padding: '3px 8px',
                           borderRadius: 4,
                           fontSize: '11px',
@@ -1232,13 +1210,13 @@ export default function CommissaryManager({ cafe, token }) {
                         {w.reason.replace('_', ' ')}
                       </span>
                     </td>
-                    <td style={{ padding: '12px 16px', color: '#bfae9f' }}>{w.loggedBy}</td>
-                    <td style={{ padding: '12px 16px', color: '#9e8e81', fontSize: '12px' }}>{w.notes || '—'}</td>
+                    <td style={{ padding: '12px 16px', color: '#4b5563' }}>{w.loggedBy}</td>
+                    <td style={{ padding: '12px 16px', color: '#6b7280', fontSize: '12px' }}>{w.notes || '—'}</td>
                   </tr>
                 ))}
                 {(!wastageSummary.recentLogs || wastageSummary.recentLogs.length === 0) && (
                   <tr>
-                    <td colSpan={7} style={{ padding: '30px', textAlign: 'center', color: '#8c7d71' }}>
+                    <td colSpan={7} style={{ padding: '30px', textAlign: 'center', color: '#6b7280' }}>
                       No spoilage or wastage logged. Clean operations!
                     </td>
                   </tr>
@@ -1258,8 +1236,8 @@ export default function CommissaryManager({ cafe, token }) {
           {ropAlerts.triggeredCount > 0 && (
             <div
               style={{
-                background: 'linear-gradient(135deg, #451a03 0%, #78350f 100%)',
-                border: '1px solid #b45309',
+                background: '#fffbeb',
+                border: '1px solid #fde68a',
                 borderRadius: 12,
                 padding: '16px 20px',
                 marginBottom: 24,
@@ -1268,15 +1246,16 @@ export default function CommissaryManager({ cafe, token }) {
                 alignItems: 'center',
                 flexWrap: 'wrap',
                 gap: 12,
+                boxShadow: '0 2px 8px rgba(180,83,9,0.06)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <AlertTriangle size={28} style={{ color: '#fbbf24' }} />
+                <AlertTriangle size={28} style={{ color: '#b45309' }} />
                 <div>
-                  <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#fef3c7' }}>
+                  <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#92400e' }}>
                     {ropAlerts.triggeredCount} Item(s) Breached Reorder Point (ROP) Threshold
                   </h4>
-                  <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#fde68a' }}>
+                  <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#b45309' }}>
                     Current on-hand inventory is below critical buffer level. Generate supplier replenishment POs with 1 click.
                   </p>
                 </div>
@@ -1308,8 +1287,8 @@ export default function CommissaryManager({ cafe, token }) {
                         setPoModalOpen(true);
                       }}
                       style={{
-                        background: '#fbbf24',
-                        color: '#451a03',
+                        background: '#f59e0b',
+                        color: '#ffffff',
                         border: 'none',
                         padding: '8px 14px',
                         borderRadius: 6,
@@ -1319,6 +1298,7 @@ export default function CommissaryManager({ cafe, token }) {
                         display: 'flex',
                         alignItems: 'center',
                         gap: 6,
+                        boxShadow: '0 2px 6px rgba(245,158,11,0.25)',
                       }}
                     >
                       <Plus size={14} />
@@ -1332,7 +1312,7 @@ export default function CommissaryManager({ cafe, token }) {
 
           {/* Action Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#f5eee6' }}>
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#111827' }}>
               Supplier Purchase Orders & Procurement
             </h3>
             <button
@@ -1357,7 +1337,7 @@ export default function CommissaryManager({ cafe, token }) {
                 setPoModalOpen(true);
               }}
               style={{
-                background: '#ea7a33',
+                background: '#176B50',
                 color: '#fff',
                 border: 'none',
                 padding: '9px 16px',
@@ -1368,6 +1348,7 @@ export default function CommissaryManager({ cafe, token }) {
                 gap: 8,
                 fontSize: '13px',
                 fontWeight: 600,
+                boxShadow: '0 2px 6px rgba(23,107,80,0.25)',
               }}
             >
               <Plus size={16} />
@@ -1381,23 +1362,25 @@ export default function CommissaryManager({ cafe, token }) {
               <div
                 key={po.id}
                 style={{
-                  background: '#231b17',
-                  border: '1px solid #3a2b22',
-                  borderRadius: 12,
+                  background: '#ffffff',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: 16,
                   padding: '18px 20px',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   flexWrap: 'wrap',
                   gap: 14,
+                  boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
                 }}
               >
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <span
                       style={{
-                        background: '#332720',
-                        color: '#ea7a33',
+                        background: '#ecfdf5',
+                        color: '#065f46',
+                        border: '1px solid #a7f3d0',
                         padding: '3px 8px',
                         borderRadius: 4,
                         fontSize: '12px',
@@ -1407,7 +1390,7 @@ export default function CommissaryManager({ cafe, token }) {
                     >
                       {po.poNumber}
                     </span>
-                    <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#f7f2ed' }}>
+                    <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#111827' }}>
                       {po.supplierName}
                     </h4>
                     <span
@@ -1419,24 +1402,30 @@ export default function CommissaryManager({ cafe, token }) {
                         textTransform: 'uppercase',
                         background:
                           po.status === 'fulfilled'
-                            ? 'rgba(34, 197, 94, 0.15)'
+                            ? '#ecfdf5'
                             : po.status === 'sent'
-                            ? 'rgba(234, 122, 51, 0.15)'
-                            : 'rgba(156, 163, 175, 0.15)',
+                            ? '#eff6ff'
+                            : '#f3f4f6',
                         color:
                           po.status === 'fulfilled'
-                            ? '#4ade80'
+                            ? '#047857'
                             : po.status === 'sent'
-                            ? '#ea7a33'
-                            : '#9ca3af',
+                            ? '#1d4ed8'
+                            : '#4b5563',
+                        border:
+                          po.status === 'fulfilled'
+                            ? '1px solid #a7f3d0'
+                            : po.status === 'sent'
+                            ? '1px solid #bfdbfe'
+                            : '1px solid #e5e7eb',
                       }}
                     >
                       {po.status}
                     </span>
                   </div>
 
-                  <div style={{ fontSize: '12px', color: '#9e8e81', marginTop: 6 }}>
-                    {(po.items || []).length} items • Total Value: <b style={{ color: '#f3ece4' }}>₹{po.totalAmount?.toFixed(2)}</b>
+                  <div style={{ fontSize: '12px', color: '#6b7280', marginTop: 6 }}>
+                    {(po.items || []).length} items • Total Value: <b style={{ color: '#111827' }}>₹{po.totalAmount?.toFixed(2)}</b>
                     {po.expectedDeliveryDate && ` • Expected: ${po.expectedDeliveryDate}`}
                   </div>
                 </div>
@@ -1445,9 +1434,9 @@ export default function CommissaryManager({ cafe, token }) {
                   <button
                     onClick={() => handlePrintPo(po.id)}
                     style={{
-                      background: '#2b201a',
-                      color: '#d6c8bd',
-                      border: '1px solid #45342a',
+                      background: '#ffffff',
+                      color: '#374151',
+                      border: '1px solid #d1d5db',
                       padding: '7px 12px',
                       borderRadius: 6,
                       fontSize: '12px',
@@ -1466,7 +1455,7 @@ export default function CommissaryManager({ cafe, token }) {
                     <button
                       onClick={() => handleUpdatePoStatus(po.id, 'sent')}
                       style={{
-                        background: '#ea7a33',
+                        background: '#176B50',
                         color: '#fff',
                         border: 'none',
                         padding: '7px 12px',
@@ -1477,6 +1466,7 @@ export default function CommissaryManager({ cafe, token }) {
                         display: 'flex',
                         alignItems: 'center',
                         gap: 6,
+                        boxShadow: '0 2px 6px rgba(23,107,80,0.25)',
                       }}
                     >
                       <Send size={14} />
@@ -1488,7 +1478,7 @@ export default function CommissaryManager({ cafe, token }) {
                     <button
                       onClick={() => handleUpdatePoStatus(po.id, 'fulfilled', true)}
                       style={{
-                        background: '#15803d',
+                        background: '#059669',
                         color: '#fff',
                         border: 'none',
                         padding: '7px 12px',
@@ -1499,6 +1489,7 @@ export default function CommissaryManager({ cafe, token }) {
                         display: 'flex',
                         alignItems: 'center',
                         gap: 6,
+                        boxShadow: '0 2px 6px rgba(5,150,105,0.25)',
                       }}
                     >
                       <CheckCircle2 size={14} />
@@ -1509,7 +1500,7 @@ export default function CommissaryManager({ cafe, token }) {
               </div>
             ))}
             {purchaseOrders.length === 0 && (
-              <div style={{ padding: '40px', textAlign: 'center', color: '#8c7d71', background: '#1c1512', borderRadius: 8 }}>
+              <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280', background: '#ffffff', border: '1px dashed #d1d5db', borderRadius: 16 }}>
                 No supplier purchase orders logged yet.
               </div>
             )}
@@ -1523,43 +1514,43 @@ export default function CommissaryManager({ cafe, token }) {
 
       {/* 1. Modal: New Production Batch */}
       {batchModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div style={{ background: '#221915', border: '1px solid #3d2d24', borderRadius: 14, width: '100%', maxWidth: 650, padding: 24, maxHeight: '90vh', overflowY: 'auto' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, width: '100%', maxWidth: 650, padding: 24, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 50px rgba(0,0,0,0.15)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#f5eee6' }}>Create Master Production Batch</h3>
-              <button onClick={() => setBatchModalOpen(false)} style={{ background: 'none', border: 'none', color: '#a08f82', cursor: 'pointer' }}><X size={20} /></button>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#111827' }}>Create Master Production Batch</h3>
+              <button onClick={() => setBatchModalOpen(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer' }}><X size={20} /></button>
             </div>
 
             <form onSubmit={handleCreateBatch}>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Recipe Name</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Recipe Name</label>
                 <input
                   type="text"
                   required
                   value={newBatch.recipeName}
                   onChange={e => setNewBatch({ ...newBatch, recipeName: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Planned Input Qty</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Planned Input Qty</label>
                   <input
                     type="number"
                     step="any"
                     required
                     value={newBatch.plannedQuantity}
                     onChange={e => setNewBatch({ ...newBatch, plannedQuantity: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Unit</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Unit</label>
                   <select
                     value={newBatch.unit}
                     onChange={e => setNewBatch({ ...newBatch, unit: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                   >
                     <option value="kg">kg (Kilograms)</option>
                     <option value="g">g (Grams)</option>
@@ -1571,7 +1562,7 @@ export default function CommissaryManager({ cafe, token }) {
               </div>
 
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Output Finished Good (To Restock on Completion)</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Output Finished Good (To Restock on Completion)</label>
                 <select
                   value={newBatch.outputInventoryItemId}
                   onChange={e => {
@@ -1582,7 +1573,7 @@ export default function CommissaryManager({ cafe, token }) {
                       outputItemName: sel?.name || '',
                     });
                   }}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 >
                   <option value="">Select Finished Inventory Item...</option>
                   {inventoryItems.map(it => (
@@ -1592,9 +1583,9 @@ export default function CommissaryManager({ cafe, token }) {
               </div>
 
               {/* BOM Selector */}
-              <div style={{ marginBottom: 14, background: '#19120f', padding: '12px', borderRadius: 8, border: '1px solid #2d211a' }}>
+              <div style={{ marginBottom: 14, background: '#f8fafc', padding: '12px', borderRadius: 10, border: '1px solid #e2e8f0' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#ea7a33' }}>Raw Ingredients BOM</span>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#176B50' }}>Raw Ingredients BOM</span>
                   <button
                     type="button"
                     onClick={() => {
@@ -1613,14 +1604,14 @@ export default function CommissaryManager({ cafe, token }) {
                         ],
                       });
                     }}
-                    style={{ background: '#332720', color: '#ea7a33', border: 'none', padding: '4px 8px', borderRadius: 4, fontSize: '11px', cursor: 'pointer' }}
+                    style={{ background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0', padding: '4px 10px', borderRadius: 6, fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}
                   >
                     + Add Ingredient
                   </button>
                 </div>
 
                 {newBatch.bomIngredients.map((bIng, idx) => (
-                  <div key={idx} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 24px', gap: 6, marginBottom: 6, alignItems: 'center' }}>
+                  <div key={idx} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 24px', gap: 8, marginBottom: 6, alignItems: 'center' }}>
                     <select
                       value={bIng.inventoryItemId}
                       onChange={e => {
@@ -1635,7 +1626,7 @@ export default function CommissaryManager({ cafe, token }) {
                         };
                         setNewBatch({ ...newBatch, bomIngredients: arr });
                       }}
-                      style={{ padding: '6px', background: '#120d0b', border: '1px solid #3d2d24', borderRadius: 4, color: '#f3ece4', fontSize: '12px' }}
+                      style={{ padding: '8px', background: '#ffffff', border: '1px solid #d1d5db', borderRadius: 6, color: '#111827', fontSize: '12px' }}
                     >
                       {inventoryItems.map(it => (
                         <option key={it.id} value={it.id}>{it.name}</option>
@@ -1651,16 +1642,16 @@ export default function CommissaryManager({ cafe, token }) {
                         arr[idx].quantityRequired = Number(e.target.value);
                         setNewBatch({ ...newBatch, bomIngredients: arr });
                       }}
-                      style={{ padding: '6px', background: '#120d0b', border: '1px solid #3d2d24', borderRadius: 4, color: '#f3ece4', fontSize: '12px' }}
+                      style={{ padding: '8px', background: '#ffffff', border: '1px solid #d1d5db', borderRadius: 6, color: '#111827', fontSize: '12px' }}
                     />
-                    <span style={{ fontSize: '11px', color: '#8c7d71' }}>{bIng.unit}</span>
+                    <span style={{ fontSize: '11px', color: '#6b7280', fontWeight: 500 }}>{bIng.unit}</span>
                     <button
                       type="button"
                       onClick={() => {
                         const arr = newBatch.bomIngredients.filter((_, i) => i !== idx);
                         setNewBatch({ ...newBatch, bomIngredients: arr });
                       }}
-                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+                      style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '16px', cursor: 'pointer' }}
                     >
                       ×
                     </button>
@@ -1669,29 +1660,29 @@ export default function CommissaryManager({ cafe, token }) {
               </div>
 
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Master Roaster / Operator Name</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Master Roaster / Operator Name</label>
                 <input
                   type="text"
                   value={newBatch.operatorName}
                   onChange={e => setNewBatch({ ...newBatch, operatorName: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 />
               </div>
 
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Roasting Notes & Target Profile</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Roasting Notes & Target Profile</label>
                 <textarea
                   rows={2}
                   placeholder="e.g. Target drop temp 216C, first crack 9m15s"
                   value={newBatch.roasterNotes}
                   onChange={e => setNewBatch({ ...newBatch, roasterNotes: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 />
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-                <button type="button" onClick={() => setBatchModalOpen(false)} style={{ background: '#2c211b', color: '#bfae9f', border: 'none', padding: '10px 18px', borderRadius: 6, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ background: '#ea7a33', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>Create Batch</button>
+                <button type="button" onClick={() => setBatchModalOpen(false)} style={{ background: '#f3f4f6', color: '#374151', border: '1px solid #e5e7eb', padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 500 }}>Cancel</button>
+                <button type="submit" style={{ background: '#176B50', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, boxShadow: '0 2px 6px rgba(23,107,80,0.25)' }}>Create Batch</button>
               </div>
             </form>
           </div>
@@ -1700,20 +1691,20 @@ export default function CommissaryManager({ cafe, token }) {
 
       {/* 2. Modal: Complete Batch Yield */}
       {completeBatchModalOpen && selectedBatchForCompletion && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div style={{ background: '#221915', border: '1px solid #3d2d24', borderRadius: 14, width: '100%', maxWidth: 500, padding: 24 }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, width: '100%', maxWidth: 500, padding: 24, boxShadow: '0 20px 50px rgba(0,0,0,0.15)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#f5eee6' }}>Complete Batch & Record Yield</h3>
-              <button onClick={() => setCompleteBatchModalOpen(false)} style={{ background: 'none', border: 'none', color: '#a08f82', cursor: 'pointer' }}><X size={20} /></button>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#111827' }}>Complete Batch & Record Yield</h3>
+              <button onClick={() => setCompleteBatchModalOpen(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer' }}><X size={20} /></button>
             </div>
 
-            <p style={{ fontSize: '12px', color: '#a08f82', marginBottom: 16 }}>
-              Batch: <b>{selectedBatchForCompletion.batchNumber}</b> • Planned Input: <b>{selectedBatchForCompletion.plannedQuantity} {selectedBatchForCompletion.unit}</b>
+            <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: 16 }}>
+              Batch: <b style={{ color: '#111827' }}>{selectedBatchForCompletion.batchNumber}</b> • Planned Input: <b style={{ color: '#111827' }}>{selectedBatchForCompletion.plannedQuantity} {selectedBatchForCompletion.unit}</b>
             </p>
 
             <form onSubmit={handleCompleteBatch}>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Actual Weighed Yield ({selectedBatchForCompletion.unit})</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Actual Weighed Yield ({selectedBatchForCompletion.unit})</label>
                 <input
                   type="number"
                   step="any"
@@ -1732,34 +1723,34 @@ export default function CommissaryManager({ cafe, token }) {
                       shrinkagePercent: shrink,
                     });
                   }}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 />
               </div>
 
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Calculated Roast Shrinkage / Moisture Loss (%)</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Calculated Roast Shrinkage / Moisture Loss (%)</label>
                 <input
                   type="number"
                   step="any"
                   value={completionForm.shrinkagePercent}
                   onChange={e => setCompletionForm({ ...completionForm, shrinkagePercent: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 />
               </div>
 
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Roaster Profile Notes</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Roaster Profile Notes</label>
                 <textarea
                   rows={2}
                   value={completionForm.roasterNotes}
                   onChange={e => setCompletionForm({ ...completionForm, roasterNotes: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 />
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-                <button type="button" onClick={() => setCompleteBatchModalOpen(false)} style={{ background: '#2c211b', color: '#bfae9f', border: 'none', padding: '10px 18px', borderRadius: 6, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ background: '#15803d', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>Finalize & Add to Stock</button>
+                <button type="button" onClick={() => setCompleteBatchModalOpen(false)} style={{ background: '#f3f4f6', color: '#374151', border: '1px solid #e5e7eb', padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 500 }}>Cancel</button>
+                <button type="submit" style={{ background: '#059669', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, boxShadow: '0 2px 6px rgba(5,150,105,0.25)' }}>Finalize & Add to Stock</button>
               </div>
             </form>
           </div>
@@ -1768,21 +1759,21 @@ export default function CommissaryManager({ cafe, token }) {
 
       {/* 3. Modal: Raise Inter-Store Indent */}
       {indentModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div style={{ background: '#221915', border: '1px solid #3d2d24', borderRadius: 14, width: '100%', maxWidth: 600, padding: 24, maxHeight: '90vh', overflowY: 'auto' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, width: '100%', maxWidth: 600, padding: 24, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 50px rgba(0,0,0,0.15)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#f5eee6' }}>Raise Inter-Store Indent Request</h3>
-              <button onClick={() => setIndentModalOpen(false)} style={{ background: 'none', border: 'none', color: '#a08f82', cursor: 'pointer' }}><X size={20} /></button>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#111827' }}>Raise Inter-Store Indent Request</h3>
+              <button onClick={() => setIndentModalOpen(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer' }}><X size={20} /></button>
             </div>
 
             <form onSubmit={handleCreateIndent}>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Fulfilling Commissary / Central Warehouse Outlet</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Fulfilling Commissary / Central Warehouse Outlet</label>
                 <select
                   required
                   value={newIndent.supplyingCafeId}
                   onChange={e => setNewIndent({ ...newIndent, supplyingCafeId: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 >
                   <option value="">Select Supplying Outlet / Commissary...</option>
                   {allCafes.filter(c => c.id !== cafe?.id).map(c => (
@@ -1793,11 +1784,11 @@ export default function CommissaryManager({ cafe, token }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Priority</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Priority</label>
                   <select
                     value={newIndent.priority}
                     onChange={e => setNewIndent({ ...newIndent, priority: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                   >
                     <option value="normal">Normal</option>
                     <option value="high">High</option>
@@ -1805,20 +1796,20 @@ export default function CommissaryManager({ cafe, token }) {
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Requested By</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Requested By</label>
                   <input
                     type="text"
                     value={newIndent.requestedBy}
                     onChange={e => setNewIndent({ ...newIndent, requestedBy: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                   />
                 </div>
               </div>
 
               {/* Items List */}
-              <div style={{ marginBottom: 14, background: '#19120f', padding: '12px', borderRadius: 8, border: '1px solid #2d211a' }}>
+              <div style={{ marginBottom: 14, background: '#f8fafc', padding: '12px', borderRadius: 10, border: '1px solid #e2e8f0' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#ea7a33' }}>Requested Stock Items</span>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#176B50' }}>Requested Stock Items</span>
                   <button
                     type="button"
                     onClick={() => {
@@ -1836,14 +1827,14 @@ export default function CommissaryManager({ cafe, token }) {
                         ],
                       });
                     }}
-                    style={{ background: '#332720', color: '#ea7a33', border: 'none', padding: '4px 8px', borderRadius: 4, fontSize: '11px', cursor: 'pointer' }}
+                    style={{ background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0', padding: '4px 10px', borderRadius: 6, fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}
                   >
                     + Add Item
                   </button>
                 </div>
 
                 {newIndent.items.map((it, idx) => (
-                  <div key={idx} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 24px', gap: 6, marginBottom: 6, alignItems: 'center' }}>
+                  <div key={idx} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 24px', gap: 8, marginBottom: 6, alignItems: 'center' }}>
                     <input
                       type="text"
                       placeholder="Item name"
@@ -1853,7 +1844,7 @@ export default function CommissaryManager({ cafe, token }) {
                         arr[idx].itemName = e.target.value;
                         setNewIndent({ ...newIndent, items: arr });
                       }}
-                      style={{ padding: '6px', background: '#120d0b', border: '1px solid #3d2d24', borderRadius: 4, color: '#f3ece4', fontSize: '12px' }}
+                      style={{ padding: '8px', background: '#ffffff', border: '1px solid #d1d5db', borderRadius: 6, color: '#111827', fontSize: '12px' }}
                     />
                     <input
                       type="number"
@@ -1865,7 +1856,7 @@ export default function CommissaryManager({ cafe, token }) {
                         arr[idx].requestedQty = Number(e.target.value);
                         setNewIndent({ ...newIndent, items: arr });
                       }}
-                      style={{ padding: '6px', background: '#120d0b', border: '1px solid #3d2d24', borderRadius: 4, color: '#f3ece4', fontSize: '12px' }}
+                      style={{ padding: '8px', background: '#ffffff', border: '1px solid #d1d5db', borderRadius: 6, color: '#111827', fontSize: '12px' }}
                     />
                     <select
                       value={it.unit}
@@ -1874,7 +1865,7 @@ export default function CommissaryManager({ cafe, token }) {
                         arr[idx].unit = e.target.value;
                         setNewIndent({ ...newIndent, items: arr });
                       }}
-                      style={{ padding: '6px', background: '#120d0b', border: '1px solid #3d2d24', borderRadius: 4, color: '#f3ece4', fontSize: '12px' }}
+                      style={{ padding: '8px', background: '#ffffff', border: '1px solid #d1d5db', borderRadius: 6, color: '#111827', fontSize: '12px' }}
                     >
                       <option value="kg">kg</option>
                       <option value="g">g</option>
@@ -1887,7 +1878,7 @@ export default function CommissaryManager({ cafe, token }) {
                         const arr = newIndent.items.filter((_, i) => i !== idx);
                         setNewIndent({ ...newIndent, items: arr });
                       }}
-                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+                      style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '16px', cursor: 'pointer' }}
                     >
                       ×
                     </button>
@@ -1896,19 +1887,19 @@ export default function CommissaryManager({ cafe, token }) {
               </div>
 
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Notes / Reason</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Notes / Reason</label>
                 <textarea
                   rows={2}
                   placeholder="e.g. Weekend roast replenishment for cold brew & retail shelves"
                   value={newIndent.notes}
                   onChange={e => setNewIndent({ ...newIndent, notes: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 />
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-                <button type="button" onClick={() => setIndentModalOpen(false)} style={{ background: '#2c211b', color: '#bfae9f', border: 'none', padding: '10px 18px', borderRadius: 6, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ background: '#ea7a33', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>Submit Indent</button>
+                <button type="button" onClick={() => setIndentModalOpen(false)} style={{ background: '#f3f4f6', color: '#374151', border: '1px solid #e5e7eb', padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 500 }}>Cancel</button>
+                <button type="submit" style={{ background: '#176B50', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, boxShadow: '0 2px 6px rgba(23,107,80,0.25)' }}>Submit Indent</button>
               </div>
             </form>
           </div>
@@ -1917,50 +1908,50 @@ export default function CommissaryManager({ cafe, token }) {
 
       {/* 4. Modal: Dispatch STN */}
       {dispatchModalOpen && selectedIndent && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div style={{ background: '#221915', border: '1px solid #3d2d24', borderRadius: 14, width: '100%', maxWidth: 550, padding: 24 }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, width: '100%', maxWidth: 550, padding: 24, boxShadow: '0 20px 50px rgba(0,0,0,0.15)', color: '#111827' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#f5eee6' }}>Issue STN & Dispatch Stock</h3>
-              <button onClick={() => setDispatchModalOpen(false)} style={{ background: 'none', border: 'none', color: '#a08f82', cursor: 'pointer' }}><X size={20} /></button>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#111827' }}>Issue STN & Dispatch Stock</h3>
+              <button onClick={() => setDispatchModalOpen(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer' }}><X size={20} /></button>
             </div>
 
             <form onSubmit={handleDispatchSTN}>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Transporter / Logistics Partner</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Transporter / Logistics Partner</label>
                 <input
                   type="text"
                   required
                   value={dispatchForm.transporterName}
                   onChange={e => setDispatchForm({ ...dispatchForm, transporterName: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Vehicle Number</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Vehicle Number</label>
                   <input
                     type="text"
                     required
                     value={dispatchForm.vehicleNumber}
                     onChange={e => setDispatchForm({ ...dispatchForm, vehicleNumber: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Driver Contact</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Driver Contact</label>
                   <input
                     type="text"
                     value={dispatchForm.driverContact}
                     onChange={e => setDispatchForm({ ...dispatchForm, driverContact: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                   />
                 </div>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
-                <button type="button" onClick={() => setDispatchModalOpen(false)} style={{ background: '#2c211b', color: '#bfae9f', border: 'none', padding: '10px 18px', borderRadius: 6, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ background: '#ea7a33', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>Confirm Dispatch & Deduct Stock</button>
+                <button type="button" onClick={() => setDispatchModalOpen(false)} style={{ background: '#f3f4f6', color: '#374151', border: '1px solid #e5e7eb', padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 500 }}>Cancel</button>
+                <button type="submit" style={{ background: '#176B50', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, boxShadow: '0 2px 6px rgba(23,107,80,0.25)' }}>Confirm Dispatch & Deduct Stock</button>
               </div>
             </form>
           </div>
@@ -1969,36 +1960,36 @@ export default function CommissaryManager({ cafe, token }) {
 
       {/* 5. Modal: Receive GRN */}
       {receiveModalOpen && selectedIndent && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div style={{ background: '#221915', border: '1px solid #3d2d24', borderRadius: 14, width: '100%', maxWidth: 650, padding: 24 }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, width: '100%', maxWidth: 650, padding: 24, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 50px rgba(0,0,0,0.15)', color: '#111827' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#f5eee6' }}>Verify Goods Received Note (GRN)</h3>
-              <button onClick={() => setReceiveModalOpen(false)} style={{ background: 'none', border: 'none', color: '#a08f82', cursor: 'pointer' }}><X size={20} /></button>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#111827' }}>Verify Goods Received Note (GRN)</h3>
+              <button onClick={() => setReceiveModalOpen(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer' }}><X size={20} /></button>
             </div>
 
             <form onSubmit={handleReceiveGRN}>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Received By (Staff Member)</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Received By (Staff Member)</label>
                 <input
                   type="text"
                   required
                   value={receiveForm.receivedBy}
                   onChange={e => setReceiveForm({ ...receiveForm, receivedBy: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 />
               </div>
 
               {/* Items Verification */}
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 6 }}>Counted Received Quantities</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 6 }}>Counted Received Quantities</label>
                 {(selectedIndent.items || []).map((li, idx) => {
                   const currRec = receiveForm.receivedQuantities[idx] || { receivedQty: li.dispatchedQty, varianceReason: '' };
                   const variance = Number(currRec.receivedQty) - Number(li.dispatchedQty);
                   return (
-                    <div key={li.id} style={{ background: '#18120f', border: '1px solid #2d211a', borderRadius: 8, padding: '10px', marginBottom: 8 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', fontWeight: 600, color: '#f3ece4', marginBottom: 6 }}>
+                    <div key={li.id} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 10, padding: '12px', marginBottom: 8 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', fontWeight: 600, color: '#111827', marginBottom: 6 }}>
                         <span>{li.itemName}</span>
-                        <span style={{ color: '#9e8e81' }}>Dispatched: {li.dispatchedQty} {li.unit}</span>
+                        <span style={{ color: '#6b7280', fontWeight: 500 }}>Dispatched: {li.dispatchedQty} {li.unit}</span>
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 10, alignItems: 'center' }}>
                         <div>
@@ -2012,7 +2003,7 @@ export default function CommissaryManager({ cafe, token }) {
                               arr[idx] = { ...arr[idx], id: li.id, receivedQty: Number(e.target.value) };
                               setReceiveForm({ ...receiveForm, receivedQuantities: arr });
                             }}
-                            style={{ width: '100%', padding: '8px', background: '#120d0b', border: '1px solid #3d2d24', borderRadius: 4, color: '#f3ece4', fontSize: '12px' }}
+                            style={{ width: '100%', padding: '8px 10px', background: '#ffffff', border: '1px solid #d1d5db', borderRadius: 6, color: '#111827', fontSize: '12px' }}
                           />
                         </div>
                         <div>
@@ -2025,7 +2016,7 @@ export default function CommissaryManager({ cafe, token }) {
                               arr[idx] = { ...arr[idx], id: li.id, varianceReason: e.target.value };
                               setReceiveForm({ ...receiveForm, receivedQuantities: arr });
                             }}
-                            style={{ width: '100%', padding: '8px', background: '#120d0b', border: '1px solid #3d2d24', borderRadius: 4, color: '#f3ece4', fontSize: '12px' }}
+                            style={{ width: '100%', padding: '8px 10px', background: '#ffffff', border: '1px solid #d1d5db', borderRadius: 6, color: '#111827', fontSize: '12px' }}
                           />
                         </div>
                       </div>
@@ -2035,8 +2026,8 @@ export default function CommissaryManager({ cafe, token }) {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-                <button type="button" onClick={() => setReceiveModalOpen(false)} style={{ background: '#2c211b', color: '#bfae9f', border: 'none', padding: '10px 18px', borderRadius: 6, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ background: '#15803d', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>Acknowledge GRN & Restock</button>
+                <button type="button" onClick={() => setReceiveModalOpen(false)} style={{ background: '#f3f4f6', color: '#374151', border: '1px solid #e5e7eb', padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 500 }}>Cancel</button>
+                <button type="submit" style={{ background: '#059669', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, boxShadow: '0 2px 6px rgba(5,150,105,0.25)' }}>Acknowledge GRN & Restock</button>
               </div>
             </form>
           </div>
@@ -2045,16 +2036,16 @@ export default function CommissaryManager({ cafe, token }) {
 
       {/* 6. Modal: Log Spoilage / Wastage */}
       {wastageModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div style={{ background: '#221915', border: '1px solid #3d2d24', borderRadius: 14, width: '100%', maxWidth: 500, padding: 24 }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, width: '100%', maxWidth: 500, padding: 24, boxShadow: '0 20px 50px rgba(0,0,0,0.15)', color: '#111827' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#f5eee6' }}>Record Spoilage / Wastage</h3>
-              <button onClick={() => setWastageModalOpen(false)} style={{ background: 'none', border: 'none', color: '#a08f82', cursor: 'pointer' }}><X size={20} /></button>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#111827' }}>Record Spoilage / Wastage</h3>
+              <button onClick={() => setWastageModalOpen(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer' }}><X size={20} /></button>
             </div>
 
             <form onSubmit={handleLogWastage}>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Inventory Item</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Inventory Item</label>
                 <select
                   required
                   value={newWastage.inventoryItemId}
@@ -2067,7 +2058,7 @@ export default function CommissaryManager({ cafe, token }) {
                       costPerUnit: sel?.costPerUnit || 0,
                     });
                   }}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 >
                   <option value="">Select Item...</option>
                   {inventoryItems.map(it => (
@@ -2078,22 +2069,22 @@ export default function CommissaryManager({ cafe, token }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Quantity</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Quantity</label>
                   <input
                     type="number"
                     step="any"
                     required
                     value={newWastage.quantity}
                     onChange={e => setNewWastage({ ...newWastage, quantity: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Reason Category</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Reason Category</label>
                   <select
                     value={newWastage.reason}
                     onChange={e => setNewWastage({ ...newWastage, reason: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                   >
                     <option value="barista_spill">Barista Spill</option>
                     <option value="expired">Expired Date</option>
@@ -2107,28 +2098,28 @@ export default function CommissaryManager({ cafe, token }) {
               </div>
 
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Logged By (Staff)</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Logged By (Staff)</label>
                 <input
                   type="text"
                   value={newWastage.loggedBy}
                   onChange={e => setNewWastage({ ...newWastage, loggedBy: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 />
               </div>
 
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Incident Notes</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Incident Notes</label>
                 <textarea
                   rows={2}
                   value={newWastage.notes}
                   onChange={e => setNewWastage({ ...newWastage, notes: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 />
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-                <button type="button" onClick={() => setWastageModalOpen(false)} style={{ background: '#2c211b', color: '#bfae9f', border: 'none', padding: '10px 18px', borderRadius: 6, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ background: '#dc2626', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>Log Wastage & Deduct Stock</button>
+                <button type="button" onClick={() => setWastageModalOpen(false)} style={{ background: '#f3f4f6', color: '#374151', border: '1px solid #e5e7eb', padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 500 }}>Cancel</button>
+                <button type="submit" style={{ background: '#dc2626', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, boxShadow: '0 2px 6px rgba(220,38,38,0.25)' }}>Log Wastage & Deduct Stock</button>
               </div>
             </form>
           </div>
@@ -2137,60 +2128,60 @@ export default function CommissaryManager({ cafe, token }) {
 
       {/* 7. Modal: Create Purchase Order */}
       {poModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div style={{ background: '#221915', border: '1px solid #3d2d24', borderRadius: 14, width: '100%', maxWidth: 650, padding: 24, maxHeight: '90vh', overflowY: 'auto' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, width: '100%', maxWidth: 650, padding: 24, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 50px rgba(0,0,0,0.15)', color: '#111827' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#f5eee6' }}>Draft Supplier Purchase Order</h3>
-              <button onClick={() => setPoModalOpen(false)} style={{ background: 'none', border: 'none', color: '#a08f82', cursor: 'pointer' }}><X size={20} /></button>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#111827' }}>Draft Supplier Purchase Order</h3>
+              <button onClick={() => setPoModalOpen(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer' }}><X size={20} /></button>
             </div>
 
             <form onSubmit={handleCreatePo}>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Supplier Name</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Supplier Name</label>
                 <input
                   type="text"
                   required
                   value={newPo.supplierName}
                   onChange={e => setNewPo({ ...newPo, supplierName: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Supplier Email</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Supplier Email</label>
                   <input
                     type="email"
                     value={newPo.supplierEmail}
                     onChange={e => setNewPo({ ...newPo, supplierEmail: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Supplier Phone</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Supplier Phone</label>
                   <input
                     type="text"
                     value={newPo.supplierPhone}
                     onChange={e => setNewPo({ ...newPo, supplierPhone: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                   />
                 </div>
               </div>
 
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Expected Delivery Date</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Expected Delivery Date</label>
                 <input
                   type="date"
                   value={newPo.expectedDeliveryDate}
                   onChange={e => setNewPo({ ...newPo, expectedDeliveryDate: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 />
               </div>
 
               {/* Items List */}
-              <div style={{ marginBottom: 14, background: '#19120f', padding: '12px', borderRadius: 8, border: '1px solid #2d211a' }}>
+              <div style={{ marginBottom: 14, background: '#f8fafc', padding: '14px', borderRadius: 10, border: '1px solid #e2e8f0' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#ea7a33' }}>Order Line Items</span>
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: '#176B50' }}>Order Line Items</span>
                   <button
                     type="button"
                     onClick={() => {
@@ -2209,7 +2200,7 @@ export default function CommissaryManager({ cafe, token }) {
                         ],
                       });
                     }}
-                    style={{ background: '#332720', color: '#ea7a33', border: 'none', padding: '4px 8px', borderRadius: 4, fontSize: '11px', cursor: 'pointer' }}
+                    style={{ background: '#e6f4ea', color: '#176B50', border: '1px solid #b7e1cd', padding: '5px 10px', borderRadius: 6, fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}
                   >
                     + Add Item
                   </button>
@@ -2226,7 +2217,7 @@ export default function CommissaryManager({ cafe, token }) {
                         arr[idx].itemName = e.target.value;
                         setNewPo({ ...newPo, items: arr });
                       }}
-                      style={{ padding: '6px', background: '#120d0b', border: '1px solid #3d2d24', borderRadius: 4, color: '#f3ece4', fontSize: '12px' }}
+                      style={{ padding: '8px', background: '#ffffff', border: '1px solid #d1d5db', borderRadius: 6, color: '#111827', fontSize: '12px' }}
                     />
                     <input
                       type="number"
@@ -2238,7 +2229,7 @@ export default function CommissaryManager({ cafe, token }) {
                         arr[idx].orderQty = Number(e.target.value);
                         setNewPo({ ...newPo, items: arr });
                       }}
-                      style={{ padding: '6px', background: '#120d0b', border: '1px solid #3d2d24', borderRadius: 4, color: '#f3ece4', fontSize: '12px' }}
+                      style={{ padding: '8px', background: '#ffffff', border: '1px solid #d1d5db', borderRadius: 6, color: '#111827', fontSize: '12px' }}
                     />
                     <input
                       type="number"
@@ -2250,16 +2241,16 @@ export default function CommissaryManager({ cafe, token }) {
                         arr[idx].costPerUnit = Number(e.target.value);
                         setNewPo({ ...newPo, items: arr });
                       }}
-                      style={{ padding: '6px', background: '#120d0b', border: '1px solid #3d2d24', borderRadius: 4, color: '#f3ece4', fontSize: '12px' }}
+                      style={{ padding: '8px', background: '#ffffff', border: '1px solid #d1d5db', borderRadius: 6, color: '#111827', fontSize: '12px' }}
                     />
-                    <span style={{ fontSize: '11px', color: '#8c7d71' }}>{it.unit}</span>
+                    <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: 500 }}>{it.unit}</span>
                     <button
                       type="button"
                       onClick={() => {
                         const arr = newPo.items.filter((_, i) => i !== idx);
                         setNewPo({ ...newPo, items: arr });
                       }}
-                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '16px' }}
                     >
                       ×
                     </button>
@@ -2268,18 +2259,18 @@ export default function CommissaryManager({ cafe, token }) {
               </div>
 
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#baa89b', marginBottom: 4 }}>Instructions & Terms</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 4 }}>Instructions & Terms</label>
                 <textarea
                   rows={2}
                   value={newPo.notes}
                   onChange={e => setNewPo({ ...newPo, notes: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#16110f', border: '1px solid #3d2d24', borderRadius: 6, color: '#f3ece4', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', background: '#f8fafc', border: '1px solid #d1d5db', borderRadius: 8, color: '#111827', fontSize: '13px' }}
                 />
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-                <button type="button" onClick={() => setPoModalOpen(false)} style={{ background: '#2c211b', color: '#bfae9f', border: 'none', padding: '10px 18px', borderRadius: 6, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ background: '#ea7a33', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>Create Purchase Order</button>
+                <button type="button" onClick={() => setPoModalOpen(false)} style={{ background: '#f3f4f6', color: '#374151', border: '1px solid #e5e7eb', padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 500 }}>Cancel</button>
+                <button type="submit" style={{ background: '#176B50', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 600, boxShadow: '0 2px 6px rgba(23,107,80,0.25)' }}>Create Purchase Order</button>
               </div>
             </form>
           </div>
@@ -2288,22 +2279,22 @@ export default function CommissaryManager({ cafe, token }) {
 
       {/* 8. Modal: View & Print PO */}
       {printPoModalOpen && printablePoData && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div style={{ background: '#1a1411', border: '1px solid #3d2d24', borderRadius: 14, width: '100%', maxWidth: 700, padding: 24, maxHeight: '90vh', overflowY: 'auto' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 16, width: '100%', maxWidth: 700, padding: 24, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 50px rgba(0,0,0,0.15)', color: '#111827' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#f5eee6' }}>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#111827' }}>
                 Purchase Order Document ({printablePoData.po.poNumber})
               </h3>
-              <button onClick={() => setPrintPoModalOpen(false)} style={{ background: 'none', border: 'none', color: '#a08f82', cursor: 'pointer' }}><X size={20} /></button>
+              <button onClick={() => setPrintPoModalOpen(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer' }}><X size={20} /></button>
             </div>
 
             <pre
               style={{
-                background: '#0d0907',
-                border: '1px solid #2d211a',
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
                 padding: '16px',
                 borderRadius: 8,
-                color: '#e5ded6',
+                color: '#111827',
                 fontFamily: 'monospace',
                 fontSize: '12px',
                 lineHeight: '1.4',
@@ -2323,11 +2314,11 @@ export default function CommissaryManager({ cafe, token }) {
                   setTimeout(() => setCopiedPrintText(false), 2000);
                 }}
                 style={{
-                  background: '#2b201a',
-                  color: '#ea7a33',
-                  border: '1px solid #ea7a33',
+                  background: '#f3f4f6',
+                  color: '#176B50',
+                  border: '1px solid #d1d5db',
                   padding: '9px 16px',
-                  borderRadius: 6,
+                  borderRadius: 8,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -2343,17 +2334,18 @@ export default function CommissaryManager({ cafe, token }) {
               <button
                 onClick={() => window.print()}
                 style={{
-                  background: '#ea7a33',
+                  background: '#176B50',
                   color: '#fff',
                   border: 'none',
                   padding: '9px 16px',
-                  borderRadius: 6,
+                  borderRadius: 8,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 6,
                   fontSize: '13px',
                   fontWeight: 600,
+                  boxShadow: '0 2px 6px rgba(23,107,80,0.25)',
                 }}
               >
                 <Printer size={16} />

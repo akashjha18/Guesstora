@@ -188,7 +188,7 @@ describe('Phase 12: Beyond Petpooja - AI Roastery OS & Intelligent Automation', 
     it('analyzes menu items, computes margins and assigns BCG classifications', async () => {
       const result = await analyzeMenuEngineering({ cafeId: testCafe.id });
 
-      assert.ok(result.totalItemsAnalyzed >= 4, 'Should analyze at least 4 items');
+      assert.equal(result.totalItemsAnalyzed, 4, 'Should analyze only this cafe’s menu items');
       assert.ok(result.averageMargin > 0, 'Average margin must be positive');
       assert.ok(typeof result.healthScore === 'number', 'Health score must be a number');
       assert.ok(result.healthScore >= 0 && result.healthScore <= 100, 'Health score between 0 and 100');

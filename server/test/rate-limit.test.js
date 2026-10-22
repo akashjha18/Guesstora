@@ -5,9 +5,10 @@ import { createRateLimiter, validatePublicOrderPayload } from '../src/security.j
 test('rate limiter blocks excessive requests', () => {
   const limiter = createRateLimiter({ maxRequests: 2, windowMs: 1000 });
 
-  assert.equal(limiter(), true);
-  assert.equal(limiter(), true);
-  assert.equal(limiter(), false);
+  assert.equal(limiter('client-a'), true);
+  assert.equal(limiter('client-a'), true);
+  assert.equal(limiter('client-a'), false);
+  assert.equal(limiter('client-b'), true);
 });
 
 test('malformed public order payloads are rejected', () => {

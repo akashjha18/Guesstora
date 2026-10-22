@@ -301,7 +301,7 @@ export default function HardwareManager({ cafe, token }) {
   return (
     <div
       style={{
-        color: '#FAF6F0',
+        color: '#111827',
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
         minHeight: '80vh',
       }}
@@ -319,7 +319,7 @@ export default function HardwareManager({ cafe, token }) {
             color: '#fff',
             padding: '12px 20px',
             borderRadius: '12px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.6)',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
             zIndex: 11000,
             display: 'flex',
             alignItems: 'center',
@@ -334,59 +334,23 @@ export default function HardwareManager({ cafe, token }) {
         </div>
       )}
 
-      {/* Header Banner */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #1f140e 0%, #2a1b14 100%)',
-          border: '1px solid #3d281d',
-          borderRadius: '18px',
-          padding: '24px 28px',
-          marginBottom: '24px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '16px',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div
-            style={{
-              width: '52px',
-              height: '52px',
-              borderRadius: '14px',
-              background: 'linear-gradient(135deg, #ea7a33 0%, #c45512 100%)',
-              display: 'grid',
-              placeItems: 'center',
-              boxShadow: '0 8px 20px rgba(234, 122, 51, 0.3)',
-            }}
-          >
-            <Printer size={26} color="#fff" />
+      {/* 1. Header Banner */}
+      <div className="crm-orders-header-card" style={{ marginBottom: 24 }}>
+        <div className="crm-orders-header-left">
+          <div className="crm-orders-brand-emblem">
+            <Printer size={24} color="#ffffff" />
           </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: '#faf6f0' }}>
+          <div className="crm-orders-brand-info">
+            <div className="crm-orders-title-row">
+              <h1 className="crm-orders-title">
                 Hardware & POS Peripherals
-              </h2>
-              <span
-                style={{
-                  background: 'rgba(16, 185, 129, 0.15)',
-                  color: '#10b981',
-                  border: '1px solid rgba(16, 185, 129, 0.3)',
-                  padding: '2px 8px',
-                  borderRadius: '12px',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                }}
-              >
-                <Cpu size={11} /> Phase 6 Enterprise Hardware
+              </h1>
+              <span className="crm-orders-live-badge">
+                <span className="crm-orders-live-pulse" />
+                ENTERPRISE HARDWARE
               </span>
             </div>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#a89a8f' }}>
+            <p className="crm-orders-subtitle">
               Raw thermal ESC/POS network routing, cash drawer kick, Pine Labs/Razorpay EDC card terminals & weighing scale integration.
             </p>
           </div>
@@ -395,7 +359,7 @@ export default function HardwareManager({ cafe, token }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <button
             type="button"
-            className="hw-btn-secondary"
+            className="crm-btn-secondary"
             onClick={fetchData}
             disabled={loading}
           >
@@ -405,108 +369,47 @@ export default function HardwareManager({ cafe, token }) {
         </div>
       </div>
 
-      {/* Sub-Tabs Switcher */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '8px',
-          borderBottom: '1px solid #332218',
-          paddingBottom: '12px',
-          marginBottom: '24px',
-          overflowX: 'auto',
-        }}
-      >
-        <button
-          type="button"
-          onClick={() => setActiveTab('printers')}
-          style={{
-            padding: '10px 18px',
-            borderRadius: '10px',
-            fontSize: '13px',
-            fontWeight: 700,
-            cursor: 'pointer',
-            border: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: activeTab === 'printers' ? '#ea7a33' : '#261912',
-            color: activeTab === 'printers' ? '#fff' : '#b3a295',
-            boxShadow: activeTab === 'printers' ? '0 4px 12px rgba(234, 122, 51, 0.3)' : 'none',
-            transition: 'all 0.2s',
-          }}
-        >
-          <Printer size={15} />
-          <span>Thermal Printers & KOT Stations ({printers.length})</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('edc')}
-          style={{
-            padding: '10px 18px',
-            borderRadius: '10px',
-            fontSize: '13px',
-            fontWeight: 700,
-            cursor: 'pointer',
-            border: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: activeTab === 'edc' ? '#ea7a33' : '#261912',
-            color: activeTab === 'edc' ? '#fff' : '#b3a295',
-            boxShadow: activeTab === 'edc' ? '0 4px 12px rgba(234, 122, 51, 0.3)' : 'none',
-            transition: 'all 0.2s',
-          }}
-        >
-          <CreditCard size={15} />
-          <span>EDC Card Terminals & Soundbox ({terminals.length})</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('scale')}
-          style={{
-            padding: '10px 18px',
-            borderRadius: '10px',
-            fontSize: '13px',
-            fontWeight: 700,
-            cursor: 'pointer',
-            border: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: activeTab === 'scale' ? '#ea7a33' : '#261912',
-            color: activeTab === 'scale' ? '#fff' : '#b3a295',
-            boxShadow: activeTab === 'scale' ? '0 4px 12px rgba(234, 122, 51, 0.3)' : 'none',
-            transition: 'all 0.2s',
-          }}
-        >
-          <Scale size={15} />
-          <span>Weighing Scale & Barcode Scanner</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('logs')}
-          style={{
-            padding: '10px 18px',
-            borderRadius: '10px',
-            fontSize: '13px',
-            fontWeight: 700,
-            cursor: 'pointer',
-            border: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: activeTab === 'logs' ? '#ea7a33' : '#261912',
-            color: activeTab === 'logs' ? '#fff' : '#b3a295',
-            boxShadow: activeTab === 'logs' ? '0 4px 12px rgba(234, 122, 51, 0.3)' : 'none',
-            transition: 'all 0.2s',
-          }}
-        >
-          <Terminal size={15} />
-          <span>Hardware Audit Logs ({logs.length})</span>
-        </button>
+      {/* 2. Sub-Tabs Bar */}
+      <div style={{
+        display: 'flex',
+        gap: '10px',
+        flexWrap: 'wrap',
+        marginBottom: '24px'
+      }}>
+        {[
+          { id: 'printers', label: `Thermal Printers & KOT Stations (${printers.length})`, icon: Printer },
+          { id: 'edc', label: `EDC Card Terminals & Soundbox (${terminals.length})`, icon: CreditCard },
+          { id: 'scale', label: 'Weighing Scale & Barcode Scanner', icon: Scale },
+          { id: 'logs', label: `Hardware Audit Logs (${logs.length})`, icon: Terminal },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 18px',
+                borderRadius: '9999px',
+                fontSize: '13px',
+                fontWeight: isActive ? '700' : '500',
+                background: isActive ? '#176B50' : '#ffffff',
+                color: isActive ? '#ffffff' : '#4b5563',
+                border: isActive ? '1px solid #176B50' : '1px solid #e5e7eb',
+                boxShadow: isActive ? '0 4px 12px rgba(23, 107, 80, 0.25)' : '0 1px 2px rgba(0, 0, 0, 0.05)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <Icon size={16} />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* ============================================================== */}
@@ -523,10 +426,10 @@ export default function HardwareManager({ cafe, token }) {
             }}
           >
             <div>
-              <h3 style={{ margin: 0, fontSize: '16px', color: '#faf6f0', fontWeight: 700 }}>
+              <h3 style={{ margin: 0, fontSize: '16px', color: '#111827', fontWeight: 700 }}>
                 Active Station Printers
               </h3>
-              <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#9e8e82' }}>
+              <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#6b7280' }}>
                 Orders are automatically split: Beverages routed to Barista KOT, Food to Kitchen KOT, and Master receipts to Counter.
               </p>
             </div>
@@ -558,19 +461,20 @@ export default function HardwareManager({ cafe, token }) {
           {printers.length === 0 ? (
             <div
               style={{
-                background: '#1f140e',
-                border: '1px dashed #472b1d',
+                background: '#ffffff',
+                border: '1px dashed #d1d5db',
                 borderRadius: '16px',
                 padding: '48px 24px',
                 textAlign: 'center',
-                color: '#a89a8f',
+                color: '#6b7280',
+                boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
               }}
             >
-              <Printer size={42} style={{ color: '#ea7a33', margin: '0 auto 12px', opacity: 0.8 }} />
-              <h4 style={{ margin: '0 0 6px', fontSize: '16px', color: '#faf6f0', fontWeight: 700 }}>
+              <Printer size={42} style={{ color: '#176B50', margin: '0 auto 12px', opacity: 0.8 }} />
+              <h4 style={{ margin: '0 0 6px', fontSize: '16px', color: '#111827', fontWeight: 700 }}>
                 No Thermal Printers Configured
               </h4>
-              <p style={{ margin: '0 auto 18px', fontSize: '13px', maxWidth: '420px', color: '#9e8e82' }}>
+              <p style={{ margin: '0 auto 18px', fontSize: '13px', maxWidth: '420px', color: '#6b7280' }}>
                 Click "Add Thermal Printer" above to register an ESC/POS network printer for customer receipts, Barista KOT, or Kitchen KOT.
               </p>
               <button
@@ -628,21 +532,21 @@ export default function HardwareManager({ cafe, token }) {
                               background: isReceipt
                                 ? 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
                                 : isBarista
-                                ? 'linear-gradient(135deg, #ea7a33 0%, #c45512 100%)'
+                                ? 'linear-gradient(135deg, #176B50 0%, #c45512 100%)'
                                 : 'linear-gradient(135deg, #10b981 0%, #047857 100%)',
                               display: 'grid',
                               placeItems: 'center',
                               color: '#fff',
-                              boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                             }}
                           >
                             <Printer size={20} />
                           </div>
                           <div>
-                            <h4 style={{ margin: 0, fontSize: '15px', color: '#fff', fontWeight: 700 }}>
+                            <h4 style={{ margin: 0, fontSize: '15px', color: '#111827', fontWeight: 700 }}>
                               {p.name}
                             </h4>
-                            <span style={{ fontSize: '11px', color: '#a89a8f', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            <span style={{ fontSize: '11px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                               {p.role.replace('_', ' ')} · {p.paperWidth}mm
                             </span>
                           </div>
@@ -665,13 +569,13 @@ export default function HardwareManager({ cafe, token }) {
 
                       <div
                         style={{
-                          background: '#150d08',
-                          border: '1px solid #2b180f',
+                          background: '#f8fafc',
+                          border: '1px solid #e2e8f0',
                           borderRadius: '12px',
                           padding: '12px 14px',
                           marginBottom: '16px',
                           fontSize: '12px',
-                          color: '#b8a99d',
+                          color: '#6b7280',
                           display: 'flex',
                           flexDirection: 'column',
                           gap: '6px',
@@ -679,11 +583,11 @@ export default function HardwareManager({ cafe, token }) {
                       >
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                           <span>Target IP / Port:</span>
-                          <strong style={{ color: '#fff', fontFamily: 'monospace' }}>{p.ipAddress}:{p.port}</strong>
+                          <strong style={{ color: '#111827', fontFamily: 'monospace' }}>{p.ipAddress}:{p.port}</strong>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                           <span>Connection Type:</span>
-                          <span style={{ textTransform: 'capitalize', color: '#ea7a33', fontWeight: 600 }}>{p.connectionType} ESC/POS</span>
+                          <span style={{ textTransform: 'capitalize', color: '#176B50', fontWeight: 600 }}>{p.connectionType} ESC/POS</span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                           <span>Auto Cash Drawer:</span>
@@ -693,7 +597,7 @@ export default function HardwareManager({ cafe, token }) {
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                           <span>Station Routing:</span>
-                          <span style={{ color: '#e0d5cb', maxWidth: '160px', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <span style={{ color: '#374151', maxWidth: '160px', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {Array.isArray(p.categories) ? p.categories.join(', ') : 'All Items'}
                           </span>
                         </div>
@@ -778,7 +682,7 @@ export default function HardwareManager({ cafe, token }) {
             {/* Left: Active Terminals List */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '16px', color: '#faf6f0', fontWeight: 700 }}>
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#111827', fontWeight: 700 }}>
                   Integrated EDC Terminals & Soundbox
                 </h3>
                 <button
@@ -804,20 +708,21 @@ export default function HardwareManager({ cafe, token }) {
               {terminals.length === 0 ? (
                 <div
                   style={{
-                    background: '#1f140e',
-                    border: '1px dashed #472b1d',
+                    background: '#ffffff',
+                    border: '1px dashed #d1d5db',
                     borderRadius: '16px',
                     padding: '36px 20px',
                     textAlign: 'center',
-                    color: '#a89a8f',
+                    color: '#6b7280',
                     marginBottom: '16px',
+                    boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
                   }}
                 >
-                  <CreditCard size={36} style={{ color: '#ea7a33', margin: '0 auto 10px', opacity: 0.8 }} />
-                  <h4 style={{ margin: '0 0 6px', fontSize: '15px', color: '#faf6f0', fontWeight: 700 }}>
+                  <CreditCard size={36} style={{ color: '#176B50', margin: '0 auto 10px', opacity: 0.8 }} />
+                  <h4 style={{ margin: '0 0 6px', fontSize: '15px', color: '#111827', fontWeight: 700 }}>
                     No Card Terminals Paired
                   </h4>
-                  <p style={{ margin: '0 auto 16px', fontSize: '12px', maxWidth: '340px', color: '#9e8e82' }}>
+                  <p style={{ margin: '0 auto 16px', fontSize: '12px', maxWidth: '340px', color: '#6b7280' }}>
                     Pair Pine Labs Plutus, Razorpay POS, or Mosambee to beam billing amounts directly to card machines.
                   </p>
                   <button
@@ -864,16 +769,16 @@ export default function HardwareManager({ cafe, token }) {
                             display: 'grid',
                             placeItems: 'center',
                             color: '#fff',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                           }}
                         >
                           {t.provider === 'paytm_soundbox' ? <Volume2 size={20} /> : <CreditCard size={20} />}
                         </div>
                         <div>
-                          <h4 style={{ margin: 0, fontSize: '14.5px', color: '#fff', fontWeight: 700 }}>
+                          <h4 style={{ margin: 0, fontSize: '14.5px', color: '#111827', fontWeight: 700 }}>
                             {t.name}
                           </h4>
-                          <span style={{ fontSize: '11px', color: '#9e8e82', fontFamily: 'monospace' }}>
+                          <span style={{ fontSize: '11px', color: '#6b7280', fontFamily: 'monospace' }}>
                             TID: {t.terminalId || 'AUTO'} · {t.ipAddress}
                           </span>
                         </div>
@@ -911,28 +816,28 @@ export default function HardwareManager({ cafe, token }) {
               <div
                 style={{
                   marginTop: '16px',
-                  background: 'linear-gradient(135deg, #0e1e24 0%, #162b33 100%)',
-                  border: '1px solid #1f404d',
+                  background: '#f0f9ff',
+                  border: '1px solid #bae6fd',
                   borderRadius: '16px',
                   padding: '18px 20px',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+                  boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
                 }}
               >
                 <div>
-                  <h4 style={{ margin: 0, fontSize: '14.5px', color: '#00baf2', fontWeight: 700 }}>
+                  <h4 style={{ margin: 0, fontSize: '14.5px', color: '#0284c7', fontWeight: 700 }}>
                     Paytm / UPI Soundbox Speaker
                   </h4>
-                  <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#8ec0d1' }}>
+                  <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#0369a1' }}>
                     Instant audio confirmation chime on counter for QR UPI payments.
                   </p>
                 </div>
                 <button
                   type="button"
                   className="hw-btn-primary"
-                  style={{ background: '#00baf2', color: '#000', fontWeight: 800 }}
+                  style={{ background: '#0284c7', color: '#fff', fontWeight: 700 }}
                   disabled={actionLoading.soundbox}
                   onClick={handleTestSoundbox}
                 >
@@ -946,19 +851,20 @@ export default function HardwareManager({ cafe, token }) {
             <div
               className="hw-card"
               style={{
-                background: '#1a110b',
-                border: '1px solid #3d2618',
-                borderRadius: '18px',
+                background: '#ffffff',
+                border: '1px solid #e5e7eb',
+                borderRadius: '16px',
                 padding: '24px',
+                boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-                <Zap size={18} style={{ color: '#ea7a33' }} />
-                <h3 style={{ margin: 0, fontSize: '16px', color: '#faf6f0', fontWeight: 800 }}>
+                <Zap size={18} style={{ color: '#176B50' }} />
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#111827', fontWeight: 800 }}>
                   Interactive EDC Terminal Simulator
                 </h3>
               </div>
-              <p style={{ margin: '0 0 16px', fontSize: '12px', color: '#9e8e82' }}>
+              <p style={{ margin: '0 0 16px', fontSize: '12px', color: '#6b7280' }}>
                 Test the complete push-to-terminal and card swipe workflow without needing a physical Pine Labs machine.
               </p>
 
@@ -1003,20 +909,20 @@ export default function HardwareManager({ cafe, token }) {
                 {simStep === 'waiting_card' && (
                   <div
                     style={{
-                      background: '#241710',
-                      border: '1px solid #ea7a33',
+                      background: '#f8fafc',
+                      border: '1px solid #176B50',
                       borderRadius: '14px',
                       padding: '18px',
                       textAlign: 'center',
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-                      <RefreshCw size={24} className="spin" style={{ color: '#ea7a33' }} />
+                      <RefreshCw size={24} className="spin" style={{ color: '#176B50' }} />
                     </div>
-                    <h4 style={{ margin: 0, color: '#fff', fontSize: '14.5px' }}>
+                    <h4 style={{ margin: 0, color: '#111827', fontSize: '14.5px', fontWeight: 700 }}>
                       Terminal Waiting for Card Tap / Swipe...
                     </h4>
-                    <p style={{ margin: '4px 0 14px', fontSize: '11.5px', color: '#a89a8f' }}>
+                    <p style={{ margin: '4px 0 14px', fontSize: '11.5px', color: '#6b7280' }}>
                       Ref: {activeEdcTxn?.transactionRef} · Amount: ₹{activeEdcTxn?.amount}
                     </p>
                     <button
@@ -1035,18 +941,18 @@ export default function HardwareManager({ cafe, token }) {
                 {simStep === 'approved' && (
                   <div
                     style={{
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      border: '1px solid #10b981',
+                      background: '#ecfdf5',
+                      border: '1px solid #a7f3d0',
                       borderRadius: '14px',
                       padding: '18px',
                       textAlign: 'center',
                     }}
                   >
-                    <CheckCircle2 size={32} style={{ color: '#10b981', margin: '0 auto 8px' }} />
-                    <h4 style={{ margin: 0, color: '#10b981', fontSize: '15px' }}>
+                    <CheckCircle2 size={32} style={{ color: '#059669', margin: '0 auto 8px' }} />
+                    <h4 style={{ margin: 0, color: '#065f46', fontSize: '15px', fontWeight: 700 }}>
                       Charge Approved & Succeeded!
                     </h4>
-                    <p style={{ margin: '4px 0 14px', fontSize: '12px', color: '#c4e3d5' }}>
+                    <p style={{ margin: '4px 0 14px', fontSize: '12px', color: '#047857' }}>
                       Payment settled. Order marked PAID and customer receipt triggered.
                     </p>
                     <button
@@ -1073,12 +979,12 @@ export default function HardwareManager({ cafe, token }) {
             {/* Left: Weighing Scale Digital Indicator */}
             <div className="hw-card">
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-                <Scale size={20} style={{ color: '#ea7a33' }} />
-                <h3 style={{ margin: 0, fontSize: '16px', color: '#faf6f0', fontWeight: 800 }}>
+                <Scale size={20} style={{ color: '#176B50' }} />
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#111827', fontWeight: 800 }}>
                   Whole Coffee Bean Precision Scale
                 </h3>
               </div>
-              <p style={{ margin: '0 0 16px', fontSize: '12px', color: '#9e8e82' }}>
+              <p style={{ margin: '0 0 16px', fontSize: '12px', color: '#6b7280' }}>
                 Connect USB/Bluetooth scales via Web Serial API or simulate live bean weight for retail packaging.
               </p>
 
@@ -1144,25 +1050,25 @@ export default function HardwareManager({ cafe, token }) {
               {/* Bean Gram Pricing Calculator */}
               <div
                 style={{
-                  background: '#150d08',
-                  border: '1px solid #2b180f',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                   borderRadius: '14px',
                   padding: '16px',
                   fontSize: '12.5px',
-                  color: '#b8a99d',
+                  color: '#6b7280',
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span>Bean Origin:</span>
-                  <strong style={{ color: '#fff' }}>{selectedBeanName}</strong>
+                  <strong style={{ color: '#111827' }}>{selectedBeanName}</strong>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span>Rate per Gram:</span>
-                  <strong style={{ color: '#ea7a33' }}>₹{selectedBeanRate.toFixed(2)} / g</strong>
+                  <strong style={{ color: '#176B50' }}>₹{selectedBeanRate.toFixed(2)} / g</strong>
                 </div>
-                <div style={{ borderTop: '1px solid #2e1a10', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
-                  <span style={{ fontWeight: 700, color: '#faf6f0' }}>Total Calculated Price:</span>
-                  <strong style={{ color: '#10b981', fontSize: '17px' }}>
+                <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
+                  <span style={{ fontWeight: 700, color: '#111827' }}>Total Calculated Price:</span>
+                  <strong style={{ color: '#059669', fontSize: '17px' }}>
                     ₹{((scaleWeight - tareWeight) * selectedBeanRate).toFixed(2)}
                   </strong>
                 </div>
@@ -1172,12 +1078,12 @@ export default function HardwareManager({ cafe, token }) {
             {/* Right: Barcode Scanner Live Listener */}
             <div className="hw-card">
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-                <QrCode size={20} style={{ color: '#ea7a33' }} />
-                <h3 style={{ margin: 0, fontSize: '16px', color: '#faf6f0', fontWeight: 800 }}>
+                <QrCode size={20} style={{ color: '#176B50' }} />
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#111827', fontWeight: 800 }}>
                   Retail Barcode Scanner Listener
                 </h3>
               </div>
-              <p style={{ margin: '0 0 16px', fontSize: '12px', color: '#9e8e82' }}>
+              <p style={{ margin: '0 0 16px', fontSize: '12px', color: '#6b7280' }}>
                 Hardware USB and wireless Bluetooth barcode guns emulate keyboard keystrokes to instantly ring up merchandise.
               </p>
 
@@ -1217,7 +1123,7 @@ export default function HardwareManager({ cafe, token }) {
                 </button>
               </div>
 
-              <div style={{ fontSize: '12px', color: '#a89a8f', marginBottom: '10px', fontWeight: 700 }}>
+              <div style={{ fontSize: '12px', color: '#111827', marginBottom: '10px', fontWeight: 700 }}>
                 Recent Scan Log:
               </div>
 
@@ -1226,8 +1132,8 @@ export default function HardwareManager({ cafe, token }) {
                   <div
                     key={idx}
                     style={{
-                      background: '#150d08',
-                      border: '1px solid #2b180f',
+                      background: '#f8fafc',
+                      border: '1px solid #e2e8f0',
                       borderRadius: '10px',
                       padding: '12px 14px',
                       display: 'flex',
@@ -1236,12 +1142,12 @@ export default function HardwareManager({ cafe, token }) {
                     }}
                   >
                     <div>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: '#fff' }}>{item.name}</div>
-                      <div style={{ fontSize: '11px', color: '#888', fontFamily: 'monospace' }}>BARCODE: {item.code}</div>
+                      <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>{item.name}</div>
+                      <div style={{ fontSize: '11px', color: '#6b7280', fontFamily: 'monospace' }}>BARCODE: {item.code}</div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: '13.5px', fontWeight: 700, color: '#10b981' }}>₹{item.price}</div>
-                      <div style={{ fontSize: '10.5px', color: '#666' }}>{item.time}</div>
+                      <div style={{ fontSize: '13.5px', fontWeight: 700, color: '#059669' }}>₹{item.price}</div>
+                      <div style={{ fontSize: '10.5px', color: '#9ca3af' }}>{item.time}</div>
                     </div>
                   </div>
                 ))}
@@ -1257,54 +1163,54 @@ export default function HardwareManager({ cafe, token }) {
       {activeTab === 'logs' && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ margin: 0, fontSize: '16px', color: '#faf6f0', fontWeight: 700 }}>
+            <h3 style={{ margin: 0, fontSize: '16px', color: '#111827', fontWeight: 700 }}>
               Hardware Transmission Audit Trail
             </h3>
-            <span style={{ fontSize: '12px', color: '#9e8e82' }}>
+            <span style={{ fontSize: '12px', color: '#6b7280' }}>
               Showing recent raw socket transmissions and webhook events
             </span>
           </div>
 
           <div
             style={{
-              background: '#1d130d',
-              border: '1px solid #38251a',
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
               borderRadius: '16px',
               overflow: 'hidden',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
             }}
           >
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12.5px', color: '#d1c4b8' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12.5px', color: '#374151' }}>
               <thead>
-                <tr style={{ background: '#150d08', borderBottom: '1px solid #332015', textAlign: 'left' }}>
-                  <th style={{ padding: '14px 18px', fontWeight: 700, color: '#c9b9ad' }}>Device</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 700, color: '#c9b9ad' }}>Action</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 700, color: '#c9b9ad' }}>Status</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 700, color: '#c9b9ad' }}>Message / Result</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 700, color: '#c9b9ad' }}>Timestamp</th>
+                <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e5e7eb', textAlign: 'left' }}>
+                  <th style={{ padding: '14px 18px', fontWeight: 700, color: '#4b5563' }}>Device</th>
+                  <th style={{ padding: '14px 18px', fontWeight: 700, color: '#4b5563' }}>Action</th>
+                  <th style={{ padding: '14px 18px', fontWeight: 700, color: '#4b5563' }}>Status</th>
+                  <th style={{ padding: '14px 18px', fontWeight: 700, color: '#4b5563' }}>Message / Result</th>
+                  <th style={{ padding: '14px 18px', fontWeight: 700, color: '#4b5563' }}>Timestamp</th>
                 </tr>
               </thead>
               <tbody>
                 {logs.length === 0 ? (
                   <tr>
-                    <td colSpan="5" style={{ padding: '36px', textAlign: 'center', color: '#888' }}>
+                    <td colSpan="5" style={{ padding: '36px', textAlign: 'center', color: '#9ca3af' }}>
                       No hardware actions logged yet. Run a test print or swipe simulator.
                     </td>
                   </tr>
                 ) : (
                   logs.map((log) => (
-                    <tr key={log.id} style={{ borderBottom: '1px solid #28170e' }}>
-                      <td style={{ padding: '12px 18px', fontWeight: 700, color: '#fff' }}>
+                    <tr key={log.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '12px 18px', fontWeight: 700, color: '#111827' }}>
                         {log.deviceName || log.deviceType}
                       </td>
-                      <td style={{ padding: '12px 18px', fontFamily: 'monospace', color: '#ea7a33' }}>
+                      <td style={{ padding: '12px 18px', fontFamily: 'monospace', color: '#176B50' }}>
                         {log.action}
                       </td>
                       <td style={{ padding: '12px 18px' }}>
                         <span
                           style={{
-                            background: log.status === 'success' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(234, 122, 51, 0.15)',
-                            color: log.status === 'success' ? '#10b981' : '#ea7a33',
+                            background: log.status === 'success' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(23, 107, 80, 0.15)',
+                            color: log.status === 'success' ? '#059669' : '#176B50',
                             padding: '3px 8px',
                             borderRadius: '8px',
                             fontSize: '11px',
@@ -1314,10 +1220,10 @@ export default function HardwareManager({ cafe, token }) {
                           {log.status.toUpperCase()}
                         </span>
                       </td>
-                      <td style={{ padding: '12px 18px', color: '#b0a093' }}>
+                      <td style={{ padding: '12px 18px', color: '#4b5563' }}>
                         {log.message || JSON.stringify(log.payload || {})}
                       </td>
-                      <td style={{ padding: '12px 18px', color: '#888' }}>
+                      <td style={{ padding: '12px 18px', color: '#6b7280' }}>
                         {new Date(log.createdAt).toLocaleTimeString('en-IN')}
                       </td>
                     </tr>
@@ -1330,7 +1236,7 @@ export default function HardwareManager({ cafe, token }) {
       )}
 
       {/* ============================================================== */}
-      {/* MODAL: ADD / EDIT PRINTER CONFIG (FIXED DARK ROASTERY MODAL)   */}
+      {/* MODAL: ADD / EDIT PRINTER CONFIG (FIXED ROASTERY MODAL)         */}
       {/* ============================================================== */}
       {printerModalOpen && (
         <div className="hw-modal-backdrop" onClick={() => setPrinterModalOpen(false)}>
@@ -1342,10 +1248,10 @@ export default function HardwareManager({ cafe, token }) {
                     width: '36px',
                     height: '36px',
                     borderRadius: '10px',
-                    background: 'rgba(234, 122, 51, 0.15)',
+                    background: 'rgba(23, 107, 80, 0.15)',
                     display: 'grid',
                     placeItems: 'center',
-                    color: '#ea7a33',
+                    color: '#176B50',
                   }}
                 >
                   <Printer size={18} />
@@ -1354,7 +1260,7 @@ export default function HardwareManager({ cafe, token }) {
                   <h3 className="hw-modal-title">
                     {editingPrinter ? 'Edit Thermal Printer' : 'Configure New Thermal Printer'}
                   </h3>
-                  <span style={{ fontSize: '11px', color: '#a89a8f' }}>
+                  <span style={{ fontSize: '11px', color: '#6b7280' }}>
                     Network ESC/POS & RJ11 Drawer Setup
                   </span>
                 </div>
@@ -1444,32 +1350,32 @@ export default function HardwareManager({ cafe, token }) {
                   value={printerForm.categories}
                   onChange={(e) => setPrinterForm(prev => ({ ...prev, categories: e.target.value }))}
                 />
-                <small style={{ color: '#888', fontSize: '11px', display: 'block', marginTop: '4px' }}>
+                <small style={{ color: '#6b7280', fontSize: '11px', display: 'block', marginTop: '4px' }}>
                   Use "*" to route all items or list specific categories.
                 </small>
               </div>
 
               <div
                 style={{
-                  background: '#150d08',
-                  border: '1px solid #332015',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                   borderRadius: '12px',
                   padding: '12px 14px',
                   display: 'flex',
                   gap: '20px',
                 }}
               >
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12.5px', color: '#d1c4b8', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12.5px', color: '#374151', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={printerForm.autoDrawerKick}
                     onChange={(e) => setPrinterForm(prev => ({ ...prev, autoDrawerKick: e.target.checked }))}
-                    style={{ accentColor: '#ea7a33', width: '16px', height: '16px' }}
+                    style={{ accentColor: '#176B50', width: '16px', height: '16px' }}
                   />
                   <span>Kick Cash Drawer (RJ11)</span>
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12.5px', color: '#d1c4b8', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12.5px', color: '#374151', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={printerForm.active}
@@ -1520,7 +1426,7 @@ export default function HardwareManager({ cafe, token }) {
                 </div>
                 <div>
                   <h3 className="hw-modal-title">Configure EDC Card Machine</h3>
-                  <span style={{ fontSize: '11px', color: '#a89a8f' }}>
+                  <span style={{ fontSize: '11px', color: '#6b7280' }}>
                     Pine Labs, Razorpay POS, Mosambee & Soundbox
                   </span>
                 </div>

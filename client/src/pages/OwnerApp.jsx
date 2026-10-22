@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -65,6 +65,7 @@ import {
   Activity,
   Laptop,
   LayoutGrid,
+  Menu as MenuIcon,
   Timer,
   Armchair,
   CalendarCheck,
@@ -101,13 +102,6 @@ import { QRCodeSVG } from 'qrcode.react';
 import { api, BASE, getToken, logoutUser } from '../api';
 import ShiftModals from '../components/ShiftModals';
 import BillOperationsModals from '../components/BillOperationsModals';
-import InventoryManager from '../components/InventoryManager';
-import OmnichannelManager from '../components/OmnichannelManager';
-import HardwareManager from '../components/HardwareManager';
-import GstTallyManager from '../components/GstTallyManager';
-import CommissaryManager from '../components/CommissaryManager';
-import StaffOperationsManager from '../components/StaffOperationsManager';
-import AiRoasteryManager from '../components/AiRoasteryManager';
 import OfflineSyncModal from '../components/OfflineSyncModal';
 import { broadcastToCfd } from '../utils/cfdChannel';
 import {
@@ -117,6 +111,14 @@ import {
   cacheMenuCatalog
 } from '../utils/offlineStore';
 import { getOfflineQueue, flushOfflineQueue, enqueueOfflineOperation } from '../utils/offlineQueue';
+
+const InventoryManager = lazy(() => import('../components/InventoryManager'));
+const OmnichannelManager = lazy(() => import('../components/OmnichannelManager'));
+const HardwareManager = lazy(() => import('../components/HardwareManager'));
+const GstTallyManager = lazy(() => import('../components/GstTallyManager'));
+const CommissaryManager = lazy(() => import('../components/CommissaryManager'));
+const StaffOperationsManager = lazy(() => import('../components/StaffOperationsManager'));
+const AiRoasteryManager = lazy(() => import('../components/AiRoasteryManager'));
 
 const money = n =>
   new Intl.NumberFormat('en-IN', {
@@ -136,6 +138,37 @@ function getTimeAgo(dateInput) {
   return `${Math.floor(diffSec / 86400)} day${Math.floor(diffSec / 86400) > 1 ? 's' : ''} ago`;
 }
 
+function getNavigationText(node) {
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(getNavigationText).join(' ');
+  if (React.isValidElement(node)) return getNavigationText(node.props.children);
+  return '';
+}
+
+function filterSidebarNavigation(children, query) {
+  const normalizedQuery = query.trim().toLowerCase();
+  if (!normalizedQuery) return children;
+
+  return React.Children.map(children, child => {
+    if (!React.isValidElement(child)) return child;
+
+    if (child.type === React.Fragment) {
+      const filteredChildren = filterSidebarNavigation(child.props.children, normalizedQuery);
+      return React.Children.count(filteredChildren)
+        ? React.cloneElement(child, {}, filteredChildren)
+        : null;
+    }
+
+    if (child.props.className?.split(/\s+/).includes('nav-item')) {
+      return getNavigationText(child.props.children).toLowerCase().includes(normalizedQuery)
+        ? child
+        : null;
+    }
+
+    return child;
+  });
+}
+
 function getAvatarColor(char = 'A') {
   const colors = [
     { bg: '#e5e7eb', text: '#374151' }, // Gray
@@ -144,7 +177,7 @@ function getAvatarColor(char = 'A') {
     { bg: '#fce7f3', text: '#be185d' }, // Pink
     { bg: '#fef3c7', text: '#b45309' }, // Amber
     { bg: '#dcfce7', text: '#15803d' }, // Green
-    { bg: '#ffedd5', text: '#c2410c' }, // Orange
+    { bg: '#FDF0E7', text: '#F28A45' }, // Muted Orange
   ];
   const idx = (char.charCodeAt(0) || 0) % colors.length;
   return colors[idx];
@@ -255,6 +288,7 @@ export default function OwnerApp() {
   const nav = useNavigate();
   const [data, setData] = useState();
   const [tab, setTab] = useState('overview');
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [error, setError] = useState('');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [orderMenuOpen, setOrderMenuOpen] = useState(null);
@@ -280,6 +314,7 @@ export default function OwnerApp() {
   const [ownerMenuDropdownOpen, setOwnerMenuDropdownOpen] = useState(false);
   const [ownerAddModalOpen, setOwnerAddModalOpen] = useState(false);
   const [ownerQrModalOpen, setOwnerQrModalOpen] = useState(false);
+  const [navSearchQuery, setNavSearchQuery] = useState('');
 
   // Phase 2: Cashier Shift Management & Day-End Z-Report State
   const [currentShiftData, setCurrentShiftData] = useState(null);
@@ -346,6 +381,15 @@ export default function OwnerApp() {
   const [customerNotesInput, setCustomerNotesInput] = useState('');
   const [customerEmailInput, setCustomerEmailInput] = useState('');
   const [savingCustomerProfile, setSavingCustomerProfile] = useState(false);
+
+  // CRM Issue Custom Voucher State
+  const [issueVoucherModalOpen, setIssueVoucherModalOpen] = useState(false);
+  const [voucherAmount, setVoucherAmount] = useState(250);
+  const [voucherValidityDays, setVoucherValidityDays] = useState(30);
+  const [voucherReason, setVoucherReason] = useState('Birthday Perk');
+  const [voucherCustomReason, setVoucherCustomReason] = useState('');
+  const [submittingVoucher, setSubmittingVoucher] = useState(false);
+  const [voucherSuccessToast, setVoucherSuccessToast] = useState(null);
 
   // Manual CRM Order State
   const [manualOrderModalOpen, setManualOrderModalOpen] = useState(false);
@@ -562,8 +606,11 @@ export default function OwnerApp() {
     price: '',
     veg: true,
     available: true,
-    image: ''
+    image: '',
+    variants: [],
+    modifierGroups: []
   });
+  const [activeItemModalTab, setActiveItemModalTab] = useState('details'); // 'details' | 'variants' | 'modifiers'
 
   const photoPresets = [
     { name: 'Sandwich', url: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80' },
@@ -618,6 +665,10 @@ export default function OwnerApp() {
     }
     load();
   }, []);
+
+  useEffect(() => {
+    setMobileNavOpen(false);
+  }, [tab]);
 
   // Real-time SSE event listener for automatic dashboard syncing
   useEffect(() => {
@@ -790,7 +841,7 @@ export default function OwnerApp() {
         desc: `Table ${o.tableNumber || 'Takeaway'} • ₹${o.totalAmount || o.total || 0} • ${o.items?.length || 1} item(s)`,
         time: o.createdAt ? new Date(o.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : 'Live',
         icon: ShoppingBag,
-        color: '#ea7a33',
+        color: '#176B50',
         action: () => {
           setTab('orders');
           setSelectedOrder(o);
@@ -1906,6 +1957,56 @@ export default function OwnerApp() {
     }
   }
 
+  async function handleIssueCustomVoucher(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    if (!selectedCustomer) return;
+    const finalAmount = Math.max(1, Math.round(Number(voucherAmount) || 0));
+    if (!finalAmount) {
+      setError('Please enter a valid voucher amount.');
+      return;
+    }
+    const finalNotes = voucherReason === 'Custom'
+      ? (voucherCustomReason.trim() || 'Custom Voucher')
+      : voucherReason;
+
+    setSubmittingVoucher(true);
+    try {
+      const res = await api(`/owner/customers/${selectedCustomer.id || selectedCustomer._id}/issue-voucher`, {
+        method: 'POST',
+        body: JSON.stringify({
+          amount: finalAmount,
+          validityDays: Number(voucherValidityDays) || 30,
+          notes: finalNotes,
+        }),
+      });
+
+      if (res.reward) {
+        setCustomerDetail(prev => {
+          if (!prev) return prev;
+          const updatedRewards = [res.reward, ...(prev.rewards || [])];
+          return {
+            ...prev,
+            rewards: updatedRewards,
+            customer: {
+              ...prev.customer,
+              activeRewardsCount: (prev.customer?.activeRewardsCount || 0) + 1,
+              rewards: updatedRewards,
+            },
+          };
+        });
+      }
+
+      setIssueVoucherModalOpen(false);
+      setVoucherSuccessToast(`Issued ₹${finalAmount} voucher (${res.reward?.claimCode || 'CLM'})!`);
+      setTimeout(() => setVoucherSuccessToast(null), 4000);
+      load();
+    } catch (err) {
+      setError(err.message || 'Failed to issue custom voucher');
+    } finally {
+      setSubmittingVoucher(false);
+    }
+  }
+
   const filteredCustomers = useMemo(() => {
     let list = data?.customers || [];
     if (customerSearch.trim()) {
@@ -2291,6 +2392,159 @@ export default function OwnerApp() {
     }
   }
 
+  function addVariant(name = '', price = '') {
+    setItem(prev => ({
+      ...prev,
+      variants: [
+        ...(prev.variants || []),
+        { id: `v_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`, name, price: price !== '' ? price : (prev.price || '') }
+      ]
+    }));
+  }
+
+  function updateVariant(idx, field, val) {
+    setItem(prev => {
+      const next = [...(prev.variants || [])];
+      next[idx] = { ...next[idx], [field]: val };
+      return { ...prev, variants: next };
+    });
+  }
+
+  function removeVariant(idx) {
+    setItem(prev => ({
+      ...prev,
+      variants: (prev.variants || []).filter((_, i) => i !== idx)
+    }));
+  }
+
+  function applyVariantPreset(type) {
+    const base = Number(item.price) || 200;
+    if (type === 'coffee') {
+      setItem(prev => ({
+        ...prev,
+        variants: [
+          { id: `v_reg_${Date.now()}`, name: 'Regular (250ml)', price: base },
+          { id: `v_lrg_${Date.now()}`, name: 'Large (350ml)', price: base + 40 }
+        ]
+      }));
+    } else if (type === 'pizza') {
+      setItem(prev => ({
+        ...prev,
+        variants: [
+          { id: `v_sml_${Date.now()}`, name: 'Personal (7")', price: Math.max(120, base - 50) },
+          { id: `v_med_${Date.now()}`, name: 'Medium (10")', price: base },
+          { id: `v_lrg_${Date.now()}`, name: 'Large (12")', price: base + 80 }
+        ]
+      }));
+    } else if (type === 'portions') {
+      setItem(prev => ({
+        ...prev,
+        variants: [
+          { id: `v_half_${Date.now()}`, name: 'Half Portion', price: Math.round(base * 0.6) },
+          { id: `v_full_${Date.now()}`, name: 'Full Portion', price: base }
+        ]
+      }));
+    }
+  }
+
+  function addModifierGroup(groupName = 'Choice of Milk', required = false, maxSelect = 1, options = []) {
+    setItem(prev => ({
+      ...prev,
+      modifierGroups: [
+        ...(prev.modifierGroups || []),
+        {
+          id: `mg_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+          name: groupName,
+          required: Boolean(required),
+          minSelect: required ? 1 : 0,
+          maxSelect: Number(maxSelect) || 1,
+          options: options.length > 0 ? options : [
+            { id: `opt_${Date.now()}_1`, name: '', price: 0 }
+          ]
+        }
+      ]
+    }));
+  }
+
+  function updateModifierGroup(gIdx, field, val) {
+    setItem(prev => {
+      const next = [...(prev.modifierGroups || [])];
+      next[gIdx] = { ...next[gIdx], [field]: val };
+      return { ...prev, modifierGroups: next };
+    });
+  }
+
+  function removeModifierGroup(gIdx) {
+    setItem(prev => ({
+      ...prev,
+      modifierGroups: (prev.modifierGroups || []).filter((_, i) => i !== gIdx)
+    }));
+  }
+
+  function addGroupOption(gIdx) {
+    setItem(prev => {
+      const next = [...(prev.modifierGroups || [])];
+      const grp = { ...next[gIdx] };
+      grp.options = [
+        ...(grp.options || []),
+        { id: `opt_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`, name: '', price: 0 }
+      ];
+      next[gIdx] = grp;
+      return { ...prev, modifierGroups: next };
+    });
+  }
+
+  function updateGroupOption(gIdx, oIdx, field, val) {
+    setItem(prev => {
+      const next = [...(prev.modifierGroups || [])];
+      const grp = { ...next[gIdx] };
+      const opts = [...(grp.options || [])];
+      opts[oIdx] = { ...opts[oIdx], [field]: val };
+      grp.options = opts;
+      next[gIdx] = grp;
+      return { ...prev, modifierGroups: next };
+    });
+  }
+
+  function removeGroupOption(gIdx, oIdx) {
+    setItem(prev => {
+      const next = [...(prev.modifierGroups || [])];
+      const grp = { ...next[gIdx] };
+      grp.options = (grp.options || []).filter((_, i) => i !== oIdx);
+      next[gIdx] = grp;
+      return { ...prev, modifierGroups: next };
+    });
+  }
+
+  function applyModifierPreset(type) {
+    if (type === 'milk') {
+      addModifierGroup('Choice of Milk', false, 1, [
+        { id: `opt_oat_${Date.now()}`, name: 'Oat Milk', price: 40 },
+        { id: `opt_almond_${Date.now()}`, name: 'Almond Milk', price: 50 },
+        { id: `opt_soy_${Date.now()}`, name: 'Soy Milk', price: 30 }
+      ]);
+    } else if (type === 'syrups') {
+      addModifierGroup('Add-ons & Syrups', false, 3, [
+        { id: `opt_shot_${Date.now()}`, name: 'Extra Espresso Shot', price: 50 },
+        { id: `opt_vanilla_${Date.now()}`, name: 'Madagascar Vanilla Syrup', price: 30 },
+        { id: `opt_caramel_${Date.now()}`, name: 'Salted Caramel Drizzle', price: 30 },
+        { id: `opt_hazelnut_${Date.now()}`, name: 'Roasted Hazelnut Syrup', price: 30 }
+      ]);
+    } else if (type === 'toppings') {
+      addModifierGroup('Extra Toppings & Cheese', false, 3, [
+        { id: `opt_chz_${Date.now()}`, name: 'Extra Mozzarella Cheese', price: 40 },
+        { id: `opt_jal_${Date.now()}`, name: 'Pickled Jalapenos', price: 25 },
+        { id: `opt_olv_${Date.now()}`, name: 'Black Olives', price: 25 }
+      ]);
+    } else if (type === 'bread') {
+      addModifierGroup('Bread Selection', false, 1, [
+        { id: `opt_sd_${Date.now()}`, name: 'Artisan Sourdough', price: 0 },
+        { id: `opt_mg_${Date.now()}`, name: 'Multigrain Bread', price: 20 },
+        { id: `opt_gf_${Date.now()}`, name: 'Gluten-Free Bread', price: 35 }
+      ]);
+    }
+  }
+
   function startEditItem(menuItem) {
     setEditingItem(menuItem);
     setItem({
@@ -2300,14 +2554,28 @@ export default function OwnerApp() {
       price: menuItem.price !== undefined ? menuItem.price : '',
       veg: menuItem.veg !== undefined ? menuItem.veg : true,
       available: menuItem.available !== undefined ? menuItem.available : true,
-      image: menuItem.image || ''
+      image: menuItem.image || '',
+      variants: Array.isArray(menuItem.variants) ? JSON.parse(JSON.stringify(menuItem.variants)) : [],
+      modifierGroups: Array.isArray(menuItem.modifierGroups) ? JSON.parse(JSON.stringify(menuItem.modifierGroups)) : []
     });
+    setActiveItemModalTab('details');
     setOwnerAddModalOpen(true);
   }
 
   function cancelEdit() {
     setEditingItem(null);
-    setItem({ name: '', description: '', category: 'Coffee', price: '', veg: true, available: true, image: '' });
+    setItem({
+      name: '',
+      description: '',
+      category: 'Coffee',
+      price: '',
+      veg: true,
+      available: true,
+      image: '',
+      variants: [],
+      modifierGroups: []
+    });
+    setActiveItemModalTab('details');
     setOwnerAddModalOpen(false);
   }
 
@@ -2316,10 +2584,40 @@ export default function OwnerApp() {
     try {
       const payload = {
         ...item,
-        price: Number(item.price) || 0
+        price: Number(item.price) || 0,
+        variants: Array.isArray(item.variants)
+          ? item.variants
+              .filter(v => v.name && v.name.trim())
+              .map(v => ({
+                id: v.id || `v_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+                name: v.name.trim(),
+                price: Number(v.price) || 0
+              }))
+          : [],
+        modifierGroups: Array.isArray(item.modifierGroups)
+          ? item.modifierGroups
+              .filter(g => g.name && g.name.trim())
+              .map(g => ({
+                id: g.id || `mg_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+                name: g.name.trim(),
+                required: Boolean(g.required),
+                minSelect: Number(g.minSelect) || (g.required ? 1 : 0),
+                maxSelect: Number(g.maxSelect) || (g.required ? 1 : 1),
+                options: Array.isArray(g.options)
+                  ? g.options
+                      .filter(o => o.name && o.name.trim())
+                      .map(o => ({
+                        id: o.id || `opt_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+                        name: o.name.trim(),
+                        price: Number(o.price) || 0
+                      }))
+                  : []
+              }))
+          : []
       };
+
       if (editingItem) {
-        await api(`/owner/menu/${editingItem._id}`, {
+        await api(`/owner/menu/${editingItem._id || editingItem.id}`, {
           method: 'PATCH',
           body: JSON.stringify(payload)
         });
@@ -2332,7 +2630,8 @@ export default function OwnerApp() {
         });
         setError('New menu item added!');
       }
-      setItem({ name: '', description: '', category: 'Coffee', price: '', veg: true, available: true, image: '' });
+      setItem({ name: '', description: '', category: 'Coffee', price: '', veg: true, available: true, image: '', variants: [], modifierGroups: [] });
+      setActiveItemModalTab('details');
       setOwnerAddModalOpen(false);
       load();
     } catch (e) {
@@ -2712,7 +3011,7 @@ export default function OwnerApp() {
   return (
     <div className="owner-root">
       {/* ===================== SIDEBAR ===================== */}
-      <aside className="owner-sidebar">
+      <aside className={`owner-sidebar ${mobileNavOpen ? 'mobile-open' : ''}`}>
         <div className="sidebar-top">
           <div className="brand-logo-area">
             <div className="brand-icon-box">
@@ -2722,9 +3021,31 @@ export default function OwnerApp() {
               <h2>Gusstora</h2>
               <span className="brand-sub">Café Control Centre</span>
             </div>
+            <button
+              type="button"
+              className="owner-mobile-nav-toggle"
+              aria-label={mobileNavOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={mobileNavOpen}
+              onClick={() => setMobileNavOpen(open => !open)}
+            >
+              {mobileNavOpen ? <X size={20} /> : <MenuIcon size={20} />}
+            </button>
+          </div>
+
+          <div className="sidebar-search-box">
+            <Search size={14} className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search... (Ctrl K)"
+              value={navSearchQuery}
+              onChange={e => setNavSearchQuery(e.target.value)}
+              className="sidebar-search-input"
+            />
           </div>
 
           <nav className="sidebar-nav">
+            {filterSidebarNavigation(
+              <>
             {/* Kitchen Role View: Direct KDS shortcut */}
             {isKitchen && (
               <button
@@ -2903,7 +3224,7 @@ export default function OwnerApp() {
                   >
                     <UserCheck size={19} />
                     <span>Staff Ops & Tips</span>
-                    <span className="nav-badge success">P11</span>
+                    <span className="nav-badge success">NEW</span>
                   </button>
                 )}
 
@@ -2914,7 +3235,7 @@ export default function OwnerApp() {
                   >
                     <Sparkles size={19} />
                     <span>AI Roastery OS</span>
-                    <span className="nav-badge success">P12</span>
+                    <span className="nav-badge success">AI</span>
                   </button>
                 )}
 
@@ -2987,32 +3308,55 @@ export default function OwnerApp() {
                 )}
               </>
             )}
+              </>,
+              navSearchQuery
+            )}
           </nav>
         </div>
 
-        {/* Sidebar Promo Card & Sign Out */}
+        {/* Sidebar Promo Card & User Strip */}
         <div className="sidebar-bottom">
-          <div style={{ padding: '0 16px 12px', fontSize: '11px', color: 'var(--text-subtle, #8c8279)' }}>
-            Signed in as <b style={{ color: '#fff' }}>{data.user?.name || 'Staff'}</b>
-            <div style={{ marginTop: '5px' }}>
-              <span className={`role-badge ${userRole}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                {userRole === 'owner' ? <><Crown size={12} /> OWNER</> : userRole === 'manager' ? <><ClipboardList size={12} /> MANAGER</> : userRole === 'cashier' ? <><CreditCard size={12} /> CASHIER</> : <><ChefHat size={12} /> KITCHEN</>}
-              </span>
+          <div className="sidebar-pro-card" onClick={() => setTab('settings')}>
+            <div className="pro-icon-box">
+              <Crown size={15} />
             </div>
+            <div className="pro-content">
+              <span className="pro-title">Pro Plan · Active</span>
+              <span className="pro-sub">Expires in 28 days</span>
+            </div>
+            <ChevronRight size={14} className="pro-arrow" />
           </div>
 
-          <button
-            className="sidebar-signout-btn"
-            onClick={async () => {
-              await logoutUser();
-              nav('/owner/login');
-            }}
-          >
-            <LogOut size={18} />
-            <span>Sign out</span>
-          </button>
+          <div className="sidebar-user-strip">
+            <div className="sidebar-user-avatar">
+              {(data?.user?.name?.[0] || 'A').toUpperCase()}
+            </div>
+            <div className="sidebar-user-meta">
+              <span className="sidebar-user-name">{data?.user?.name || 'Akash Jha'}</span>
+              <span className="sidebar-user-role">{userRole ? userRole.toUpperCase() : 'OWNER'}</span>
+            </div>
+            <button
+              type="button"
+              className="sidebar-logout-icon-btn"
+              title="Sign out"
+              onClick={async () => {
+                await logoutUser();
+                nav('/owner/login');
+              }}
+            >
+              <LogOut size={14} />
+            </button>
+          </div>
         </div>
       </aside>
+      {mobileNavOpen && (
+        <button
+          type="button"
+          className="owner-mobile-nav-backdrop"
+          aria-label="Close navigation menu"
+          onClick={() => setMobileNavOpen(false)}
+        />
+      )}
 
       {/* ===================== MAIN CONTENT AREA ===================== */}
       <main className="owner-main">
@@ -3040,12 +3384,14 @@ export default function OwnerApp() {
               onClick={() => setShowOfflineSyncModal(true)}
               style={{ cursor: 'pointer' }}
             >
-              <span className="network-dot" />
               {isOnline ? (
-                <span>{offlineQueueCount > 0 ? `Outbox (${offlineQueueCount})` : 'Online'}</span>
+                <>
+                  <Wifi size={14} className="header-status-icon" />
+                  <span>{offlineQueueCount > 0 ? `Outbox (${offlineQueueCount})` : 'Online'}</span>
+                </>
               ) : (
                 <>
-                  <WifiOff size={13} />
+                  <WifiOff size={14} className="header-status-icon" />
                   <span>Offline ({offlineQueueCount})</span>
                 </>
               )}
@@ -3113,7 +3459,7 @@ export default function OwnerApp() {
                 <div className="header-dropdown-menu shift-popover">
                   <div className="popover-title-row">
                     <div className="popover-title-flex">
-                      <Coins size={16} style={{ color: '#ea7a33' }} />
+                      <Coins size={16} style={{ color: '#176B50' }} />
                       <span className="popover-heading">
                         {currentShiftData ? 'Active Cash Register' : 'Register Status'}
                       </span>
@@ -3151,7 +3497,7 @@ export default function OwnerApp() {
                             </div>
                             <div className="shift-popover-row">
                               <span>Expected in Drawer:</span>
-                              <b style={{ color: '#ea7a33' }}>
+                              <b style={{ color: '#176B50' }}>
                                 ₹{(currentShiftData.summary.closingFloatExpected || currentShiftData.summary.expectedCashInDrawer || 0).toLocaleString('en-IN')}
                               </b>
                             </div>
@@ -3260,7 +3606,7 @@ export default function OwnerApp() {
                 <div className="header-dropdown-menu date-popover">
                   <div className="popover-title-row">
                     <div className="popover-title-flex">
-                      <Calendar size={16} style={{ color: '#ea7a33' }} />
+                      <Calendar size={16} style={{ color: '#176B50' }} />
                       <span className="popover-heading">Operational Date</span>
                     </div>
                     <button
@@ -3379,7 +3725,7 @@ export default function OwnerApp() {
                 <div className="header-dropdown-menu notif-popover">
                   <div className="popover-title-row">
                     <div className="popover-title-flex">
-                      <Bell size={16} style={{ color: '#ea7a33' }} />
+                      <Bell size={16} style={{ color: '#176B50' }} />
                       <span className="popover-heading">Notifications</span>
                       {headerNotifications.length > 0 && (
                         <span className="notif-count-pill">{headerNotifications.length}</span>
@@ -3486,7 +3832,7 @@ export default function OwnerApp() {
                     width: '32px',
                     height: '32px',
                     borderRadius: '50%',
-                    background: isOwner ? '#ea7a33' : isManager ? '#3b82f6' : isCashier ? '#10b981' : '#f59e0b',
+                    background: '#176B50',
                     color: '#fff',
                     display: 'grid',
                     placeItems: 'center',
@@ -3513,7 +3859,7 @@ export default function OwnerApp() {
                         width: '42px',
                         height: '42px',
                         borderRadius: '50%',
-                        background: isOwner ? '#ea7a33' : isManager ? '#3b82f6' : isCashier ? '#10b981' : '#f59e0b',
+                        background: isOwner ? '#176B50' : isManager ? '#3b82f6' : isCashier ? '#10b981' : '#f59e0b',
                         color: '#fff',
                         display: 'grid',
                         placeItems: 'center',
@@ -3663,14 +4009,17 @@ export default function OwnerApp() {
 
         {/* ===================== TAB: OVERVIEW (EXECUTIVE CAFE PULSE) ===================== */}
         {tab === 'overview' && (
-          <div className="crm-orders-wrapper" style={{ padding: '0 0 40px 0' }}>
+          <div className="crm-orders-wrapper owner-overview" style={{ padding: '0 0 40px 0' }}>
             {/* 1. Operational Overview Header Card */}
-            <div className="crm-orders-header-card">
+            <div className="crm-orders-header-card owner-pulse-banner">
               <div className="crm-orders-header-left">
                 <div className="crm-orders-brand-emblem">
-                  <Flame size={24} style={{ color: '#ea7a33' }} />
+                  <Coffee size={24} style={{ color: '#DCEFE4' }} />
                 </div>
                 <div className="crm-orders-brand-info">
+                  <div className="crm-orders-tag-row">
+                    <span className="crm-orders-tag">BUSINESS INSIGHTS</span>
+                  </div>
                   <div className="crm-orders-title-row">
                     <h1 className="crm-orders-title">{data?.cafe?.name || 'Gusstora'} Executive Pulse</h1>
                     <span className="crm-menu-status-badge">
@@ -3687,7 +4036,7 @@ export default function OwnerApp() {
               <div className="crm-orders-header-actions">
                 <button
                   type="button"
-                  className="crm-btn-secondary"
+                  className="crm-btn-secondary owner-pulse-primary"
                   onClick={() => setTab('orders')}
                 >
                   <PackageOpen size={16} />
@@ -3695,7 +4044,7 @@ export default function OwnerApp() {
                 </button>
                 <button
                   type="button"
-                  className="crm-btn-primary"
+                  className="crm-btn-primary owner-pulse-secondary"
                   onClick={() => setTab('bookings')}
                 >
                   <Calendar size={16} />
@@ -3721,12 +4070,10 @@ export default function OwnerApp() {
                   <span className="stat-trend positive">
                     <TrendingUp size={13} /> +12% <small>vs yesterday</small>
                   </span>
-                  <div className="mini-bars-graphic coral">
-                    <span style={{ height: '35%' }}></span>
-                    <span style={{ height: '60%' }}></span>
-                    <span style={{ height: '45%' }}></span>
-                    <span style={{ height: '90%' }}></span>
-                  </div>
+                  <svg className="kpi-sparkline coral" viewBox="0 0 82 28">
+                    <path className="spark-area" d="M 0 24 Q 20 22, 35 14 T 65 6 T 82 2 L 82 28 L 0 28 Z" />
+                    <path className="spark-line" d="M 0 24 Q 20 22, 35 14 T 65 6 T 82 2" />
+                  </svg>
                 </div>
               </div>
 
@@ -3745,19 +4092,17 @@ export default function OwnerApp() {
                   <span className="stat-trend positive">
                     <TrendingUp size={13} /> +3 <small>vs yesterday</small>
                   </span>
-                  <div className="mini-bars-graphic mint">
-                    <span style={{ height: '40%' }}></span>
-                    <span style={{ height: '55%' }}></span>
-                    <span style={{ height: '80%' }}></span>
-                    <span style={{ height: '95%' }}></span>
-                  </div>
+                  <svg className="kpi-sparkline mint" viewBox="0 0 82 28">
+                    <path className="spark-area" d="M 0 20 Q 25 24, 40 10 T 65 12 T 82 4 L 82 28 L 0 28 Z" />
+                    <path className="spark-line" d="M 0 20 Q 25 24, 40 10 T 65 12 T 82 4" />
+                  </svg>
                 </div>
               </div>
 
               {/* Card 3: Total Customers */}
               <div className="stat-card">
                 <div className="stat-card-top">
-                  <div className="stat-icon-wrap purple">
+                  <div className="stat-icon-wrap soft-sage">
                     <Users size={22} />
                   </div>
                   <div className="stat-info">
@@ -3769,12 +4114,10 @@ export default function OwnerApp() {
                   <span className="stat-trend positive">
                     <TrendingUp size={13} /> +2 <small>new today</small>
                   </span>
-                  <div className="mini-bars-graphic purple">
-                    <span style={{ height: '30%' }}></span>
-                    <span style={{ height: '50%' }}></span>
-                    <span style={{ height: '70%' }}></span>
-                    <span style={{ height: '90%' }}></span>
-                  </div>
+                  <svg className="kpi-sparkline sage" viewBox="0 0 82 28">
+                    <path className="spark-area" d="M 0 22 Q 20 18, 42 12 T 68 8 T 82 3 L 82 28 L 0 28 Z" />
+                    <path className="spark-line" d="M 0 22 Q 20 18, 42 12 T 68 8 T 82 3" />
+                  </svg>
                 </div>
               </div>
 
@@ -3791,12 +4134,10 @@ export default function OwnerApp() {
                 </div>
                 <div className="stat-card-bottom">
                   <span className="stat-trend neutral">Awaiting confirmation</span>
-                  <div className="mini-bars-graphic amber">
-                    <span style={{ height: '45%' }}></span>
-                    <span style={{ height: '65%' }}></span>
-                    <span style={{ height: '35%' }}></span>
-                    <span style={{ height: '80%' }}></span>
-                  </div>
+                  <svg className="kpi-sparkline amber" viewBox="0 0 82 28">
+                    <path className="spark-area" d="M 0 16 Q 22 8, 44 18 T 66 10 T 82 6 L 82 28 L 0 28 Z" />
+                    <path className="spark-line" d="M 0 16 Q 22 8, 44 18 T 66 10 T 82 6" />
+                  </svg>
                 </div>
               </div>
             </div>
@@ -3977,6 +4318,7 @@ export default function OwnerApp() {
                           <button
                             key={opt}
                             type="button"
+                            className={orderStatusFilter === opt ? 'active' : ''}
                             onClick={() => {
                               setOrderStatusFilter(opt);
                               setOrderStatusDropdownOpen(false);
@@ -4012,17 +4354,17 @@ export default function OwnerApp() {
                         cy="70"
                         r="52"
                         fill="transparent"
-                        stroke="#f1ebe3"
+                        stroke="#E4EAE5"
                         strokeWidth="15"
                       />
 
-                      {/* Completed Segment (Teal) */}
+                      {/* Completed Segment (Emerald) */}
                       <circle
                         cx="70"
                         cy="70"
                         r="52"
                         fill="transparent"
-                        stroke="#10b981"
+                        stroke="#16A579"
                         strokeWidth="15"
                         strokeDasharray={`${(cPct / 100) * circumference} ${circumference}`}
                         strokeDashoffset={cOffset}
@@ -4030,13 +4372,13 @@ export default function OwnerApp() {
                         transform="rotate(-90 70 70)"
                       />
 
-                      {/* Preparing Segment (Amber) */}
+                      {/* Preparing Segment (Orange) */}
                       <circle
                         cx="70"
                         cy="70"
                         r="52"
                         fill="transparent"
-                        stroke="#f59e0b"
+                        stroke="#F28A45"
                         strokeWidth="15"
                         strokeDasharray={`${(prepPct / 100) * circumference} ${circumference}`}
                         strokeDashoffset={prepOffset}
@@ -4044,13 +4386,13 @@ export default function OwnerApp() {
                         transform="rotate(-90 70 70)"
                       />
 
-                      {/* Pending Segment (Coral/Red) */}
+                      {/* Pending Segment (Soft Coral Red) */}
                       <circle
                         cx="70"
                         cy="70"
                         r="52"
                         fill="transparent"
-                        stroke="#f87171"
+                        stroke="#E66B67"
                         strokeWidth="15"
                         strokeDasharray={`${(pendPct / 100) * circumference} ${circumference}`}
                         strokeDashoffset={pendOffset}
@@ -4058,13 +4400,13 @@ export default function OwnerApp() {
                         transform="rotate(-90 70 70)"
                       />
 
-                      {/* Cancelled Segment (Gray) */}
+                      {/* Cancelled Segment (Slate Gray) */}
                       <circle
                         cx="70"
                         cy="70"
                         r="52"
                         fill="transparent"
-                        stroke="#9ca3af"
+                        stroke="#94A3B8"
                         strokeWidth="15"
                         strokeDasharray={`${(cancPct / 100) * circumference} ${circumference}`}
                         strokeDashoffset={cancOffset}
@@ -4358,7 +4700,7 @@ export default function OwnerApp() {
               <div className="crm-orders-header-card">
                 <div className="crm-orders-header-left">
                   <div className="crm-orders-brand-emblem">
-                    <UtensilsCrossed size={24} style={{ color: '#ea7a33' }} />
+                    <UtensilsCrossed size={24} style={{ color: '#DCEFE4' }} />
                   </div>
                   <div className="crm-orders-brand-info">
                     <div className="crm-orders-title-row">
@@ -4940,7 +5282,7 @@ export default function OwnerApp() {
                           <tr>
                             <td colSpan={7} style={{ textAlign: 'center', padding: '60px 20px' }}>
                               <div className="crm-empty-table-state">
-                                <PackageOpen size={36} style={{ color: '#ea7a33', opacity: 0.6, marginBottom: 12 }} />
+                                <PackageOpen size={36} style={{ color: '#176B50', opacity: 0.6, marginBottom: 12 }} />
                                 <h4>No orders matching criteria</h4>
                                 <p>Try clearing your search query or selecting a different status filter.</p>
                                 {(ordersSearchQuery || ordersStatusTab !== 'all') && (
@@ -4977,7 +5319,7 @@ export default function OwnerApp() {
               <div className="crm-orders-header-card">
                 <div className="crm-orders-header-left">
                   <div className="crm-orders-brand-emblem">
-                    <Armchair size={24} style={{ color: '#ea7a33' }} />
+                    <Armchair size={24} style={{ color: '#DCEFE4' }} />
                   </div>
                   <div className="crm-orders-brand-info">
                     <div className="crm-orders-title-row">
@@ -5396,7 +5738,7 @@ export default function OwnerApp() {
                 <div className="crm-table-container">
                   {!bookingsList.length ? (
                     <div className="crm-empty-table-state" style={{ padding: '60px 20px' }}>
-                      <CalendarDays size={42} style={{ color: '#ea7a33', opacity: 0.6, marginBottom: 12 }} />
+                      <CalendarDays size={42} style={{ color: '#176B50', opacity: 0.6, marginBottom: 12 }} />
                       <h4>No Reservations Found</h4>
                       <p>There are no table reservations scheduled for {bookingDate}.</p>
                       <button
@@ -5503,7 +5845,7 @@ export default function OwnerApp() {
                                       {b.status.toUpperCase()}
                                     </span>
                                     {b.status === 'seated' && diningTimer && (
-                                      <span style={{ fontSize: '11px', color: diningTimer.isOvertime ? '#c2410c' : '#047857', fontWeight: 600 }}>
+                                      <span style={{ fontSize: '11px', color: diningTimer.isOvertime ? '#E66B67' : '#16A579', fontWeight: 600 }}>
                                         <Timer size={10} style={{ display: 'inline', marginRight: 3 }} />
                                         {diningTimer.text}
                                       </span>
@@ -5609,7 +5951,7 @@ export default function OwnerApp() {
                     {data?.cafe?.logo ? (
                       <img src={data.cafe.logo} alt={data?.cafe?.name} />
                     ) : (
-                      <Coffee size={24} style={{ color: '#ea7a33' }} />
+                      <Coffee size={24} style={{ color: '#176B50' }} />
                     )}
                   </div>
                   <div className="crm-menu-brand-info">
@@ -5855,7 +6197,7 @@ export default function OwnerApp() {
               {filteredOwnerMenu.length === 0 ? (
                 <div className="crm-menu-empty-card">
                   <div className="crm-empty-icon-box">
-                    <Coffee size={36} style={{ color: '#ea7a33' }} />
+                    <Coffee size={36} style={{ color: '#176B50' }} />
                   </div>
                   <h3>No Menu Items Found</h3>
                   <p>Try clearing filters or search query, or add a new menu item to your catalogue.</p>
@@ -5922,6 +6264,21 @@ export default function OwnerApp() {
                             <span className="crm-card-price">{money(i.price)}</span>
                             <span className="crm-card-kcal">{itemKcal}</span>
                           </div>
+
+                          {((Array.isArray(i.variants) && i.variants.length > 0) || (Array.isArray(i.modifierGroups) && i.modifierGroups.length > 0)) && (
+                            <div className="crm-card-tags-row" style={{ display: 'flex', gap: 6, flexWrap: 'wrap', margin: '4px 0 8px 0' }}>
+                              {Array.isArray(i.variants) && i.variants.length > 0 && (
+                                <span className="crm-card-tag-pill" title={`${i.variants.length} portion sizes available`}>
+                                  {i.variants.length} Sizes
+                                </span>
+                              )}
+                              {Array.isArray(i.modifierGroups) && i.modifierGroups.length > 0 && (
+                                <span className="crm-card-tag-pill" title={`${i.modifierGroups.length} customization groups configured`}>
+                                  {i.modifierGroups.length} Customizers
+                                </span>
+                              )}
+                            </div>
+                          )}
 
                           <div className="crm-card-actions">
                             <button
@@ -6014,15 +6371,19 @@ export default function OwnerApp() {
               </div>
             )}
 
-            {/* Add / Edit Menu Item Modal Form */}
+            {/* Add / Edit Menu Item Modal Form with Customization Studio */}
             {ownerAddModalOpen && (
               <div className="fave-modal-backdrop" onClick={cancelEdit}>
-                <div className="fave-modal-card" style={{ maxWidth: 600 }} onClick={e => e.stopPropagation()}>
+                <div
+                  className="fave-modal-card"
+                  style={{ maxWidth: 740, maxHeight: '92vh', overflowY: 'auto' }}
+                  onClick={e => e.stopPropagation()}
+                >
                   <div className="fave-modal-header">
                     <div>
                       <h3 className="fave-modal-title">{editingItem ? 'Edit Menu Item' : 'Add New Menu Item'}</h3>
                       <p style={{ margin: '4px 0 0 0', fontSize: 13, color: '#64748b' }}>
-                        {editingItem ? `Editing "${editingItem.name}"` : 'Fill in the dish details and attach appetizing photography'}
+                        {editingItem ? `Editing "${editingItem.name}"` : 'Configure dish pricing, portion sizes, and customizations'}
                       </p>
                     </div>
                     <button
@@ -6034,145 +6395,429 @@ export default function OwnerApp() {
                     </button>
                   </div>
 
-                  <form className="theme-form-grid" onSubmit={saveItem}>
-                    <label>
-                      <span>Item Name</span>
-                      <input
-                        required
-                        placeholder="e.g. Sandwich Tuna Plenty Special Tomato"
-                        value={item.name}
-                        onChange={e => setItem({ ...item, name: e.target.value })}
-                      />
-                    </label>
+                  {/* 3-Tab Navigator */}
+                  <div className="menu-modal-tabs">
+                    <button
+                      type="button"
+                      className={`menu-modal-tab-btn ${activeItemModalTab === 'details' ? 'active' : ''}`}
+                      onClick={() => setActiveItemModalTab('details')}
+                    >
+                      <span>1. Dish Details</span>
+                    </button>
 
-                    <label>
-                      <span>Category</span>
-                      <select
-                        value={item.category}
-                        onChange={e => setItem({ ...item, category: e.target.value })}
-                      >
-                        <option value="Coffee">Coffee & Brews</option>
-                        <option value="Breakfasts">Breakfasts</option>
-                        <option value="Mains">Mains</option>
-                        <option value="Bites">Bites</option>
-                        <option value="Dessert">Dessert & Fruits</option>
-                        <option value="Beverages">Beverages & Teas</option>
-                      </select>
-                    </label>
+                    <button
+                      type="button"
+                      className={`menu-modal-tab-btn ${activeItemModalTab === 'variants' ? 'active' : ''}`}
+                      onClick={() => setActiveItemModalTab('variants')}
+                    >
+                      <span>2. Portions & Sizes</span>
+                      {(item.variants || []).length > 0 && (
+                        <span className="menu-modal-tab-badge">{(item.variants || []).length}</span>
+                      )}
+                    </button>
 
-                    <label>
-                      <span>Price (INR)</span>
-                      <input
-                        required
-                        type="number"
-                        placeholder="250"
-                        value={item.price}
-                        onChange={e => setItem({ ...item, price: e.target.value })}
-                      />
-                    </label>
+                    <button
+                      type="button"
+                      className={`menu-modal-tab-btn ${activeItemModalTab === 'modifiers' ? 'active' : ''}`}
+                      onClick={() => setActiveItemModalTab('modifiers')}
+                    >
+                      <span>3. Customizations & Add-ons</span>
+                      {(item.modifierGroups || []).length > 0 && (
+                        <span className="menu-modal-tab-badge">{(item.modifierGroups || []).length}</span>
+                      )}
+                    </button>
+                  </div>
 
-                    <label>
-                      <span>Dietary Type</span>
-                      <select
-                        value={item.veg ? 'veg' : 'non-veg'}
-                        onChange={e => setItem({ ...item, veg: e.target.value === 'veg' })}
-                      >
-                        <option value="veg">Vegetarian</option>
-                        <option value="non-veg">Non-Vegetarian</option>
-                      </select>
-                    </label>
+                  <form onSubmit={saveItem}>
+                    {/* TAB 1: BASIC DISH DETAILS */}
+                    {activeItemModalTab === 'details' && (
+                      <div className="theme-form-grid">
+                        <label>
+                          <span>Item Name</span>
+                          <input
+                            required
+                            placeholder="e.g. Sandwich Tuna Plenty Special Tomato"
+                            value={item.name}
+                            onChange={e => setItem({ ...item, name: e.target.value })}
+                          />
+                        </label>
 
-                    <label className="full-width">
-                      <span>Recipe Ingredients & Description</span>
-                      <textarea
-                        rows={2}
-                        placeholder="bread, eggs, butter, tomato, lettuce, cheese, mayonnaise..."
-                        value={item.description}
-                        onChange={e => setItem({ ...item, description: e.target.value })}
-                      />
-                    </label>
-
-                    {/* Photo Upload & Preview Section */}
-                    <div className="full-width photo-manager-section">
-                      <div className="photo-manager-header">
-                        <span>Item Photo</span>
-                        {item.image && (
-                          <button
-                            type="button"
-                            className="photo-remove-btn"
-                            onClick={() => setItem({ ...item, image: '' })}
+                        <label>
+                          <span>Category</span>
+                          <select
+                            value={item.category}
+                            onChange={e => setItem({ ...item, category: e.target.value })}
                           >
-                            <Trash2 size={12} /> Remove
-                          </button>
-                        )}
-                      </div>
+                            <option value="Coffee">Coffee & Brews</option>
+                            <option value="Breakfasts">Breakfasts</option>
+                            <option value="Mains">Mains</option>
+                            <option value="Bites">Bites</option>
+                            <option value="Dessert">Dessert & Fruits</option>
+                            <option value="Beverages">Beverages & Teas</option>
+                          </select>
+                        </label>
 
-                      {item.image ? (
-                        <div className="photo-preview-card">
-                          <img src={item.image} alt="Preview" className="photo-preview-img" />
-                          <div className="photo-preview-info">
-                            <span className="photo-preview-label">Active Item Photo</span>
-                            <p className="photo-preview-sub">Displays on customer digital QR menu</p>
+                        <label>
+                          <span>Base Price (INR)</span>
+                          <input
+                            required
+                            type="number"
+                            placeholder="250"
+                            value={item.price}
+                            onChange={e => setItem({ ...item, price: e.target.value })}
+                          />
+                        </label>
+
+                        <label>
+                          <span>Dietary Type</span>
+                          <select
+                            value={item.veg ? 'veg' : 'non-veg'}
+                            onChange={e => setItem({ ...item, veg: e.target.value === 'veg' })}
+                          >
+                            <option value="veg">Vegetarian</option>
+                            <option value="non-veg">Non-Vegetarian</option>
+                          </select>
+                        </label>
+
+                        <label className="full-width">
+                          <span>Recipe Ingredients & Description</span>
+                          <textarea
+                            rows={2}
+                            placeholder="bread, eggs, butter, tomato, lettuce, cheese, mayonnaise..."
+                            value={item.description}
+                            onChange={e => setItem({ ...item, description: e.target.value })}
+                          />
+                        </label>
+
+                        {/* Photo Upload & Preview Section */}
+                        <div className="full-width photo-manager-section">
+                          <div className="photo-manager-header">
+                            <span>Item Photo</span>
+                            {item.image && (
+                              <button
+                                type="button"
+                                className="photo-remove-btn"
+                                onClick={() => setItem({ ...item, image: '' })}
+                              >
+                                <Trash2 size={12} /> Remove
+                              </button>
+                            )}
+                          </div>
+
+                          {item.image ? (
+                            <div className="photo-preview-card">
+                              <img src={item.image} alt="Preview" className="photo-preview-img" />
+                              <div className="photo-preview-info">
+                                <span className="photo-preview-label">Active Item Photo</span>
+                                <p className="photo-preview-sub">Displays on customer digital QR menu</p>
+                                <button
+                                  type="button"
+                                  className="photo-change-btn"
+                                  onClick={() => setItem({ ...item, image: '' })}
+                                >
+                                  Change Photo
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="photo-input-container">
+                              <div className="photo-upload-zone">
+                                <input
+                                  type="file"
+                                  id="menu-photo-file-input"
+                                  accept="image/*"
+                                  onChange={handlePhotoUpload}
+                                  style={{ display: 'none' }}
+                                />
+                                <label htmlFor="menu-photo-file-input" className="photo-upload-button-label">
+                                  <Upload size={18} />
+                                  <span>Upload Photo from Computer</span>
+                                  <small>PNG, JPG, WebP up to 5MB</small>
+                                </label>
+                              </div>
+
+                              <div className="photo-url-divider">
+                                <span>OR ENTER IMAGE URL</span>
+                              </div>
+
+                              <div className="photo-url-input-wrap">
+                                <ImageIcon size={15} className="url-icon" />
+                                <input
+                                  type="url"
+                                  placeholder="https://images.unsplash.com/..."
+                                  value={item.image}
+                                  onChange={e => setItem({ ...item, image: e.target.value })}
+                                />
+                              </div>
+
+                              <div className="photo-presets-block">
+                                <span className="presets-label">Quick Presets:</span>
+                                <div className="photo-presets-pills">
+                                  {photoPresets.map(preset => (
+                                    <button
+                                      key={preset.name}
+                                      type="button"
+                                      className="preset-chip"
+                                      onClick={() => setItem({ ...item, image: preset.url })}
+                                    >
+                                      + {preset.name}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* TAB 2: PORTIONS & SIZES (VARIANTS) */}
+                    {activeItemModalTab === 'variants' && (
+                      <div className="menu-variants-tab-content">
+                        <div className="menu-customizer-banner">
+                          <h4>Portions & Serving Sizes</h4>
+                          <p>
+                            Configure optional sizes (e.g. Regular 250ml vs Large 350ml, or Personal vs Medium Pizza).
+                            When variants are configured, customers pick their preferred size on the QR menu.
+                          </p>
+                          <div className="menu-customizer-presets-row">
+                            <span style={{ fontSize: 12, fontWeight: 700, color: '#176B50' }}>Quick Templates:</span>
                             <button
                               type="button"
-                              className="photo-change-btn"
-                              onClick={() => setItem({ ...item, image: '' })}
+                              className="menu-preset-chip-btn"
+                              onClick={() => applyVariantPreset('coffee')}
                             >
-                              Change Photo
+                              + Coffee Volumes (250ml / 350ml)
+                            </button>
+                            <button
+                              type="button"
+                              className="menu-preset-chip-btn"
+                              onClick={() => applyVariantPreset('pizza')}
+                            >
+                              + Pizza Sizes (7" / 10" / 12")
+                            </button>
+                            <button
+                              type="button"
+                              className="menu-preset-chip-btn"
+                              onClick={() => applyVariantPreset('portions')}
+                            >
+                              + Half / Full Portion
                             </button>
                           </div>
                         </div>
-                      ) : (
-                        <div className="photo-input-container">
-                          <div className="photo-upload-zone">
-                            <input
-                              type="file"
-                              id="menu-photo-file-input"
-                              accept="image/*"
-                              onChange={handlePhotoUpload}
-                              style={{ display: 'none' }}
-                            />
-                            <label htmlFor="menu-photo-file-input" className="photo-upload-button-label">
-                              <Upload size={18} />
-                              <span>Upload Photo from Computer</span>
-                              <small>PNG, JPG, WebP up to 5MB</small>
-                            </label>
-                          </div>
 
-                          <div className="photo-url-divider">
-                            <span>OR ENTER IMAGE URL</span>
+                        {(item.variants || []).length === 0 ? (
+                          <div className="menu-empty-customizer-state">
+                            <p style={{ margin: 0, fontWeight: 600 }}>No portion sizes added yet.</p>
+                            <p style={{ margin: '4px 0 0 0', fontSize: 12 }}>
+                              The dish will be sold at its standard base price (₹{item.price || 0}). Click below or use a template to add sizes.
+                            </p>
                           </div>
-
-                          <div className="photo-url-input-wrap">
-                            <ImageIcon size={15} className="url-icon" />
-                            <input
-                              type="url"
-                              placeholder="https://images.unsplash.com/..."
-                              value={item.image}
-                              onChange={e => setItem({ ...item, image: e.target.value })}
-                            />
-                          </div>
-
-                          <div className="photo-presets-block">
-                            <span className="presets-label">Quick Presets:</span>
-                            <div className="photo-presets-pills">
-                              {photoPresets.map(preset => (
+                        ) : (
+                          <div className="menu-variants-list" style={{ marginBottom: 16 }}>
+                            {(item.variants || []).map((v, vIdx) => (
+                              <div key={v.id || vIdx} className="menu-variant-item-card">
+                                <span className="menu-variant-index">#{vIdx + 1}</span>
+                                <input
+                                  type="text"
+                                  className="menu-variant-name-input"
+                                  placeholder="Size Name (e.g. Regular 250ml, Large 350ml)"
+                                  value={v.name}
+                                  onChange={e => updateVariant(vIdx, 'name', e.target.value)}
+                                  required
+                                />
+                                <div className="menu-variant-price-wrap">
+                                  <span>₹</span>
+                                  <input
+                                    type="number"
+                                    placeholder="Price"
+                                    value={v.price}
+                                    onChange={e => updateVariant(vIdx, 'price', e.target.value)}
+                                    required
+                                  />
+                                </div>
                                 <button
-                                  key={preset.name}
                                   type="button"
-                                  className="preset-chip"
-                                  onClick={() => setItem({ ...item, image: preset.url })}
+                                  className="menu-action-icon-btn"
+                                  onClick={() => removeVariant(vIdx)}
+                                  title="Remove this size"
                                 >
-                                  + {preset.name}
+                                  <Trash2 size={14} />
                                 </button>
-                              ))}
-                            </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        <button
+                          type="button"
+                          className="menu-add-btn-primary-outline"
+                          onClick={() => addVariant('', item.price || '')}
+                        >
+                          <Plus size={15} /> Add Portion / Size
+                        </button>
+                      </div>
+                    )}
+
+                    {/* TAB 3: CUSTOMIZATIONS & ADD-ONS (MODIFIER GROUPS) */}
+                    {activeItemModalTab === 'modifiers' && (
+                      <div className="menu-modifiers-tab-content">
+                        <div className="menu-customizer-banner">
+                          <h4>Customization Groups & Add-ons</h4>
+                          <p>
+                            Let diners customize ingredients like Choice of Milk (Oat/Almond), Syrups & Shots, Extra Toppings, or Bread Selection with custom pricing.
+                          </p>
+                          <div className="menu-customizer-presets-row">
+                            <span style={{ fontSize: 12, fontWeight: 700, color: '#176B50' }}>Popular Add-on Packs:</span>
+                            <button
+                              type="button"
+                              className="menu-preset-chip-btn"
+                              onClick={() => applyModifierPreset('milk')}
+                            >
+                              + Choice of Milk (Oat, Almond, Soy)
+                            </button>
+                            <button
+                              type="button"
+                              className="menu-preset-chip-btn"
+                              onClick={() => applyModifierPreset('syrups')}
+                            >
+                              + Syrups & Shots
+                            </button>
+                            <button
+                              type="button"
+                              className="menu-preset-chip-btn"
+                              onClick={() => applyModifierPreset('toppings')}
+                            >
+                              + Extra Toppings
+                            </button>
+                            <button
+                              type="button"
+                              className="menu-preset-chip-btn"
+                              onClick={() => applyModifierPreset('bread')}
+                            >
+                              + Bread Selection
+                            </button>
                           </div>
                         </div>
-                      )}
-                    </div>
 
-                    <div className="form-submit-actions full-width" style={{ marginTop: 12 }}>
+                        {(item.modifierGroups || []).length === 0 ? (
+                          <div className="menu-empty-customizer-state">
+                            <p style={{ margin: 0, fontWeight: 600 }}>No customization groups configured.</p>
+                            <p style={{ margin: '4px 0 0 0', fontSize: 12 }}>
+                              Add modifier groups (like milk choice or extra toppings) or click a quick template above.
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="menu-modifiers-list" style={{ marginBottom: 16 }}>
+                            {(item.modifierGroups || []).map((grp, gIdx) => (
+                              <div key={grp.id || gIdx} className="menu-modifier-group-card">
+                                <div className="menu-modifier-group-header">
+                                  <input
+                                    type="text"
+                                    className="menu-modifier-group-title-input"
+                                    placeholder="Group Name (e.g. Choice of Milk, Extra Cheese)"
+                                    value={grp.name}
+                                    onChange={e => updateModifierGroup(gIdx, 'name', e.target.value)}
+                                    required
+                                  />
+                                  <button
+                                    type="button"
+                                    className="menu-action-icon-btn"
+                                    onClick={() => removeModifierGroup(gIdx)}
+                                    title="Delete group"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+
+                                <div className="menu-modifier-group-controls">
+                                  <label className="menu-mod-radio-label">
+                                    <input
+                                      type="checkbox"
+                                      checked={Boolean(grp.required)}
+                                      onChange={e => {
+                                        const req = e.target.checked;
+                                        updateModifierGroup(gIdx, 'required', req);
+                                        updateModifierGroup(gIdx, 'minSelect', req ? 1 : 0);
+                                      }}
+                                    />
+                                    <span>Mandatory / Required Selection</span>
+                                  </label>
+
+                                  <div className="menu-mod-max-select-wrap">
+                                    <span>Max allowed options:</span>
+                                    <input
+                                      type="number"
+                                      min="1"
+                                      max="10"
+                                      value={grp.maxSelect || 1}
+                                      onChange={e => updateModifierGroup(gIdx, 'maxSelect', Math.max(1, Number(e.target.value) || 1))}
+                                    />
+                                    <span style={{ fontSize: 11, color: '#94a3b8' }}>
+                                      ({Number(grp.maxSelect) === 1 ? 'Single choice radio' : 'Multi-select checkboxes'})
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div className="menu-options-container">
+                                  <span style={{ fontSize: 12, fontWeight: 700, color: '#17211D' }}>
+                                    Options & Extra Price:
+                                  </span>
+                                  {(grp.options || []).map((opt, oIdx) => (
+                                    <div key={opt.id || oIdx} className="menu-option-row-item">
+                                      <input
+                                        type="text"
+                                        className="menu-option-name-input"
+                                        placeholder="Option Name (e.g. Oat Milk, Extra Hazelnut)"
+                                        value={opt.name}
+                                        onChange={e => updateGroupOption(gIdx, oIdx, 'name', e.target.value)}
+                                        required
+                                      />
+                                      <input
+                                        type="number"
+                                        className="menu-option-price-input"
+                                        placeholder="Extra ₹ (0 for free)"
+                                        value={opt.price}
+                                        onChange={e => updateGroupOption(gIdx, oIdx, 'price', e.target.value)}
+                                        required
+                                      />
+                                      <button
+                                        type="button"
+                                        className="menu-action-icon-btn"
+                                        onClick={() => removeGroupOption(gIdx, oIdx)}
+                                        title="Remove option"
+                                        style={{ width: 28, height: 28 }}
+                                      >
+                                        <Trash2 size={13} />
+                                      </button>
+                                    </div>
+                                  ))}
+
+                                  <button
+                                    type="button"
+                                    className="menu-add-option-btn"
+                                    onClick={() => addGroupOption(gIdx)}
+                                  >
+                                    <Plus size={13} /> Add Option to "{grp.name || 'Group'}"
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        <button
+                          type="button"
+                          className="menu-add-btn-primary-outline"
+                          onClick={() => addModifierGroup('New Customization Group', false, 1, [])}
+                        >
+                          <Plus size={15} /> Add Customization Group
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Bottom Submit Actions */}
+                    <div className="form-submit-actions full-width" style={{ marginTop: 20 }}>
                       <button className="crm-btn-primary full-width" type="submit">
                         {editingItem ? (
                           <>
@@ -6202,78 +6847,92 @@ export default function OwnerApp() {
         {/* ===================== TAB: INVENTORY & RECIPES (BOM & 86 ENGINE) ===================== */}
         {tab === 'inventory' && (isOwner || isManager) && (
           <div className="tab-pane-container" style={{ padding: '0 0 40px 0' }}>
-            <InventoryManager cafe={data?.cafe} token={getToken()} />
+            <Suspense fallback={<div role="status">Loading section...</div>}>
+              <InventoryManager cafe={data?.cafe} token={getToken()} />
+            </Suspense>
           </div>
         )}
 
         {/* ===================== TAB: ENTERPRISE & OMNICHANNEL CHANNELS (PHASE 5) ===================== */}
         {tab === 'enterprise' && (isOwner || isManager) && (
           <div className="tab-pane-container" style={{ padding: '0 0 40px 0' }}>
-            <OmnichannelManager
-              cafe={data?.cafe}
-              token={getToken()}
-              onCafeSwitch={(newCafe) => {
-                fetchData();
-              }}
-            />
+            <Suspense fallback={<div role="status">Loading section...</div>}>
+              <OmnichannelManager
+                cafe={data?.cafe}
+                token={getToken()}
+                onCafeSwitch={(newCafe) => {
+                  fetchData();
+                }}
+              />
+            </Suspense>
           </div>
         )}
 
         {/* ===================== TAB: HARDWARE & PERIPHERALS (PHASE 6) ===================== */}
         {tab === 'hardware' && (isOwner || isManager) && (
           <div className="tab-pane-container" style={{ padding: '0 0 40px 0' }}>
-            <HardwareManager
-              cafe={data?.cafe}
-              token={getToken()}
-            />
+            <Suspense fallback={<div role="status">Loading section...</div>}>
+              <HardwareManager
+                cafe={data?.cafe}
+                token={getToken()}
+              />
+            </Suspense>
           </div>
         )}
 
         {/* ===================== TAB: GST & TALLY ERP SYNC (PHASE 9) ===================== */}
         {tab === 'gst' && (isOwner || isManager) && (
           <div className="tab-pane-container" style={{ padding: '0 0 40px 0' }}>
-            <GstTallyManager
-              cafe={data?.cafe}
-              token={getToken()}
-            />
+            <Suspense fallback={<div role="status">Loading section...</div>}>
+              <GstTallyManager
+                cafe={data?.cafe}
+                token={getToken()}
+              />
+            </Suspense>
           </div>
         )}
 
-        {/* ===================== TAB: CENTRAL COMMISSARY & INDENTS (PHASE 10) ===================== */}
+        {/* ===================== TAB: CENTRAL COMMISSARY & INDENTS ===================== */}
         {tab === 'commissary' && (isOwner || isManager) && (
           <div className="tab-pane-container" style={{ padding: '0 0 40px 0' }}>
-            <CommissaryManager
-              cafe={data?.cafe}
-              token={getToken()}
-            />
+            <Suspense fallback={<div role="status">Loading section...</div>}>
+              <CommissaryManager
+                cafe={data?.cafe}
+                token={getToken()}
+              />
+            </Suspense>
           </div>
         )}
 
-        {/* ===================== TAB: STAFF OPERATIONS & TIP PAYROLL (PHASE 11) ===================== */}
+        {/* ===================== TAB: STAFF OPERATIONS & TIP PAYROLL ===================== */}
         {tab === 'staff-ops' && (isOwner || isManager) && (
           <div className="tab-pane-container" style={{ padding: '0 0 40px 0' }}>
-            <StaffOperationsManager
-              cafe={data?.cafe}
-              token={getToken()}
-              staffList={staffList}
-            />
+            <Suspense fallback={<div role="status">Loading section...</div>}>
+              <StaffOperationsManager
+                cafe={data?.cafe}
+                token={getToken()}
+                staffList={staffList}
+              />
+            </Suspense>
           </div>
         )}
 
-        {/* ===================== TAB: AI ROASTERY OPERATING SYSTEM (PHASE 12) ===================== */}
+        {/* ===================== TAB: AI ROASTERY OPERATING SYSTEM ===================== */}
         {tab === 'ai-roastery' && (isOwner || isManager) && (
           <div className="tab-pane-container" style={{ padding: '0 0 40px 0' }}>
-            <AiRoasteryManager
-              cafe={data?.cafe}
-              token={getToken()}
-            />
+            <Suspense fallback={<div role="status">Loading section...</div>}>
+              <AiRoasteryManager
+                cafe={data?.cafe}
+                token={getToken()}
+              />
+            </Suspense>
           </div>
         )}
 
         {/* ===================== TAB: CUSTOMERS (CRM & GUEST INTELLIGENCE) ===================== */}
         {tab === 'customers' && (
           <div className="tab-pane-container" style={{ padding: '0 0 40px 0' }}>
-            <div className="crm-orders-wrapper">
+            <div className="crm-orders-wrapper crm-customer-directory">
               {/* 1. Header Card */}
               <div className="crm-orders-header-card">
                 <div className="crm-orders-header-left">
@@ -6457,7 +7116,7 @@ export default function OwnerApp() {
               <div className="crm-table-container">
                 {filteredCustomers.length === 0 ? (
                   <div className="crm-empty-table-state" style={{ padding: '60px 20px' }}>
-                    <Users size={42} style={{ color: '#ea7a33', opacity: 0.6, marginBottom: 12 }} />
+                    <Users size={42} style={{ color: '#176B50', opacity: 0.6, marginBottom: 12 }} />
                     <h4>No Diner Profiles Found</h4>
                     <p>
                       {customerSearch
@@ -6475,7 +7134,7 @@ export default function OwnerApp() {
                   </div>
                 ) : (
                   <div className="crm-table-responsive-wrapper">
-                    <table className="crm-orders-table">
+                    <table className="crm-orders-table crm-customer-table">
                       <thead>
                         <tr>
                           <th>DINER PROFILE</th>
@@ -6502,7 +7161,7 @@ export default function OwnerApp() {
                               style={{ cursor: 'pointer' }}
                               onClick={() => openCustomerProfile(c)}
                             >
-                              <td className="cell-customer">
+                              <td className="cell-customer" data-label="Diner profile">
                                 <div
                                   className="crm-customer-avatar-box"
                                   style={{ background: avatar.bg, color: avatar.text }}
@@ -6530,7 +7189,7 @@ export default function OwnerApp() {
                                 </div>
                               </td>
 
-                              <td style={{ whiteSpace: 'nowrap' }}>
+                              <td data-label="Contact" style={{ whiteSpace: 'nowrap' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                                   <span style={{ fontSize: '13px', fontWeight: 600, color: '#1a120c' }}>
                                     {c.phone || '—'}
@@ -6549,14 +7208,14 @@ export default function OwnerApp() {
                                 </div>
                               </td>
 
-                              <td style={{ whiteSpace: 'nowrap' }}>
+                              <td data-label="Lifetime spend" style={{ whiteSpace: 'nowrap' }}>
                                 <div className="crm-order-amount">{money(c.totalSpend)}</div>
                                 <span className="crm-order-ref-time">
                                   {c.ordersCount || 0} order(s)
                                 </span>
                               </td>
 
-                              <td>
+                              <td data-label="Visits & milestone">
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 5, minWidth: 120 }}>
                                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: '#1a120c' }}>
                                     <span>{c.visits || 0} / {visitsReq} visits</span>
@@ -6567,7 +7226,7 @@ export default function OwnerApp() {
                                       style={{
                                         height: '100%',
                                         width: `${progressPct}%`,
-                                        background: progressPct >= 100 ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #ea7a33, #c2410c)',
+                                        background: progressPct >= 100 ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #176B50, #123D32)',
                                         borderRadius: 999,
                                         transition: 'width 0.3s ease'
                                       }}
@@ -6576,7 +7235,7 @@ export default function OwnerApp() {
                                 </div>
                               </td>
 
-                              <td style={{ whiteSpace: 'nowrap' }}>
+                              <td data-label="Reward status" style={{ whiteSpace: 'nowrap' }}>
                                 {isRewardReady ? (
                                   <span className="crm-status-pill payment paid" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap' }}>
                                     <Gift size={11} /> REWARD READY
@@ -6588,13 +7247,13 @@ export default function OwnerApp() {
                                 )}
                               </td>
 
-                              <td style={{ whiteSpace: 'nowrap' }}>
+                              <td data-label="Last visit" style={{ whiteSpace: 'nowrap' }}>
                                 <span style={{ fontSize: '12.5px', color: '#7d736b', fontWeight: 600 }}>
                                   {getTimeAgo(c.lastVisit)}
                                 </span>
                               </td>
 
-                              <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                              <td data-label="Actions" style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                                 <div className="crm-table-action-cell" onClick={e => e.stopPropagation()}>
                                   <button
                                     type="button"
@@ -7332,7 +7991,7 @@ export default function OwnerApp() {
                 </div>
 
                 <div className="crm-metric-card">
-                  <div className="crm-metric-icon-wrap" style={{ background: '#fff4eb', color: '#ea7a33' }}>
+                  <div className="crm-metric-icon-wrap" style={{ background: '#F1F7F2', color: '#176B50' }}>
                     <CheckCircle2 size={20} />
                   </div>
                   <div className="crm-metric-info">
@@ -7362,7 +8021,7 @@ export default function OwnerApp() {
               <div className="crm-floor-section-group" style={{ marginBottom: 22 }}>
                 <div className="crm-floor-section-header">
                   <div className="crm-floor-section-title">
-                    <ShieldCheck size={18} style={{ color: '#ea7a33' }} />
+                    <ShieldCheck size={18} style={{ color: '#176B50' }} />
                     <h4>Cashier In-Store Redemption Terminal</h4>
                   </div>
                   <span className="crm-section-table-count">Instant 1-Tap Discount Verification</span>
@@ -7590,7 +8249,7 @@ export default function OwnerApp() {
                               </td>
 
                               <td>
-                                <span style={{ fontWeight: 800, color: '#ea7a33', fontSize: '13.5px' }}>
+                                <span style={{ fontWeight: 800, color: '#176B50', fontSize: '13.5px' }}>
                                   {money(r.amount)}
                                 </span>
                               </td>
@@ -7683,7 +8342,7 @@ export default function OwnerApp() {
             <div className="crm-orders-header-card">
               <div className="crm-orders-header-left">
                 <div className="crm-orders-brand-emblem">
-                  <Award size={24} style={{ color: '#ea7a33' }} />
+                  <Award size={24} style={{ color: '#DCEFE4' }} />
                 </div>
                 <div className="crm-orders-brand-info">
                   <div className="crm-orders-title-row">
@@ -7722,7 +8381,7 @@ export default function OwnerApp() {
             {/* 2. KPI Summary */}
             <div className="crm-orders-metrics-grid" style={{ marginBottom: '20px' }}>
               <div className="crm-metric-card">
-                <div className="crm-metric-icon-box" style={{ background: '#fff4eb', color: '#ea7a33' }}>
+                <div className="crm-metric-icon-box" style={{ background: '#F1F7F2', color: '#176B50' }}>
                   <Award size={20} />
                 </div>
                 <div className="crm-metric-content">
@@ -7831,14 +8490,14 @@ export default function OwnerApp() {
                   position: 'relative',
                   overflow: 'hidden'
                 }}>
-                  <div style={{ position: 'absolute', right: '-20px', top: '-20px', width: '120px', height: '120px', background: 'radial-gradient(circle, rgba(234,122,51,0.2) 0%, transparent 70%)', pointerEvents: 'none' }} />
+                  <div style={{ position: 'absolute', right: '-20px', top: '-20px', width: '120px', height: '120px', background: 'radial-gradient(circle, rgba(23, 107, 80,0.2) 0%, transparent 70%)', pointerEvents: 'none' }} />
                   
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Coffee size={18} style={{ color: '#ea7a33' }} />
-                      <strong style={{ fontSize: '14px', letterSpacing: '0.02em', color: '#fff4eb' }}>{data?.cafe?.name || 'Gusstora Roastery'}</strong>
+                      <Coffee size={18} style={{ color: '#176B50' }} />
+                      <strong style={{ fontSize: '14px', letterSpacing: '0.02em', color: '#F1F7F2' }}>{data?.cafe?.name || 'Gusstora Roastery'}</strong>
                     </div>
-                    <span style={{ fontSize: '10.5px', background: 'rgba(234, 122, 51, 0.2)', border: '1px solid rgba(234, 122, 51, 0.4)', color: '#ea7a33', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>VIP CLUB</span>
+                    <span style={{ fontSize: '10.5px', background: 'rgba(23, 107, 80, 0.2)', border: '1px solid rgba(23, 107, 80, 0.4)', color: '#176B50', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>VIP CLUB</span>
                   </div>
 
                   {/* Stamp Grid Mockup (Visits Required) */}
@@ -7849,11 +8508,11 @@ export default function OwnerApp() {
                         style={{
                           height: '46px',
                           borderRadius: '10px',
-                          background: idx < 5 ? 'rgba(234, 122, 51, 0.18)' : 'rgba(255, 255, 255, 0.05)',
-                          border: idx < 5 ? '1px solid #ea7a33' : '1px dashed rgba(255, 255, 255, 0.15)',
+                          background: idx < 5 ? 'rgba(23, 107, 80, 0.18)' : 'rgba(255, 255, 255, 0.05)',
+                          border: idx < 5 ? '1px solid #176B50' : '1px dashed rgba(255, 255, 255, 0.15)',
                           display: 'grid',
                           placeItems: 'center',
-                          color: idx < 5 ? '#ea7a33' : 'rgba(255, 255, 255, 0.3)',
+                          color: idx < 5 ? '#176B50' : 'rgba(255, 255, 255, 0.3)',
                           fontSize: '12px',
                           fontWeight: 700
                         }}
@@ -7865,7 +8524,7 @@ export default function OwnerApp() {
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11.5px', color: '#c9bea3', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '10px' }}>
                     <span>5 / {data?.cafe?.loyalty?.visitsRequired || 8} stamps earned</span>
-                    <span style={{ color: '#ea7a33', fontWeight: 700 }}>Unlock ₹{data?.cafe?.loyalty?.rewardCap || 1000} Voucher</span>
+                    <span style={{ color: '#176B50', fontWeight: 700 }}>Unlock ₹{data?.cafe?.loyalty?.rewardCap || 1000} Voucher</span>
                   </div>
                 </div>
 
@@ -7900,7 +8559,7 @@ export default function OwnerApp() {
             <div className="crm-orders-header-card">
               <div className="crm-orders-header-left">
                 <div className="crm-orders-brand-emblem">
-                  <Sliders size={24} style={{ color: '#ea7a33' }} />
+                  <Sliders size={24} style={{ color: '#DCEFE4' }} />
                 </div>
                 <div className="crm-orders-brand-info">
                   <div className="crm-orders-title-row">
@@ -7940,7 +8599,7 @@ export default function OwnerApp() {
               <form className="theme-form-grid" onSubmit={saveCafeSettings}>
                 {/* Section 1: Identity */}
                 <div style={{ gridColumn: '1 / -1', paddingBottom: '8px', borderBottom: '1px solid #f0e9e1', marginTop: '4px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#ea7a33' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#176B50' }}>
                     1. ESTABLISHMENT IDENTITY & LOCATION
                   </span>
                 </div>
@@ -7993,7 +8652,7 @@ export default function OwnerApp() {
 
                 {/* Section 2: Wi-Fi */}
                 <div style={{ gridColumn: '1 / -1', paddingBottom: '8px', borderBottom: '1px solid #f0e9e1', marginTop: '14px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#ea7a33' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#176B50' }}>
                     2. GUEST WI-FI CONNECTIVITY (TABLE DISPLAY)
                   </span>
                 </div>
@@ -8020,7 +8679,7 @@ export default function OwnerApp() {
 
                 {/* Section 3: Digital Links */}
                 <div style={{ gridColumn: '1 / -1', paddingBottom: '8px', borderBottom: '1px solid #f0e9e1', marginTop: '14px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#ea7a33' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#176B50' }}>
                     3. DIGITAL REPUTATION & SOCIAL PRESENCE
                   </span>
                 </div>
@@ -8053,7 +8712,7 @@ export default function OwnerApp() {
 
                 {/* Section 4: Brand Accent */}
                 <div style={{ gridColumn: '1 / -1', paddingBottom: '8px', borderBottom: '1px solid #f0e9e1', marginTop: '14px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#ea7a33' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#176B50' }}>
                     4. BRAND ACCENT PALETTE
                   </span>
                 </div>
@@ -8063,13 +8722,13 @@ export default function OwnerApp() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
                     <input
                       type="color"
-                      value={data.cafe.brandColor || '#ea7a33'}
+                      value={data.cafe.brandColor || '#176B50'}
                       onChange={e => setData({ ...data, cafe: { ...data.cafe, brandColor: e.target.value } })}
                       style={{ width: '42px', height: '38px', padding: '0', border: '1px solid #ece4da', borderRadius: '8px', cursor: 'pointer' }}
                     />
                     <input
                       type="text"
-                      value={data.cafe.brandColor || '#ea7a33'}
+                      value={data.cafe.brandColor || '#176B50'}
                       onChange={e => setData({ ...data, cafe: { ...data.cafe, brandColor: e.target.value } })}
                       style={{ flex: 1 }}
                     />
@@ -8077,7 +8736,7 @@ export default function OwnerApp() {
                   {/* Preset Coffee Palette Chips */}
                   <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                     {[
-                      { name: 'Warm Orange', hex: '#ea7a33' },
+                      { name: 'Emerald Forest', hex: '#176B50' },
                       { name: 'Cognac Roast', hex: '#7b3d22' },
                       { name: 'Dark Roast', hex: '#241b14' },
                       { name: 'Espresso', hex: '#1a120c' }
@@ -8088,7 +8747,7 @@ export default function OwnerApp() {
                         onClick={() => setData({ ...data, cafe: { ...data.cafe, brandColor: preset.hex } })}
                         style={{
                           background: '#fcf9f6',
-                          border: data.cafe.brandColor === preset.hex ? '2px solid #ea7a33' : '1px solid #ece4da',
+                          border: data.cafe.brandColor === preset.hex ? '2px solid #176B50' : '1px solid #ece4da',
                           borderRadius: '6px',
                           padding: '4px 8px',
                           display: 'flex',
@@ -8109,7 +8768,7 @@ export default function OwnerApp() {
 
                 {/* Section 5: Customer Facing Display (CFD) Controls */}
                 <div style={{ gridColumn: '1 / -1', paddingBottom: '8px', borderBottom: '1px solid #f0e9e1', marginTop: '14px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#ea7a33' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#176B50' }}>
                     5. DUAL-SCREEN CUSTOMER FACING DISPLAY (CFD) SETTINGS
                   </span>
                 </div>
@@ -8173,7 +8832,7 @@ export default function OwnerApp() {
             <div className="crm-orders-header-card">
               <div className="crm-orders-header-left">
                 <div className="crm-orders-brand-emblem">
-                  <Users size={24} style={{ color: '#ea7a33' }} />
+                  <Users size={24} style={{ color: '#DCEFE4' }} />
                 </div>
                 <div className="crm-orders-brand-info">
                   <div className="crm-orders-title-row">
@@ -8295,7 +8954,7 @@ export default function OwnerApp() {
                     <span className="role-badge manager" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
                       <ClipboardList size={12} /> MANAGER
                     </span>
-                    <span style={{ fontSize: '11px', fontWeight: '800', color: '#ea7a33' }}>Operations</span>
+                    <span style={{ fontSize: '11px', fontWeight: '800', color: '#176B50' }}>Operations</span>
                   </div>
                   <p className="role-scope-desc">
                     Operational management. Menu catalog, dining queue, customer CRM, staff invites (excluding owner accounts).
@@ -8332,7 +8991,7 @@ export default function OwnerApp() {
                     <span className="role-badge kitchen" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
                       <ChefHat size={12} /> KITCHEN
                     </span>
-                    <span style={{ fontSize: '11px', fontWeight: '800', color: '#c2410c' }}>Back-of-House</span>
+                    <span style={{ fontSize: '11px', fontWeight: '800', color: '#16A579' }}>Back-of-House</span>
                   </div>
                   <p className="role-scope-desc">
                     Kitchen Display System (KDS). Real-time ticket board, item prep checklists, cooking to served lifecycle.
@@ -8445,7 +9104,7 @@ export default function OwnerApp() {
                               </div>
                               <div>
                                 <b style={{ display: 'block', fontSize: '13.5px', color: 'var(--text-dark, #1e1611)' }}>
-                                  {member.name} {isSelf && <span style={{ fontSize: '11px', color: '#ea7a33', fontWeight: '700' }}>(You)</span>}
+                                  {member.name} {isSelf && <span style={{ fontSize: '11px', color: '#176B50', fontWeight: '700' }}>(You)</span>}
                                 </b>
                                 <small style={{ color: 'var(--text-muted, #7d736b)', fontSize: '12px' }}>{member.email}</small>
                               </div>
@@ -8460,7 +9119,7 @@ export default function OwnerApp() {
                             <div style={{ fontSize: '12.5px', color: '#334155' }}>
                               {member.phone ? (
                                 <a href={`tel:${member.phone}`} style={{ color: 'inherit', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                  <Phone size={12} style={{ color: '#ea7a33' }} /> {member.phone}
+                                  <Phone size={12} style={{ color: '#176B50' }} /> {member.phone}
                                 </a>
                               ) : (
                                 <span style={{ color: 'var(--text-muted)' }}>—</span>
@@ -8491,7 +9150,7 @@ export default function OwnerApp() {
                                   title={member.status === 'active' ? 'Deactivate account' : 'Activate account'}
                                   onClick={() => handleToggleStaffStatus(member)}
                                 >
-                                  <Power size={13} style={{ color: member.status === 'active' ? '#ea580c' : '#10b981' }} />
+                                  <Power size={13} style={{ color: member.status === 'active' ? '#E66B67' : '#16A579' }} />
                                   <span>{member.status === 'active' ? 'Deactivate' : 'Activate'}</span>
                                 </button>
                               )}
@@ -8545,7 +9204,7 @@ export default function OwnerApp() {
             <div className="crm-orders-header-card">
               <div className="crm-orders-header-left">
                 <div className="crm-orders-brand-emblem">
-                  <Sliders size={24} style={{ color: '#ea7a33' }} />
+                  <Sliders size={24} style={{ color: '#DCEFE4' }} />
                 </div>
                 <div className="crm-orders-brand-info">
                   <div className="crm-orders-title-row">
@@ -8778,7 +9437,7 @@ export default function OwnerApp() {
                                       {cand.customerName}
                                     </b>
                                     <small style={{ color: 'var(--text-muted, #7d736b)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                      <Phone size={11} style={{ color: '#ea7a33' }} /> {cand.customerPhone}
+                                      <Phone size={11} style={{ color: '#176B50' }} /> {cand.customerPhone}
                                     </small>
                                   </div>
                                 </div>
@@ -9053,7 +9712,7 @@ export default function OwnerApp() {
             <div className="crm-orders-header-card">
               <div className="crm-orders-header-left">
                 <div className="crm-orders-brand-emblem">
-                  <Star size={24} style={{ color: '#ea7a33' }} />
+                  <Star size={24} style={{ color: '#DCEFE4' }} />
                 </div>
                 <div className="crm-orders-brand-info">
                   <div className="crm-orders-title-row">
@@ -9098,7 +9757,7 @@ export default function OwnerApp() {
             <div className="crm-orders-metrics-grid">
               <div className="crm-orders-stat-card">
                 <div className="crm-stat-icon-wrap warm-orange">
-                  <Star size={22} fill="#ea7a33" color="#ea7a33" />
+                  <Star size={22} fill="#F59E0B" color="#F59E0B" />
                 </div>
                 <div className="crm-stat-content">
                   <span className="crm-stat-label">Average Star Rating</span>
@@ -9111,8 +9770,8 @@ export default function OwnerApp() {
                       <Star
                         key={s}
                         size={12}
-                        fill={s <= Math.round(Number(feedbackStats?.averageRating || 5)) ? '#ea7a33' : 'none'}
-                        stroke="#ea7a33"
+                        fill={s <= Math.round(Number(feedbackStats?.averageRating || 5)) ? '#F59E0B' : 'none'}
+                        stroke="#F59E0B"
                       />
                     ))}
                   </div>
@@ -9466,7 +10125,7 @@ export default function OwnerApp() {
             <div className="crm-orders-header-card">
               <div className="crm-orders-header-left">
                 <div className="crm-orders-brand-emblem">
-                  <QrCode size={24} style={{ color: '#ea7a33' }} />
+                  <QrCode size={24} style={{ color: '#DCEFE4' }} />
                 </div>
                 <div className="crm-orders-brand-info">
                   <div className="crm-orders-title-row">
@@ -9687,8 +10346,8 @@ export default function OwnerApp() {
                           className={`contrast-btn ${qrKitContrastMode === 'brand' ? 'active' : ''}`}
                           onClick={() => setQrKitContrastMode('brand')}
                         >
-                          <span className="contrast-dot" style={{ backgroundColor: data?.cafe?.brandColor || '#ea7a33' }} />
-                          <span>Brand Accent ({data?.cafe?.brandColor || '#ea7a33'})</span>
+                          <span className="contrast-dot" style={{ backgroundColor: data?.cafe?.brandColor || '#176B50' }} />
+                          <span>Brand Accent ({data?.cafe?.brandColor || '#176B50'})</span>
                         </button>
                         <button
                           type="button"
@@ -9749,7 +10408,7 @@ export default function OwnerApp() {
                       <div
                         className="standee-header-stripe"
                         style={{
-                          backgroundColor: qrKitContrastMode === 'brand' ? (data?.cafe?.brandColor || '#ea7a33') : '#18181b'
+                          backgroundColor: qrKitContrastMode === 'brand' ? (data?.cafe?.brandColor || '#176B50') : '#18181b'
                         }}
                       >
                         <Coffee size={18} className="standee-logo-icon" />
@@ -9763,9 +10422,9 @@ export default function OwnerApp() {
                         <div
                           className="standee-table-badge"
                           style={{
-                            color: qrKitContrastMode === 'brand' ? (data?.cafe?.brandColor || '#ea7a33') : '#18181b',
-                            borderColor: qrKitContrastMode === 'brand' ? `${data?.cafe?.brandColor || '#ea7a33'}44` : '#d1d5db',
-                            backgroundColor: qrKitContrastMode === 'brand' ? `${data?.cafe?.brandColor || '#ea7a33'}11` : '#f3f4f6'
+                            color: qrKitContrastMode === 'brand' ? (data?.cafe?.brandColor || '#176B50') : '#18181b',
+                            borderColor: qrKitContrastMode === 'brand' ? `${data?.cafe?.brandColor || '#176B50'}44` : '#d1d5db',
+                            backgroundColor: qrKitContrastMode === 'brand' ? `${data?.cafe?.brandColor || '#176B50'}11` : '#f3f4f6'
                           }}
                         >
                           <span>TABLE {String(qrKitPreviewTableIndex).padStart(2, '0')}</span>
@@ -9784,7 +10443,7 @@ export default function OwnerApp() {
                             size={180}
                             level="H"
                             includeMargin={true}
-                            fgColor={qrKitContrastMode === 'brand' ? (data?.cafe?.brandColor || '#ea7a33') : '#111827'}
+                            fgColor={qrKitContrastMode === 'brand' ? (data?.cafe?.brandColor || '#176B50') : '#111827'}
                           />
                         </div>
 
@@ -9903,7 +10562,7 @@ export default function OwnerApp() {
                     <div
                       className="print-card-header"
                       style={{
-                        backgroundColor: qrKitContrastMode === 'brand' ? (data?.cafe?.brandColor || '#ea7a33') : '#111827'
+                        backgroundColor: qrKitContrastMode === 'brand' ? (data?.cafe?.brandColor || '#176B50') : '#111827'
                       }}
                     >
                       <Coffee size={24} className="print-header-icon" />
@@ -9915,8 +10574,8 @@ export default function OwnerApp() {
                       <div
                         className="print-table-badge"
                         style={{
-                          borderColor: qrKitContrastMode === 'brand' ? (data?.cafe?.brandColor || '#ea7a33') : '#111827',
-                          color: qrKitContrastMode === 'brand' ? (data?.cafe?.brandColor || '#ea7a33') : '#111827'
+                          borderColor: qrKitContrastMode === 'brand' ? (data?.cafe?.brandColor || '#176B50') : '#111827',
+                          color: qrKitContrastMode === 'brand' ? (data?.cafe?.brandColor || '#176B50') : '#111827'
                         }}
                       >
                         TABLE {String(tNum).padStart(2, '0')}
@@ -9932,7 +10591,7 @@ export default function OwnerApp() {
                           size={240}
                           level="H"
                           includeMargin={true}
-                          fgColor={qrKitContrastMode === 'brand' ? (data?.cafe?.brandColor || '#ea7a33') : '#111827'}
+                          fgColor={qrKitContrastMode === 'brand' ? (data?.cafe?.brandColor || '#176B50') : '#111827'}
                         />
                       </div>
 
@@ -9989,7 +10648,7 @@ export default function OwnerApp() {
             <div className="crm-orders-header-card">
               <div className="crm-orders-header-left">
                 <div className="crm-orders-brand-emblem">
-                  <ShieldCheck size={24} style={{ color: '#ea7a33' }} />
+                  <ShieldCheck size={24} style={{ color: '#DCEFE4' }} />
                 </div>
                 <div className="crm-orders-brand-info">
                   <div className="crm-orders-title-row">
@@ -10219,7 +10878,7 @@ export default function OwnerApp() {
             <div className="crm-table-container">
               {loadingAudit ? (
                 <div className="audit-loading-wrap" style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                  <RefreshCw size={28} className="loader-logo-spin" style={{ color: '#ea7a33', margin: '0 auto 12px' }} />
+                  <RefreshCw size={28} className="loader-logo-spin" style={{ color: '#176B50', margin: '0 auto 12px' }} />
                   <div>Loading audit log entries…</div>
                 </div>
               ) : auditLogs.length === 0 ? (
@@ -10448,7 +11107,7 @@ export default function OwnerApp() {
                         </div>
                       )}
                       {li.notes && (
-                        <div style={{ marginLeft: 20, fontSize: 11, fontStyle: 'italic', color: '#EA7A33' }}>
+                        <div style={{ marginLeft: 20, fontSize: 11, fontStyle: 'italic', color: '#176B50' }}>
                           Note: {li.notes}
                         </div>
                       )}
@@ -10827,6 +11486,38 @@ export default function OwnerApp() {
               {/* Tab 2: Rewards & Passes */}
               {customerDrawerTab === 'rewards' && (
                 <div className="crm-tab-content-scroll">
+                  <div className="crm-orders-action-strip">
+                    <div className="crm-orders-strip-info">
+                      <span className="crm-orders-strip-title">Customer Rewards & Vouchers</span>
+                      <small className="crm-orders-strip-sub">
+                        {customerDetail?.rewards?.length || 0} total voucher(s) • {(customerDetail?.rewards || []).filter(r => (r.status === 'available' || r.status === 'claimed') && (!r.expiresAt || new Date(r.expiresAt) > new Date())).length} ready to redeem
+                      </small>
+                    </div>
+                    {(isOwner || isManager || isCashier) && (
+                      <button
+                        type="button"
+                        className="crm-add-order-btn"
+                        onClick={() => {
+                          setVoucherAmount(250);
+                          setVoucherValidityDays(30);
+                          setVoucherReason('Birthday Perk');
+                          setVoucherCustomReason('');
+                          setIssueVoucherModalOpen(true);
+                        }}
+                      >
+                        <Plus size={14} />
+                        <span>+ Issue Voucher</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {voucherSuccessToast && (
+                    <div className="crm-voucher-success-toast">
+                      <CheckCircle2 size={16} color="#16a34a" />
+                      <span>{voucherSuccessToast}</span>
+                    </div>
+                  )}
+
                   {loadingCustomerDetail ? (
                     <div className="crm-loading-state">
                       <RefreshCw size={24} className="spin" />
@@ -10836,7 +11527,24 @@ export default function OwnerApp() {
                     <div className="crm-empty-state">
                       <Gift size={36} />
                       <h4>No vouchers unlocked yet</h4>
-                      <p>Loyalty vouchers unlocked by completing stamp milestones will appear here.</p>
+                      <p>Vouchers earned via loyalty stamp milestones or issued manually will appear here.</p>
+                      {(isOwner || isManager || isCashier) && (
+                        <button
+                          type="button"
+                          className="crm-btn-primary"
+                          style={{ marginTop: 14 }}
+                          onClick={() => {
+                            setVoucherAmount(250);
+                            setVoucherValidityDays(30);
+                            setVoucherReason('Birthday Perk');
+                            setVoucherCustomReason('');
+                            setIssueVoucherModalOpen(true);
+                          }}
+                        >
+                          <Plus size={15} />
+                          <span>Issue First Voucher</span>
+                        </button>
+                      )}
                     </div>
                   ) : (
                     <div className="crm-rewards-timeline-list">
@@ -11002,7 +11710,7 @@ export default function OwnerApp() {
                     {selectedDinerRewards.length > 0 && (
                       <div className="crm-loyalty-rewards-box">
                         <div className="crm-loyalty-rewards-header">
-                          <Gift size={15} color="#ea580c" />
+                          <Gift size={15} color="#176B50" />
                           <strong>Available Loyalty Perk ({selectedDinerRewards.length})</strong>
                         </div>
                         <select
@@ -11281,7 +11989,7 @@ export default function OwnerApp() {
                                 </div>
                               )}
                               {item.notes && (
-                                <div style={{ fontSize: 11, fontStyle: 'italic', color: '#EA7A33', marginTop: 2 }}>
+                                <div style={{ fontSize: 11, fontStyle: 'italic', color: '#176B50', marginTop: 2 }}>
                                   Note: {item.notes}
                                 </div>
                               )}
@@ -11359,6 +12067,240 @@ export default function OwnerApp() {
                   )}
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* ===================== CRM ISSUE CUSTOM VOUCHER MODAL ===================== */}
+        {issueVoucherModalOpen && selectedCustomer && (
+          <div className="crm-modal-backdrop" onClick={() => setIssueVoucherModalOpen(false)}>
+            <div className="crm-modal-card" style={{ maxWidth: 540 }} onClick={e => e.stopPropagation()}>
+              {/* Modal Header */}
+              <div className="crm-modal-header">
+                <div className="crm-modal-header-left">
+                  <div className="crm-modal-icon-badge" style={{ background: '#F1F7F2', color: '#176B50' }}>
+                    <Gift size={20} />
+                  </div>
+                  <div>
+                    <h3 className="crm-modal-title">Issue Dining Voucher</h3>
+                    <p className="crm-modal-subtitle">
+                      Credit a redeemable discount voucher to {customerDetail?.customer?.name || selectedCustomer?.name} ({customerDetail?.customer?.phone || selectedCustomer?.phone})
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="crm-modal-close-btn"
+                  onClick={() => setIssueVoucherModalOpen(false)}
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <form onSubmit={handleIssueCustomVoucher}>
+                <div className="crm-modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 18, maxHeight: 'calc(85vh - 140px)', overflowY: 'auto', padding: 22 }}>
+                  {/* Preset Amount Chips */}
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: 8 }}>
+                      Voucher Discount Amount (₹) <span style={{ color: '#ef4444' }}>*</span>
+                    </label>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+                      {[100, 250, 500, 1000].map(amt => (
+                        <button
+                          key={amt}
+                          type="button"
+                          className={`crm-quick-step-btn ${voucherAmount === amt ? 'active' : ''}`}
+                          style={{
+                            padding: '7px 14px',
+                            borderRadius: 8,
+                            fontSize: '12.5px',
+                            fontWeight: 700,
+                            border: voucherAmount === amt ? '1.5px solid #176B50' : '1px solid #e5e7eb',
+                            background: voucherAmount === amt ? '#F1F7F2' : '#ffffff',
+                            color: voucherAmount === amt ? '#176B50' : '#374151',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s ease'
+                          }}
+                          onClick={() => setVoucherAmount(amt)}
+                        >
+                          ₹{amt}
+                        </button>
+                      ))}
+                    </div>
+                    <div style={{ position: 'relative' }}>
+                      <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', fontWeight: 800, color: '#6b7280', fontSize: '15px' }}>
+                        ₹
+                      </span>
+                      <input
+                        type="number"
+                        min="1"
+                        max="50000"
+                        required
+                        value={voucherAmount}
+                        onChange={e => setVoucherAmount(Math.max(1, parseInt(e.target.value, 10) || ''))}
+                        placeholder="e.g. 250"
+                        style={{
+                          width: '100%',
+                          padding: '10px 14px 10px 30px',
+                          border: '1.5px solid #d1d5db',
+                          borderRadius: 10,
+                          fontSize: '15px',
+                          fontWeight: 700,
+                          color: '#111827',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+                    <small style={{ fontSize: '11px', color: '#6b7280', marginTop: 4, display: 'block' }}>
+                      Directly deducted from total bill upon redemption at counter or checkout.
+                    </small>
+                  </div>
+
+                  {/* Validity Window */}
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: 8 }}>
+                      Voucher Validity Period
+                    </label>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
+                      {[
+                        { label: '7 Days', days: 7 },
+                        { label: '15 Days', days: 15 },
+                        { label: '30 Days', days: 30 },
+                        { label: '60 Days', days: 60 },
+                        { label: '90 Days', days: 90 },
+                      ].map(opt => (
+                        <button
+                          key={opt.days}
+                          type="button"
+                          style={{
+                            padding: '6px 12px',
+                            borderRadius: 8,
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            border: voucherValidityDays === opt.days ? '1.5px solid #176B50' : '1px solid #e5e7eb',
+                            background: voucherValidityDays === opt.days ? '#F1F7F2' : '#ffffff',
+                            color: voucherValidityDays === opt.days ? '#176B50' : '#4b5563',
+                            cursor: 'pointer'
+                          }}
+                          onClick={() => setVoucherValidityDays(opt.days)}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                    <small style={{ fontSize: '11px', color: '#6b7280' }}>
+                      Expires on: <b>{new Date(Date.now() + (Number(voucherValidityDays) || 30) * 86400000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</b>
+                    </small>
+                  </div>
+
+                  {/* Reason & Staff Note */}
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: 6 }}>
+                      Purpose / Courtesy Reason
+                    </label>
+                    <select
+                      value={voucherReason}
+                      onChange={e => setVoucherReason(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '9px 12px',
+                        border: '1.5px solid #d1d5db',
+                        borderRadius: 10,
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        color: '#1f2937',
+                        background: '#ffffff',
+                        outline: 'none',
+                        marginBottom: voucherReason === 'Custom' ? 8 : 0
+                      }}
+                    >
+                      <option value="Birthday Perk">Birthday Perk / Celebration</option>
+                      <option value="Service Recovery / Apology">Service Recovery / Apology (Food/Delay)</option>
+                      <option value="VIP Guest Courtesy">VIP Guest Courtesy / Regular Dining Perk</option>
+                      <option value="Festival / Seasonal Gift">Festival / Seasonal Special Gift</option>
+                      <option value="Influencer / Tasting Courtesy">Influencer / Food Tasting Courtesy</option>
+                      <option value="Custom">Custom Staff Note…</option>
+                    </select>
+
+                    {voucherReason === 'Custom' && (
+                      <input
+                        type="text"
+                        placeholder="e.g. Compensation for spilled coffee on table #2"
+                        value={voucherCustomReason}
+                        onChange={e => setVoucherCustomReason(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '9px 12px',
+                          border: '1.5px solid #d1d5db',
+                          borderRadius: 8,
+                          fontSize: '12.5px',
+                          outline: 'none'
+                        }}
+                      />
+                    )}
+                  </div>
+
+                  {/* Summary Preview Box */}
+                  <div style={{ background: '#fdfbf7', border: '1.5px solid #fed7aa', borderRadius: 12, padding: '14px 16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700, color: '#9a3412' }}>
+                        Voucher Pass Preview
+                      </span>
+                      <span className="claim-code-pill-sm">Auto CLM-XXXXX</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                      <div>
+                        <div style={{ fontSize: '18px', fontWeight: 800, color: '#176B50' }}>
+                          ₹{Number(voucherAmount || 0).toLocaleString('en-IN')} Dining Voucher
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#6b7280', marginTop: 2 }}>
+                          {voucherReason === 'Custom' ? (voucherCustomReason || 'Custom Voucher') : voucherReason}
+                        </div>
+                      </div>
+                      <span className="status-pill loyalty-member ready" style={{ fontSize: '11px' }}>
+                        READY TO USE
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Modal Footer */}
+                <div className="crm-modal-footer">
+                  <button
+                    type="button"
+                    className="crm-modal-cancel-btn"
+                    onClick={() => setIssueVoucherModalOpen(false)}
+                    disabled={submittingVoucher}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="crm-btn-primary"
+                    disabled={submittingVoucher || !voucherAmount || voucherAmount <= 0}
+                    style={{
+                      padding: '10px 22px',
+                      borderRadius: 10,
+                      fontWeight: 700,
+                      fontSize: '13.5px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {submittingVoucher ? (
+                      <>
+                        <RefreshCw size={15} className="spin" />
+                        <span>Issuing Voucher…</span>
+                      </>
+                    ) : (
+                      <>
+                        <Gift size={16} />
+                        <span>Credit Voucher (₹{Number(voucherAmount || 0).toLocaleString('en-IN')})</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
@@ -12159,7 +13101,7 @@ export default function OwnerApp() {
                   <div className="crm-meta-cell">
                     <span className="crm-meta-label">WhatsApp</span>
                     <span className="crm-meta-val">
-                      <Phone size={12} style={{ color: '#ea7a33' }} /> {dispatchModalCandidate.customerPhone}
+                      <Phone size={12} style={{ color: '#176B50' }} /> {dispatchModalCandidate.customerPhone}
                     </span>
                   </div>
                   <div className="crm-meta-cell">

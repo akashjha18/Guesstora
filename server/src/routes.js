@@ -12,7 +12,7 @@ import { validatePublicOrderPayload } from './security.js';
 import { formatCustomersCSV, formatOrdersCSV, getCafeAnalytics } from './analyticsEngine.js';
 import { broadcastEvent, eventBus, subscribeClient } from './eventBus.js';
 import { normalizeOrderLineItems } from './modifiers.js';
-import { generatePaymentIntent, verifyPaymentTransaction } from './payments.js';
+import { generatePaymentIntent, getVerifiedPaymentWebhook, isDemoPaymentsEnabled, verifyPaymentTransaction, verifyPaymentWebhook } from './payments.js';
 import { calculateDiscount, calculateEqualBillSplit, calculateShiftSummary, formatZReportText } from './shifts.js';
 import shiftsRouter from './routes/shifts.routes.js';
 import billOpsRouter from './routes/billOps.routes.js';
@@ -734,8 +734,9 @@ router.post('/public/cafes/:slug/orders', async (req, res) => {
       const subtotal = normalizedItems.reduce((s, i) => s + i.price * i.quantity, 0);
       const total = Math.max(0, subtotal - discount);
       const rawMethod = String(orderPayload.paymentMethod || 'cash').toLowerCase();
-      const validMethod = ['demo_online', 'upi', 'razorpay', 'stripe', 'cash'].includes(rawMethod) ? rawMethod : 'cash';
-      const isPaid = orderPayload.paymentStatus === 'paid' || validMethod === 'demo_online' || (Boolean(orderPayload.paymentTransactionId) && ['upi', 'razorpay', 'stripe'].includes(validMethod));
+      const validMethod = (rawMethod !== 'demo_online' || isDemoPaymentsEnabled()) &&
+        ['demo_online', 'upi', 'razorpay', 'stripe', 'cash'].includes(rawMethod) ? rawMethod : 'cash';
+      const isPaid = validMethod === 'demo_online' && isDemoPaymentsEnabled();
       const paymentStatus = isPaid ? 'paid' : 'pending';
 
       const activeShift = await RegisterShift.findOne({
@@ -751,8 +752,8 @@ router.post('/public/cafes/:slug/orders', async (req, res) => {
         rewardId,
         paymentMethod: validMethod,
         paymentStatus,
-        paymentTransactionId: orderPayload.paymentTransactionId || null,
-        paymentGatewayMeta: orderPayload.paymentGatewayMeta || null,
+        paymentTransactionId: null,
+        paymentGatewayMeta: null,
       }, { transaction: t });
       await OrderItem.bulkCreate(normalizedItems.map(i => ({
         orderId: created.id,
@@ -816,7 +817,14 @@ router.post('/public/cafes/:slug/orders/:id/payment-intent', async (req, res) =>
     if (!order) return res.status(404).json({ message: 'Order not found.' });
 
     const gateway = String(req.body.gateway || order.paymentMethod || 'upi').toLowerCase();
-    const intent = generatePaymentIntent({ order, gateway, cafe });
+    const intent = await generatePaymentIntent({ order, gateway, cafe });
+    order.paymentMethod = intent.gateway;
+    order.paymentGatewayMeta = intent.gateway === 'razorpay'
+      ? { providerOrderId: intent.razorpayOrderId }
+      : intent.gateway === 'stripe'
+        ? { providerPaymentIntentId: intent.paymentIntentId }
+        : null;
+    await order.save();
     return res.json(intent);
   } catch (error) {
     return res.status(400).json({ message: error.message || 'Failed to generate payment intent.' });
@@ -834,8 +842,8 @@ router.post('/public/cafes/:slug/orders/:id/confirm-payment', async (req, res) =
     });
     if (!order) return res.status(404).json({ message: 'Order not found.' });
 
-    const { gateway = 'upi', transactionId, meta = {} } = req.body;
-    const verification = verifyPaymentTransaction({ gateway, transactionId, meta });
+    const { gateway = order.paymentMethod, transactionId, meta = {} } = req.body;
+    const verification = await verifyPaymentTransaction({ gateway, transactionId, meta, order, cafe });
     if (!verification.success) {
       return res.status(400).json({ message: verification.error || 'Payment verification failed.' });
     }
@@ -843,7 +851,7 @@ router.post('/public/cafes/:slug/orders/:id/confirm-payment', async (req, res) =
     order.paymentStatus = 'paid';
     order.paymentMethod = verification.gateway;
     order.paymentTransactionId = verification.transactionId;
-    order.paymentGatewayMeta = verification.meta;
+    order.paymentGatewayMeta = { ...order.paymentGatewayMeta, ...verification.meta };
     await order.save();
 
     if (order.status === 'completed') {
@@ -865,28 +873,57 @@ router.post('/public/cafes/:slug/orders/:id/confirm-payment', async (req, res) =
 
 router.post('/webhooks/payments', async (req, res) => {
   try {
-    const { event, payload } = req.body || {};
-    const orderId = payload?.payment?.entity?.notes?.orderId || payload?.orderId || payload?.data?.object?.metadata?.orderId;
-    const txnId = payload?.payment?.entity?.id || payload?.id || payload?.data?.object?.id;
+    const razorpaySignature = req.headers['x-razorpay-signature'];
+    const stripeSignature = req.headers['stripe-signature'];
+    const provider = razorpaySignature ? 'razorpay' : stripeSignature ? 'stripe' : null;
+    const signature = razorpaySignature || stripeSignature;
+    const secret = provider === 'razorpay'
+      ? process.env.RAZORPAY_WEBHOOK_SECRET
+      : provider === 'stripe'
+        ? process.env.STRIPE_WEBHOOK_SECRET
+        : '';
+    if (!provider || !verifyPaymentWebhook({ provider, rawBody: req.rawBody, signature, secret })) {
+      return res.status(400).json({ message: 'Payment webhook signature is invalid or not configured.' });
+    }
 
-    if (orderId) {
-      const order = await Order.findByPk(orderId);
-      if (order && order.paymentStatus !== 'paid') {
-        order.paymentStatus = 'paid';
-        if (txnId) order.paymentTransactionId = txnId;
-        order.paymentGatewayMeta = { webhookEvent: event, receivedAt: new Date().toISOString() };
-        await order.save();
+    const verifiedPayment = getVerifiedPaymentWebhook({ provider, payload: req.body });
+    if (!verifiedPayment) return res.status(400).json({ message: 'Unsupported or unsuccessful payment event.' });
 
-        if (order.status === 'completed') {
-          await processLoyalty(order).catch(() => {});
-        }
-        broadcastEvent(order.cafeId, 'order_updated', serializeOrder(order));
+    const order = await Order.findByPk(verifiedPayment.orderId);
+    if (!order) return res.status(404).json({ message: 'Payment order not found.' });
+    const cafe = await Cafe.findByPk(order.cafeId);
+    if (!cafe) return res.status(404).json({ message: 'Payment café not found.' });
+    const expectedCurrency = String(cafe.currency || 'INR').toUpperCase();
+    const expectedProviderOrderId = provider === 'razorpay'
+      ? order.paymentGatewayMeta?.providerOrderId
+      : order.paymentGatewayMeta?.providerPaymentIntentId;
+    if (order.paymentMethod !== provider || !expectedProviderOrderId ||
+        verifiedPayment.providerOrderId !== expectedProviderOrderId ||
+        verifiedPayment.amountMinor !== Math.round(Number(order.total) * 100) ||
+        verifiedPayment.currency !== expectedCurrency) {
+      return res.status(400).json({ message: 'Payment provider, reference, amount, or currency does not match the order.' });
+    }
+
+    if (order.paymentStatus !== 'paid') {
+      order.paymentStatus = 'paid';
+      order.paymentMethod = provider;
+      order.paymentTransactionId = verifiedPayment.transactionId;
+      order.paymentGatewayMeta = {
+        ...order.paymentGatewayMeta,
+        webhookEvent: verifiedPayment.event,
+        verifiedAt: new Date().toISOString(),
+      };
+      await order.save();
+
+      if (order.status === 'completed') {
+        await processLoyalty(order).catch(err => console.warn('Loyalty notice on payment webhook:', err.message));
       }
+      broadcastEvent(order.cafeId, 'order_updated', serializeOrder(order));
     }
     return res.json({ received: true });
   } catch (err) {
     console.warn('Webhook error:', err.message);
-    return res.status(200).json({ received: true });
+    return res.status(500).json({ message: 'Payment webhook processing failed.' });
   }
 });
 
@@ -1111,6 +1148,57 @@ router.patch('/owner/customers/:id', async (req, res) => {
   });
 });
 
+// POST /owner/customers/:id/issue-voucher - Manually issue custom voucher in CRM
+router.post('/owner/customers/:id/issue-voucher', requireRole('owner', 'manager', 'cashier'), async (req, res) => {
+  try {
+    const customer = await Customer.findOne({
+      where: { id: req.params.id, cafeId: req.auth.cafe },
+    });
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found.' });
+    }
+
+    const amount = Math.max(1, Math.round(Number(req.body.amount) || 0));
+    if (!amount || isNaN(amount)) {
+      return res.status(400).json({ message: 'A valid voucher discount amount is required.' });
+    }
+
+    const cafe = await Cafe.findByPk(req.auth.cafe);
+    const validityDays = Math.max(1, Math.round(Number(req.body.validityDays) || cafe?.loyaltyValidityDays || 30));
+    const expiresAt = new Date(Date.now() + validityDays * 86400000);
+    const notes = String(req.body.notes || 'Manually issued in CRM').trim();
+
+    const claimCode = generateClaimCode();
+
+    const reward = await customer.createReward({
+      amount,
+      claimCode,
+      status: 'available',
+      expiresAt,
+      cafeId: req.auth.cafe,
+      notes,
+    });
+
+    if (AuditLog && AuditLog.create) {
+      await AuditLog.create({
+        cafeId: req.auth.cafe,
+        userId: req.auth.id || req.auth.userId,
+        action: 'ISSUE_CUSTOMER_VOUCHER',
+        details: `Issued ₹${amount} voucher (${claimCode}) to customer ${customer.name || customer.phone}. Reason: ${notes}`,
+      }).catch(() => {});
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: `Successfully issued ₹${amount} voucher (${claimCode}) to ${customer.name || 'customer'}.`,
+      reward: serializeReward(reward),
+    });
+  } catch (err) {
+    console.error('Error issuing custom voucher:', err);
+    return res.status(500).json({ message: err.message || 'Failed to issue voucher.' });
+  }
+});
+
 router.post('/owner/orders', requireRole('owner', 'manager', 'cashier'), async (req, res) => {
   try {
     const cafe = await Cafe.findByPk(req.auth.cafe, {
@@ -1163,7 +1251,7 @@ router.post('/owner/orders', requireRole('owner', 'manager', 'cashier'), async (
     let discount = 0;
     let rewardId = null;
 
-    const paymentMethod = req.body.paymentMethod === 'demo_online' ? 'demo_online' : 'cash';
+    const paymentMethod = req.body.paymentMethod === 'demo_online' && isDemoPaymentsEnabled() ? 'demo_online' : 'cash';
     const paymentStatus = req.body.paymentStatus === 'pending' ? 'pending' : 'paid';
     const status = ['placed', 'accepted', 'preparing', 'ready', 'completed'].includes(req.body.status)
       ? req.body.status

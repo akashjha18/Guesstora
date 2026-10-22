@@ -797,3 +797,6 @@ export async function seed() {
   await ensureSeedData();
 }
 
+export function shouldSeedDemoData(env = process.env) {
+  return env.NODE_ENV !== 'production' && String(env.SEED_DEMO_DATA).toLowerCase() !== 'false';
+}

@@ -71,3 +71,32 @@ test('serializeCustomerCRM handles diner with zero orders gracefully', () => {
   assert.equal(crm.activeRewardsCount, 0);
   assert.deepEqual(crm.progress, { visits: 0, required: 8, remaining: 8 });
 });
+
+test('serializeCustomerCRM correctly counts manually issued vouchers in activeRewardsCount', () => {
+  const mockCustomerWithIssuedVoucher = {
+    id: 'cust-3',
+    name: 'VIP Priyanshu',
+    phone: '9988776655',
+    visits: 2,
+    createdAt: new Date('2026-03-01T10:00:00Z'),
+    orders: [],
+    rewards: [
+      {
+        id: 'r-manual-1',
+        amount: 250,
+        claimCode: 'CLM-VIP01',
+        status: 'available',
+        notes: 'Birthday courtesy perk',
+        expiresAt: new Date(Date.now() + 15 * 86400000), // 15 days out
+        createdAt: new Date(),
+      },
+    ],
+  };
+
+  const crm = serializeCustomerCRM(mockCustomerWithIssuedVoucher, 8);
+  assert.equal(crm.activeRewardsCount, 1);
+  assert.equal(crm.rewards[0].amount, 250);
+  assert.equal(crm.rewards[0].claimCode, 'CLM-VIP01');
+  assert.equal(crm.rewards[0].notes, 'Birthday courtesy perk');
+  assert.equal(crm.rewards[0].status, 'available');
+});

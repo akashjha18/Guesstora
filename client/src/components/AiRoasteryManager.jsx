@@ -104,7 +104,7 @@ export default function AiRoasteryManager({ cafe, token }) {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch(`${BASE}/api/owner/ai-roastery/menu-matrix`, { headers: authHeaders });
+      const res = await fetch(`${BASE}/owner/ai-roastery/menu-matrix`, { headers: authHeaders });
       if (!res.ok) throw new Error('Failed to load menu matrix analysis');
       const data = await res.json();
       setMenuMatrix(data);
@@ -134,7 +134,7 @@ export default function AiRoasteryManager({ cafe, token }) {
         newPrice: Number(newPrice),
       }));
 
-      const res = await fetch(`${BASE}/api/owner/ai-roastery/menu-matrix/simulate`, {
+      const res = await fetch(`${BASE}/owner/ai-roastery/menu-matrix/simulate`, {
         method: 'POST',
         headers: authHeaders,
         body: JSON.stringify({
@@ -153,7 +153,7 @@ export default function AiRoasteryManager({ cafe, token }) {
   async function applySinglePrice(menuItemId, newPrice) {
     try {
       setLoading(true);
-      const res = await fetch(`${BASE}/api/owner/menu/${menuItemId}`, {
+      const res = await fetch(`${BASE}/owner/menu/${menuItemId}`, {
         method: 'PATCH',
         headers: authHeaders,
         body: JSON.stringify({ price: Number(newPrice) }),
@@ -179,7 +179,7 @@ export default function AiRoasteryManager({ cafe, token }) {
       const weatherVal = customWeather || weatherCondition;
       const holidayVal = customHoliday !== undefined ? customHoliday : isHoliday;
 
-      const url = `${BASE}/api/owner/ai-roastery/prep-forecast?targetDate=${dateVal}&weatherCondition=${encodeURIComponent(weatherVal)}&isHoliday=${holidayVal}`;
+      const url = `${BASE}/owner/ai-roastery/prep-forecast?targetDate=${dateVal}&weatherCondition=${encodeURIComponent(weatherVal)}&isHoliday=${holidayVal}`;
       const res = await fetch(url, { headers: authHeaders });
       if (!res.ok) throw new Error('Failed to fetch prep forecast');
       const data = await res.json();
@@ -194,7 +194,7 @@ export default function AiRoasteryManager({ cafe, token }) {
   async function acknowledgePrepForecast() {
     try {
       setLoading(true);
-      const res = await fetch(`${BASE}/api/owner/ai-roastery/prep-forecast/acknowledge`, {
+      const res = await fetch(`${BASE}/owner/ai-roastery/prep-forecast/acknowledge`, {
         method: 'POST',
         headers: authHeaders,
         body: JSON.stringify({
@@ -219,7 +219,7 @@ export default function AiRoasteryManager({ cafe, token }) {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch(`${BASE}/api/owner/ai-roastery/affinity-rules`, { headers: authHeaders });
+      const res = await fetch(`${BASE}/owner/ai-roastery/affinity-rules`, { headers: authHeaders });
       if (!res.ok) throw new Error('Failed to fetch affinity rules');
       const data = await res.json();
       setAffinityRules(data.rules || []);
@@ -240,7 +240,7 @@ export default function AiRoasteryManager({ cafe, token }) {
     try {
       setMiningLoading(true);
       setError(null);
-      const res = await fetch(`${BASE}/api/owner/ai-roastery/affinity-rules/mine`, {
+      const res = await fetch(`${BASE}/owner/ai-roastery/affinity-rules/mine`, {
         method: 'POST',
         headers: authHeaders,
         body: JSON.stringify({ minSupport: 0.01, minConfidence: 0.2 }),
@@ -258,7 +258,7 @@ export default function AiRoasteryManager({ cafe, token }) {
 
   async function toggleRuleActive(ruleId, currentStatus) {
     try {
-      const res = await fetch(`${BASE}/api/owner/ai-roastery/affinity-rules/${ruleId}`, {
+      const res = await fetch(`${BASE}/owner/ai-roastery/affinity-rules/${ruleId}`, {
         method: 'PATCH',
         headers: authHeaders,
         body: JSON.stringify({ isActive: !currentStatus }),
@@ -274,7 +274,7 @@ export default function AiRoasteryManager({ cafe, token }) {
   async function fetchLiveUpsellPreview(itemId) {
     if (!itemId) return;
     try {
-      const res = await fetch(`${BASE}/api/ai-roastery/upsell?cafeId=${cafe?.id || ''}&itemIds=${itemId}&limit=3`);
+      const res = await fetch(`${BASE}/ai-roastery/upsell?cafeId=${cafe?.id || ''}&itemIds=${itemId}&limit=3`);
       if (!res.ok) return;
       const data = await res.json();
       setLiveUpsellSuggestions(data.suggestions || []);
@@ -291,8 +291,8 @@ export default function AiRoasteryManager({ cafe, token }) {
       setLoading(true);
       setError(null);
       const [rfmRes, campRes] = await Promise.all([
-        fetch(`${BASE}/api/owner/ai-roastery/rfm-segments`, { headers: authHeaders }),
-        fetch(`${BASE}/api/owner/ai-roastery/campaigns`, { headers: authHeaders }),
+        fetch(`${BASE}/owner/ai-roastery/rfm-segments`, { headers: authHeaders }),
+        fetch(`${BASE}/owner/ai-roastery/campaigns`, { headers: authHeaders }),
       ]);
 
       if (rfmRes.ok) {
@@ -315,7 +315,7 @@ export default function AiRoasteryManager({ cafe, token }) {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch(`${BASE}/api/owner/ai-roastery/campaigns`, {
+      const res = await fetch(`${BASE}/owner/ai-roastery/campaigns`, {
         method: 'POST',
         headers: authHeaders,
         body: JSON.stringify(campaignForm),
@@ -335,7 +335,7 @@ export default function AiRoasteryManager({ cafe, token }) {
   async function handleLaunchBroadcast(campaignId) {
     try {
       setSendingBroadcastId(campaignId);
-      const res = await fetch(`${BASE}/api/owner/ai-roastery/campaigns/${campaignId}/send`, {
+      const res = await fetch(`${BASE}/owner/ai-roastery/campaigns/${campaignId}/send`, {
         method: 'POST',
         headers: authHeaders,
       });
@@ -352,7 +352,7 @@ export default function AiRoasteryManager({ cafe, token }) {
 
   async function viewCampaignDetails(campaignId) {
     try {
-      const res = await fetch(`${BASE}/api/owner/ai-roastery/campaigns/${campaignId}`, { headers: authHeaders });
+      const res = await fetch(`${BASE}/owner/ai-roastery/campaigns/${campaignId}`, { headers: authHeaders });
       if (!res.ok) throw new Error('Failed to fetch campaign details');
       const data = await res.json();
       setSelectedCampaignDetails(data.campaign);
@@ -369,40 +369,29 @@ export default function AiRoasteryManager({ cafe, token }) {
   }, [menuMatrix, matrixFilter]);
 
   return (
-    <div className="ai-roastery-container" style={{ color: '#f5efe6' }}>
+    <div className="ai-roastery-container" style={{ color: '#111827' }}>
       {/* ====================================================================
           TOP BANNER / HEADER
           ==================================================================== */}
       <div
+        className="ai-roastery-header"
         style={{
-          background: 'linear-gradient(135deg, rgba(34, 25, 21, 0.95), rgba(26, 20, 18, 0.98))',
-          border: '1px solid #3d2a23',
+          background: '#ffffff',
+          border: '1px solid #e5e7eb',
           borderRadius: '16px',
           padding: '24px 28px',
           marginBottom: '24px',
-          boxShadow: '0 12px 32px rgba(0,0,0,0.4)',
+          boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
           position: 'relative',
           overflow: 'hidden',
         }}
       >
-        <div
-          style={{
-            position: 'absolute',
-            top: '-40px',
-            right: '-40px',
-            width: '200px',
-            height: '200px',
-            background: 'radial-gradient(circle, rgba(234, 122, 51, 0.15) 0%, rgba(234, 122, 51, 0) 70%)',
-            pointerEvents: 'none',
-          }}
-        />
-
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
               <div
                 style={{
-                  background: 'linear-gradient(135deg, #ea7a33, #dc2626)',
+                  background: 'linear-gradient(135deg, #176B50, #047857)',
                   color: '#fff',
                   padding: '6px 12px',
                   borderRadius: '20px',
@@ -415,14 +404,14 @@ export default function AiRoasteryManager({ cafe, token }) {
                 }}
               >
                 <Sparkles size={14} />
-                PHASE 12 BEYOND PETPOOJA
+                AI ROASTERY INTELLIGENCE
               </div>
-              <span style={{ color: '#a89f91', fontSize: '13px' }}>The AI Roastery Operating System</span>
+              <span style={{ color: '#6b7280', fontSize: '13px' }}>Autonomous Roastery & Menu Operating System</span>
             </div>
-            <h1 style={{ fontSize: '26px', fontWeight: '800', margin: 0, color: '#f5efe6' }}>
+            <h1 style={{ fontSize: '26px', fontWeight: '800', margin: 0, color: '#111827' }}>
               Intelligent Roastery & Menu Brain
             </h1>
-            <p style={{ margin: '4px 0 0 0', color: '#a89f91', fontSize: '14px' }}>
+            <p style={{ margin: '4px 0 0 0', color: '#6b7280', fontSize: '14px' }}>
               BCG Menu Matrix, Predictive Prep & Rush Forecasting, Dynamic POS Upselling, and Autonomous Win-Back Agent.
             </p>
           </div>
@@ -437,9 +426,9 @@ export default function AiRoasteryManager({ cafe, token }) {
               }}
               disabled={loading}
               style={{
-                background: '#2d201b',
-                border: '1px solid #4a372f',
-                color: '#f5efe6',
+                background: '#ffffff',
+                border: '1px solid #e5e7eb',
+                color: '#4b5563',
                 padding: '10px 16px',
                 borderRadius: '10px',
                 cursor: 'pointer',
@@ -503,7 +492,7 @@ export default function AiRoasteryManager({ cafe, token }) {
             display: 'flex',
             gap: '8px',
             marginTop: '20px',
-            borderTop: '1px solid #33231c',
+            borderTop: '1px solid #e5e7eb',
             paddingTop: '16px',
             flexWrap: 'wrap',
           }}
@@ -521,11 +510,11 @@ export default function AiRoasteryManager({ cafe, token }) {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 style={{
-                  background: active ? '#ea7a33' : '#221915',
-                  color: active ? '#ffffff' : '#c5bcb0',
-                  border: active ? '1px solid #ea7a33' : '1px solid #3d2a23',
-                  padding: '10px 18px',
-                  borderRadius: '10px',
+                  background: active ? '#176B50' : '#ffffff',
+                  color: active ? '#ffffff' : '#4b5563',
+                  border: active ? '1px solid #176B50' : '1px solid #e5e7eb',
+                  padding: '8px 18px',
+                  borderRadius: '9999px',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -533,7 +522,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                   fontSize: '13px',
                   fontWeight: active ? '700' : '600',
                   transition: 'all 0.2s ease',
-                  boxShadow: active ? '0 4px 12px rgba(234, 122, 51, 0.35)' : 'none',
+                  boxShadow: active ? '0 4px 12px rgba(23, 107, 80, 0.25)' : 'none',
                 }}
               >
                 <Icon size={16} />
@@ -543,8 +532,8 @@ export default function AiRoasteryManager({ cafe, token }) {
                     fontSize: '10px',
                     padding: '2px 6px',
                     borderRadius: '12px',
-                    background: active ? 'rgba(0,0,0,0.25)' : '#33231c',
-                    color: active ? '#fff' : '#ea7a33',
+                    background: active ? 'rgba(255,255,255,0.25)' : '#f3f4f6',
+                    color: active ? '#fff' : '#176B50',
                     fontWeight: '700',
                   }}
                 >
@@ -566,13 +555,13 @@ export default function AiRoasteryManager({ cafe, token }) {
             <div style={cardStyle}>
               <div style={cardHeaderStyle}>
                 <span style={cardLabelStyle}>Menu Health Score</span>
-                <Brain size={18} color="#ea7a33" />
+                <Brain size={18} color="#176B50" />
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
                 <span style={{ fontSize: '32px', fontWeight: '800', color: '#10b981' }}>
                   {menuMatrix?.healthScore || 85}
                 </span>
-                <span style={{ fontSize: '14px', color: '#a89f91' }}>/ 100</span>
+                <span style={{ fontSize: '14px', color: '#6b7280' }}>/ 100</span>
               </div>
               <span style={{ fontSize: '12px', color: '#6ee7b7', marginTop: '4px' }}>
                 High profit density across roastery catalog
@@ -584,10 +573,10 @@ export default function AiRoasteryManager({ cafe, token }) {
                 <span style={cardLabelStyle}>Average Item Margin</span>
                 <DollarSign size={18} color="#10b981" />
               </div>
-              <div style={{ fontSize: '32px', fontWeight: '800', color: '#f5efe6' }}>
+              <div style={{ fontSize: '32px', fontWeight: '800', color: '#111827' }}>
                 ₹{menuMatrix?.averageMargin || 0}
               </div>
-              <span style={{ fontSize: '12px', color: '#a89f91', marginTop: '4px' }}>
+              <span style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
                 Benchmark threshold for Star & Puzzle status
               </span>
             </div>
@@ -597,10 +586,10 @@ export default function AiRoasteryManager({ cafe, token }) {
                 <span style={cardLabelStyle}>Analyzed Items</span>
                 <BarChart3 size={18} color="#38bdf8" />
               </div>
-              <div style={{ fontSize: '32px', fontWeight: '800', color: '#f5efe6' }}>
+              <div style={{ fontSize: '32px', fontWeight: '800', color: '#111827' }}>
                 {menuMatrix?.totalItemsAnalyzed || 0}
               </div>
-              <span style={{ fontSize: '12px', color: '#a89f91', marginTop: '4px' }}>
+              <span style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
                 Avg Vol: {menuMatrix?.averageVolume || 0} units / window
               </span>
             </div>
@@ -644,7 +633,7 @@ export default function AiRoasteryManager({ cafe, token }) {
               style={{
                 ...quadrantCardStyle,
                 borderLeft: '4px solid #10b981',
-                background: matrixFilter === 'star' ? 'rgba(16, 185, 129, 0.12)' : '#221915',
+                background: matrixFilter === 'star' ? 'rgba(16, 185, 129, 0.1)' : '#ffffff',
               }}
               onClick={() => setMatrixFilter(matrixFilter === 'star' ? 'all' : 'star')}
             >
@@ -657,7 +646,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                   {menuMatrix?.starsCount || 0} Items
                 </span>
               </div>
-              <div style={{ fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>High Margin • High Volume</div>
+              <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>High Margin • High Volume</div>
               <div style={{ fontSize: '12px', color: '#d1fae5', lineHeight: '1.4' }}>
                 Core revenue anchors. Protect recipe consistency and give top visual placement on QR menu and Dual CFD.
               </div>
@@ -668,7 +657,7 @@ export default function AiRoasteryManager({ cafe, token }) {
               style={{
                 ...quadrantCardStyle,
                 borderLeft: '4px solid #f59e0b',
-                background: matrixFilter === 'plowhorse' ? 'rgba(245, 158, 11, 0.12)' : '#221915',
+                background: matrixFilter === 'plowhorse' ? 'rgba(245, 158, 11, 0.1)' : '#ffffff',
               }}
               onClick={() => setMatrixFilter(matrixFilter === 'plowhorse' ? 'all' : 'plowhorse')}
             >
@@ -681,7 +670,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                   {menuMatrix?.plowhorsesCount || 0} Items
                 </span>
               </div>
-              <div style={{ fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>Low Margin • High Volume</div>
+              <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>Low Margin • High Volume</div>
               <div style={{ fontSize: '12px', color: '#fef3c7', lineHeight: '1.4' }}>
                 High popularity with profit leak. Ready for +8% to +10% price bump or ingredient cost re-engineering.
               </div>
@@ -692,7 +681,7 @@ export default function AiRoasteryManager({ cafe, token }) {
               style={{
                 ...quadrantCardStyle,
                 borderLeft: '4px solid #a855f7',
-                background: matrixFilter === 'puzzle' ? 'rgba(168, 85, 247, 0.12)' : '#221915',
+                background: matrixFilter === 'puzzle' ? 'rgba(168, 85, 247, 0.1)' : '#ffffff',
               }}
               onClick={() => setMatrixFilter(matrixFilter === 'puzzle' ? 'all' : 'puzzle')}
             >
@@ -705,7 +694,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                   {menuMatrix?.puzzlesCount || 0} Items
                 </span>
               </div>
-              <div style={{ fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>High Margin • Low Volume</div>
+              <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>High Margin • Low Volume</div>
               <div style={{ fontSize: '12px', color: '#f3e8ff', lineHeight: '1.4' }}>
                 High-profit hidden gems. Feature in cashier POS upsell prompts and dynamic combo pairings to lift volume.
               </div>
@@ -716,7 +705,7 @@ export default function AiRoasteryManager({ cafe, token }) {
               style={{
                 ...quadrantCardStyle,
                 borderLeft: '4px solid #ef4444',
-                background: matrixFilter === 'dog' ? 'rgba(239, 68, 68, 0.12)' : '#221915',
+                background: matrixFilter === 'dog' ? 'rgba(239, 68, 68, 0.1)' : '#ffffff',
               }}
               onClick={() => setMatrixFilter(matrixFilter === 'dog' ? 'all' : 'dog')}
             >
@@ -729,7 +718,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                   {menuMatrix?.dogsCount || 0} Items
                 </span>
               </div>
-              <div style={{ fontSize: '12px', color: '#a89f91', marginBottom: '6px' }}>Low Margin • Low Volume</div>
+              <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>Low Margin • Low Volume</div>
               <div style={{ fontSize: '12px', color: '#fee2e2', lineHeight: '1.4' }}>
                 Underperformers adding prep drag. Prime candidates for menu trimming, ingredient cleanup, or recipe revamp.
               </div>
@@ -738,9 +727,9 @@ export default function AiRoasteryManager({ cafe, token }) {
 
           {/* Actionable Insights Panel */}
           {menuMatrix?.actionableInsights?.length > 0 && (
-            <div style={{ background: '#221915', border: '1px solid #3d2a23', borderRadius: '14px', padding: '20px' }}>
+            <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '16px', padding: '20px', boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-                <Sparkles size={18} color="#ea7a33" />
+                <Sparkles size={18} color="#176B50" />
                 <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '700' }}>AI Strategic Recommendations</h3>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
@@ -748,14 +737,14 @@ export default function AiRoasteryManager({ cafe, token }) {
                   <div
                     key={idx}
                     style={{
-                      background: '#1a1412',
-                      border: '1px solid #2d201b',
-                      borderRadius: '10px',
+                      background: '#f8fafc',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '12px',
                       padding: '14px',
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                      <span style={{ fontSize: '13px', fontWeight: '700', color: '#ea7a33' }}>{insight.title}</span>
+                      <span style={{ fontSize: '13px', fontWeight: '700', color: '#176B50' }}>{insight.title}</span>
                       <span
                         style={{
                           fontSize: '10px',
@@ -770,7 +759,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                         {insight.urgency}
                       </span>
                     </div>
-                    <p style={{ margin: 0, fontSize: '12px', color: '#a89f91', lineHeight: '1.4' }}>
+                    <p style={{ margin: 0, fontSize: '12px', color: '#6b7280', lineHeight: '1.4' }}>
                       {insight.description}
                     </p>
                   </div>
@@ -780,14 +769,14 @@ export default function AiRoasteryManager({ cafe, token }) {
           )}
 
           {/* Items Classification Table */}
-          <div style={{ background: '#221915', border: '1px solid #3d2a23', borderRadius: '14px', overflow: 'hidden' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid #33231c', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
               <div>
                 <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '700' }}>
                   Menu Item Profitability Ledger ({filteredMenuItems.length})
                 </h3>
-                <span style={{ fontSize: '12px', color: '#a89f91' }}>
-                  Filtered by: <strong style={{ color: '#ea7a33' }}>{matrixFilter.toUpperCase()}</strong>
+                <span style={{ fontSize: '12px', color: '#6b7280' }}>
+                  Filtered by: <strong style={{ color: '#176B50' }}>{matrixFilter.toUpperCase()}</strong>
                 </span>
               </div>
 
@@ -797,9 +786,9 @@ export default function AiRoasteryManager({ cafe, token }) {
                     key={filterKey}
                     onClick={() => setMatrixFilter(filterKey)}
                     style={{
-                      background: matrixFilter === filterKey ? '#ea7a33' : '#1a1412',
-                      color: matrixFilter === filterKey ? '#fff' : '#a89f91',
-                      border: '1px solid #3d2a23',
+                      background: matrixFilter === filterKey ? '#176B50' : '#ffffff',
+                      color: matrixFilter === filterKey ? '#fff' : '#4b5563',
+                      border: `1px solid ${matrixFilter === filterKey ? '#176B50' : '#e5e7eb'}`,
                       padding: '6px 12px',
                       borderRadius: '8px',
                       fontSize: '12px',
@@ -817,7 +806,7 @@ export default function AiRoasteryManager({ cafe, token }) {
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
                 <thead>
-                  <tr style={{ background: '#1a1412', color: '#a89f91', borderBottom: '1px solid #33231c' }}>
+                  <tr style={{ background: '#f9fafb', color: '#4b5563', borderBottom: '1px solid #e5e7eb' }}>
                     <th style={{ padding: '12px 18px' }}>Menu Item</th>
                     <th style={{ padding: '12px 18px' }}>Category</th>
                     <th style={{ padding: '12px 18px' }}>Price</th>
@@ -835,11 +824,11 @@ export default function AiRoasteryManager({ cafe, token }) {
                     const isPuzzle = item.classification === 'puzzle';
 
                     return (
-                      <tr key={item.menuItemId} style={{ borderBottom: '1px solid #2a1d18' }}>
-                        <td style={{ padding: '12px 18px', fontWeight: '700', color: '#f5efe6' }}>
+                      <tr key={item.menuItemId} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '12px 18px', fontWeight: '700', color: '#111827' }}>
                           {item.name}
                         </td>
-                        <td style={{ padding: '12px 18px', color: '#a89f91' }}>{item.category}</td>
+                        <td style={{ padding: '12px 18px', color: '#6b7280' }}>{item.category}</td>
                         <td style={{ padding: '12px 18px', fontWeight: '600' }}>₹{item.price}</td>
                         <td style={{ padding: '12px 18px', color: '#f87171' }}>₹{item.foodCost}</td>
                         <td style={{ padding: '12px 18px', color: item.marginPercent >= 70 ? '#34d399' : '#fbbf24', fontWeight: '700' }}>
@@ -864,14 +853,14 @@ export default function AiRoasteryManager({ cafe, token }) {
                         <td style={{ padding: '12px 18px' }}>
                           {item.recommendations?.[0] ? (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <span style={{ fontSize: '12px', color: '#c5bcb0' }}>
+                              <span style={{ fontSize: '12px', color: '#4b5563' }}>
                                 {item.recommendations[0].text}
                               </span>
                               {isPlowhorse && item.suggestedPrice && item.suggestedPrice !== item.price && (
                                 <button
                                   onClick={() => applySinglePrice(item.menuItemId, item.suggestedPrice)}
                                   style={{
-                                    background: '#ea7a33',
+                                    background: '#176B50',
                                     color: '#fff',
                                     border: 'none',
                                     padding: '4px 8px',
@@ -912,39 +901,39 @@ export default function AiRoasteryManager({ cafe, token }) {
                   <button onClick={() => setSimulatorOpen(false)} style={closeBtnStyle}>✕</button>
                 </div>
 
-                <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#a89f91' }}>
+                <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#6b7280' }}>
                   Simulate price increases across your Plowhorse and Puzzle items. The AI automatically models demand elasticity (-0.35 elasticity) to project your true net monthly profit gain.
                 </p>
 
                 {/* Simulation Summary Scorecard */}
                 {simulationResult && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '20px' }}>
-                    <div style={{ background: '#1a1412', padding: '14px', borderRadius: '10px', border: '1px solid #33231c' }}>
-                      <span style={{ fontSize: '11px', color: '#a89f91', textTransform: 'uppercase' }}>Projected Revenue</span>
-                      <div style={{ fontSize: '20px', fontWeight: '800', color: '#f5efe6', marginTop: '4px' }}>
+                    <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+                      <span style={{ fontSize: '11px', color: '#6b7280', textTransform: 'uppercase' }}>Projected Revenue</span>
+                      <div style={{ fontSize: '20px', fontWeight: '800', color: '#111827', marginTop: '4px' }}>
                         ₹{simulationResult.simulatedRevenue}
                       </div>
-                      <span style={{ fontSize: '11px', color: simulationResult.revenueDelta >= 0 ? '#34d399' : '#f87171' }}>
+                      <span style={{ fontSize: '11px', color: simulationResult.revenueDelta >= 0 ? '#10b981' : '#ef4444' }}>
                         {simulationResult.revenueDelta >= 0 ? '+' : ''}₹{simulationResult.revenueDelta} delta
                       </span>
                     </div>
 
-                    <div style={{ background: '#1a1412', padding: '14px', borderRadius: '10px', border: '1px solid #33231c' }}>
-                      <span style={{ fontSize: '11px', color: '#a89f91', textTransform: 'uppercase' }}>Projected Net Profit</span>
-                      <div style={{ fontSize: '20px', fontWeight: '800', color: '#10b981', marginTop: '4px' }}>
+                    <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+                      <span style={{ fontSize: '11px', color: '#6b7280', textTransform: 'uppercase' }}>Projected Net Profit</span>
+                      <div style={{ fontSize: '20px', fontWeight: '800', color: '#176B50', marginTop: '4px' }}>
                         ₹{simulationResult.simulatedProfit}
                       </div>
-                      <span style={{ fontSize: '11px', color: '#6ee7b7' }}>
+                      <span style={{ fontSize: '11px', color: '#059669' }}>
                         +{Math.round((simulationResult.profitDelta / (simulationResult.originalProfit || 1)) * 100)}% lift
                       </span>
                     </div>
 
-                    <div style={{ background: '#1a1412', padding: '14px', borderRadius: '10px', border: '1px solid #10b981' }}>
-                      <span style={{ fontSize: '11px', color: '#6ee7b7', textTransform: 'uppercase', fontWeight: '800' }}>Gross Margin Gain</span>
-                      <div style={{ fontSize: '22px', fontWeight: '800', color: '#34d399', marginTop: '4px' }}>
+                    <div style={{ background: '#ecfdf5', padding: '14px', borderRadius: '12px', border: '1px solid #a7f3d0' }}>
+                      <span style={{ fontSize: '11px', color: '#047857', textTransform: 'uppercase', fontWeight: '800' }}>Gross Margin Gain</span>
+                      <div style={{ fontSize: '22px', fontWeight: '800', color: '#176B50', marginTop: '4px' }}>
                         +₹{simulationResult.profitDelta}
                       </div>
-                      <span style={{ fontSize: '11px', color: '#a89f91' }}>Pure bottom-line expansion</span>
+                      <span style={{ fontSize: '11px', color: '#6b7280' }}>Pure bottom-line expansion</span>
                     </div>
                   </div>
                 )}
@@ -959,10 +948,10 @@ export default function AiRoasteryManager({ cafe, token }) {
                         <div
                           key={it.menuItemId}
                           style={{
-                            background: '#1a1412',
+                            background: '#f8fafc',
                             padding: '12px 16px',
-                            borderRadius: '10px',
-                            border: '1px solid #2d201b',
+                            borderRadius: '12px',
+                            border: '1px solid #e5e7eb',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
@@ -984,7 +973,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                                 {it.classification}
                               </span>
                             </div>
-                            <span style={{ fontSize: '12px', color: '#a89f91' }}>
+                            <span style={{ fontSize: '12px', color: '#6b7280' }}>
                               Current: ₹{it.price} | Food Cost: ₹{it.foodCost} | Vol: {it.volume}
                             </span>
                           </div>
@@ -1004,7 +993,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                               style={{ width: '130px', accentColor: '#a855f7' }}
                             />
                             <div style={{ minWidth: '70px', textAlign: 'right' }}>
-                              <span style={{ fontSize: '16px', fontWeight: '800', color: '#f5efe6' }}>
+                              <span style={{ fontSize: '16px', fontWeight: '800', color: '#111827' }}>
                                 ₹{curPrice}
                               </span>
                               <div style={{ fontSize: '10px', color: curPrice > it.price ? '#34d399' : '#a89f91' }}>
@@ -1045,10 +1034,11 @@ export default function AiRoasteryManager({ cafe, token }) {
           {/* Controls Bar */}
           <div
             style={{
-              background: '#221915',
-              border: '1px solid #3d2a23',
-              borderRadius: '14px',
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: '16px',
               padding: '18px 24px',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
@@ -1058,7 +1048,7 @@ export default function AiRoasteryManager({ cafe, token }) {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
               <div>
-                <label style={{ fontSize: '11px', color: '#a89f91', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '11px', color: '#6b7280', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
                   Target Prep Date
                 </label>
                 <input
@@ -1073,7 +1063,7 @@ export default function AiRoasteryManager({ cafe, token }) {
               </div>
 
               <div>
-                <label style={{ fontSize: '11px', color: '#a89f91', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '11px', color: '#6b7280', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
                   Weather Condition Modifier
                 </label>
                 <select
@@ -1093,7 +1083,7 @@ export default function AiRoasteryManager({ cafe, token }) {
               </div>
 
               <div>
-                <label style={{ fontSize: '11px', color: '#a89f91', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '11px', color: '#6b7280', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
                   Holiday / Festival Rush
                 </label>
                 <button
@@ -1103,9 +1093,9 @@ export default function AiRoasteryManager({ cafe, token }) {
                     fetchPrepForecast(targetDate, weatherCondition, nextVal);
                   }}
                   style={{
-                    background: isHoliday ? '#ea7a33' : '#1a1412',
-                    color: isHoliday ? '#fff' : '#a89f91',
-                    border: '1px solid #3d2a23',
+                    background: isHoliday ? '#176B50' : '#ffffff',
+                    color: isHoliday ? '#fff' : '#4b5563',
+                    border: `1px solid ${isHoliday ? '#176B50' : '#e5e7eb'}`,
                     padding: '8px 14px',
                     borderRadius: '8px',
                     fontSize: '12px',
@@ -1138,10 +1128,10 @@ export default function AiRoasteryManager({ cafe, token }) {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
             <div style={cardStyle}>
               <span style={cardLabelStyle}>Expected Day Orders</span>
-              <div style={{ fontSize: '30px', fontWeight: '800', color: '#f5efe6' }}>
+              <div style={{ fontSize: '30px', fontWeight: '800', color: '#111827' }}>
                 {prepForecast?.expectedTotalOrders || 0} Orders
               </div>
-              <span style={{ fontSize: '12px', color: '#a89f91' }}>
+              <span style={{ fontSize: '12px', color: '#6b7280' }}>
                 {prepForecast?.dayOfWeek} Profile
               </span>
             </div>
@@ -1158,10 +1148,10 @@ export default function AiRoasteryManager({ cafe, token }) {
 
             <div style={cardStyle}>
               <span style={cardLabelStyle}>Peak Rush Window</span>
-              <div style={{ fontSize: '26px', fontWeight: '800', color: '#ea7a33' }}>
+              <div style={{ fontSize: '26px', fontWeight: '800', color: '#176B50' }}>
                 08:30 – 10:30 AM
               </div>
-              <span style={{ fontSize: '12px', color: '#a89f91' }}>
+              <span style={{ fontSize: '12px', color: '#6b7280' }}>
                 Morning Caffeine Rush (4 Baristas Recommended)
               </span>
             </div>
@@ -1171,17 +1161,17 @@ export default function AiRoasteryManager({ cafe, token }) {
               <div style={{ fontSize: '24px', fontWeight: '800', color: prepForecast?.status === 'acknowledged' ? '#34d399' : '#fbbf24', textTransform: 'capitalize' }}>
                 {prepForecast?.status || 'Draft'}
               </div>
-              <span style={{ fontSize: '12px', color: '#a89f91' }}>
+              <span style={{ fontSize: '12px', color: '#6b7280' }}>
                 {prepForecast?.acknowledgedBy ? `By ${prepForecast.acknowledgedBy}` : 'Pending barista sign-off'}
               </span>
             </div>
           </div>
 
           {/* Morning Prep Batch Checklist (9 Core Roastery Staples) */}
-          <div style={{ background: '#221915', border: '1px solid #3d2a23', borderRadius: '14px', padding: '20px' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '16px', padding: '20px', boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Coffee size={20} color="#ea7a33" />
+                <Coffee size={20} color="#176B50" />
                 <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '800' }}>
                   Morning Roastery Prep Guide ({prepForecast?.prepRecommendations?.length || 9} Staples)
                 </h3>
@@ -1198,8 +1188,8 @@ export default function AiRoasteryManager({ cafe, token }) {
                   <div
                     key={idx}
                     style={{
-                      background: isChecked ? 'rgba(16, 185, 129, 0.08)' : '#1a1412',
-                      border: isChecked ? '1px solid #10b981' : '1px solid #2d201b',
+                      background: isChecked ? 'rgba(16, 185, 129, 0.08)' : '#f8fafc',
+                      border: isChecked ? '1px solid #10b981' : '1px solid #e5e7eb',
                       borderRadius: '12px',
                       padding: '16px',
                       transition: 'all 0.2s ease',
@@ -1207,10 +1197,10 @@ export default function AiRoasteryManager({ cafe, token }) {
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
                       <div>
-                        <span style={{ fontSize: '11px', color: '#ea7a33', fontWeight: '700', textTransform: 'uppercase' }}>
+                        <span style={{ fontSize: '11px', color: '#176B50', fontWeight: '700', textTransform: 'uppercase' }}>
                           {prep.category}
                         </span>
-                        <h4 style={{ margin: '2px 0 0 0', fontSize: '15px', fontWeight: '700', color: '#f5efe6' }}>
+                        <h4 style={{ margin: '2px 0 0 0', fontSize: '15px', fontWeight: '700', color: '#111827' }}>
                           {prep.itemName}
                         </h4>
                       </div>
@@ -1230,16 +1220,16 @@ export default function AiRoasteryManager({ cafe, token }) {
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', margin: '8px 0' }}>
-                      <span style={{ fontSize: '26px', fontWeight: '800', color: '#f5efe6' }}>
+                      <span style={{ fontSize: '26px', fontWeight: '800', color: '#111827' }}>
                         {prep.suggestedBatchQty}
                       </span>
-                      <span style={{ fontSize: '14px', color: '#a89f91', fontWeight: '600' }}>{prep.unit}</span>
-                      <span style={{ fontSize: '11px', color: '#a89f91', marginLeft: 'auto' }}>
+                      <span style={{ fontSize: '14px', color: '#6b7280', fontWeight: '600' }}>{prep.unit}</span>
+                      <span style={{ fontSize: '11px', color: '#6b7280', marginLeft: 'auto' }}>
                         (Base: {prep.baseAverage} {prep.unit} + {prep.safetyBufferPercent}%)
                       </span>
                     </div>
 
-                    <p style={{ margin: '6px 0 0 0', fontSize: '12px', color: '#a89f91', lineHeight: '1.4' }}>
+                    <p style={{ margin: '6px 0 0 0', fontSize: '12px', color: '#6b7280', lineHeight: '1.4' }}>
                       💡 {prep.notes}
                     </p>
                   </div>
@@ -1249,10 +1239,10 @@ export default function AiRoasteryManager({ cafe, token }) {
           </div>
 
           {/* 24-Hour Hourly Rush Heatmap */}
-          <div style={{ background: '#221915', border: '1px solid #3d2a23', borderRadius: '14px', padding: '20px' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '16px', padding: '20px', boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Clock size={20} color="#ea7a33" />
+                <Clock size={20} color="#176B50" />
                 <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '800' }}>
                   24-Hour Hourly Rush Curve & Staff Allocation
                 </h3>
@@ -1283,15 +1273,15 @@ export default function AiRoasteryManager({ cafe, token }) {
                   <div
                     key={idx}
                     style={{
-                      background: '#1a1412',
-                      border: isRush ? '1px solid #ef4444' : isPeak ? '1px solid #f59e0b' : '1px solid #2d201b',
+                      background: '#f8fafc',
+                      border: isRush ? '1px solid #ef4444' : isPeak ? '1px solid #f59e0b' : '1px solid #e5e7eb',
                       borderRadius: '8px',
                       padding: '10px 6px',
                       textAlign: 'center',
                       minWidth: '55px',
                     }}
                   >
-                    <span style={{ fontSize: '11px', color: '#a89f91', fontWeight: '700', display: 'block' }}>
+                    <span style={{ fontSize: '11px', color: '#6b7280', fontWeight: '700', display: 'block' }}>
                       {slot.label}
                     </span>
 
@@ -1315,19 +1305,20 @@ export default function AiRoasteryManager({ cafe, token }) {
                       />
                     </div>
 
-                    <span style={{ fontSize: '12px', fontWeight: '800', color: '#f5efe6', display: 'block' }}>
+                    <span style={{ fontSize: '12px', fontWeight: '800', color: '#111827', display: 'block' }}>
                       {slot.predictedOrders}
                     </span>
-                    <span style={{ fontSize: '10px', color: '#a89f91', display: 'block' }}>orders</span>
+                    <span style={{ fontSize: '10px', color: '#6b7280', display: 'block' }}>orders</span>
 
                     <div
                       style={{
                         marginTop: '6px',
                         padding: '2px 4px',
                         borderRadius: '4px',
-                        background: '#221915',
+                        background: '#ecfdf5',
                         fontSize: '10px',
-                        color: '#ea7a33',
+                        color: '#047857',
+                        border: '1px solid #a7f3d0',
                         fontWeight: '700',
                       }}
                     >
@@ -1349,10 +1340,11 @@ export default function AiRoasteryManager({ cafe, token }) {
           {/* Header Action Bar */}
           <div
             style={{
-              background: '#221915',
-              border: '1px solid #3d2a23',
-              borderRadius: '14px',
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: '16px',
               padding: '18px 24px',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
@@ -1364,7 +1356,7 @@ export default function AiRoasteryManager({ cafe, token }) {
               <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '800' }}>
                 Market Basket Affinity Rules ({affinityRules.length} Pairs Mined)
               </h3>
-              <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a89f91' }}>
+              <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#6b7280' }}>
                 Apriori association algorithm scans completed orders to surface pairings with Lift &gt; 1.0 for cashiers &amp; QR diners.
               </p>
             </div>
@@ -1387,21 +1379,22 @@ export default function AiRoasteryManager({ cafe, token }) {
           {/* Interactive Live POS Upsell Simulator */}
           <div
             style={{
-              background: 'linear-gradient(135deg, #1f1613, #221915)',
-              border: '1px solid #ea7a33',
-              borderRadius: '14px',
+              background: '#ffffff',
+              border: '1px solid #176B50',
+              borderRadius: '16px',
               padding: '20px',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-              <Zap size={18} color="#ea7a33" />
-              <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '800', color: '#ea7a33' }}>
+              <Zap size={18} color="#176B50" />
+              <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '800', color: '#176B50' }}>
                 Live POS &amp; Customer CFD Dynamic Upsell Preview
               </h4>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '13px', color: '#a89f91' }}>When cashier rings up / diner taps:</span>
+              <span style={{ fontSize: '13px', color: '#6b7280' }}>When cashier rings up / diner taps:</span>
               <select
                 value={selectedUpsellItem}
                 onChange={e => {
@@ -1424,11 +1417,11 @@ export default function AiRoasteryManager({ cafe, token }) {
                 <div
                   key={idx}
                   style={{
-                    background: '#1a1412',
-                    border: '1px solid #3d2a23',
+                    background: '#f8fafc',
+                    border: '1px solid #e5e7eb',
                     borderRadius: '12px',
                     padding: '16px',
-                    boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
@@ -1440,7 +1433,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                     </span>
                   </div>
 
-                  <h4 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: '700', color: '#f5efe6' }}>
+                  <h4 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: '700', color: '#111827' }}>
                     {sug.name}
                   </h4>
 
@@ -1449,7 +1442,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                       ₹{sug.comboPrice}
                     </span>
                     {sug.pairingDiscount > 0 && (
-                      <span style={{ fontSize: '12px', color: '#a89f91', textDecoration: 'line-through' }}>
+                      <span style={{ fontSize: '12px', color: '#6b7280', textDecoration: 'line-through' }}>
                         ₹{sug.originalPrice}
                       </span>
                     )}
@@ -1458,7 +1451,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                     )}
                   </div>
 
-                  <p style={{ margin: '8px 0 0 0', fontSize: '12px', color: '#c5bcb0', fontStyle: 'italic', background: '#221915', padding: '8px', borderRadius: '6px' }}>
+                  <p style={{ margin: '8px 0 0 0', fontSize: '12px', color: '#4b5563', fontStyle: 'italic', background: '#ffffff', padding: '8px', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
                     "{sug.pitchText}"
                   </p>
                 </div>
@@ -1467,8 +1460,8 @@ export default function AiRoasteryManager({ cafe, token }) {
           </div>
 
           {/* Association Rules Table */}
-          <div style={{ background: '#221915', border: '1px solid #3d2a23', borderRadius: '14px', overflow: 'hidden' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid #33231c' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #f3f4f6' }}>
               <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '700' }}>
                 Active Market Basket Rules
               </h3>
@@ -1477,7 +1470,7 @@ export default function AiRoasteryManager({ cafe, token }) {
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
                 <thead>
-                  <tr style={{ background: '#1a1412', color: '#a89f91', borderBottom: '1px solid #33231c' }}>
+                  <tr style={{ background: '#f9fafb', color: '#4b5563', borderBottom: '1px solid #e5e7eb' }}>
                     <th style={{ padding: '12px 18px' }}>Primary Trigger Item</th>
                     <th style={{ padding: '12px 18px' }}>Recommended Pair</th>
                     <th style={{ padding: '12px 18px' }}>Support</th>
@@ -1489,14 +1482,14 @@ export default function AiRoasteryManager({ cafe, token }) {
                 </thead>
                 <tbody>
                   {affinityRules.map(rule => (
-                    <tr key={rule.id} style={{ borderBottom: '1px solid #2a1d18' }}>
-                      <td style={{ padding: '12px 18px', fontWeight: '700', color: '#f5efe6' }}>
+                    <tr key={rule.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                      <td style={{ padding: '12px 18px', fontWeight: '700', color: '#111827' }}>
                         {rule.primaryItemName}
                       </td>
-                      <td style={{ padding: '12px 18px', color: '#ea7a33', fontWeight: '700' }}>
+                      <td style={{ padding: '12px 18px', color: '#176B50', fontWeight: '700' }}>
                         + {rule.pairedItemName}
                       </td>
-                      <td style={{ padding: '12px 18px', color: '#a89f91' }}>
+                      <td style={{ padding: '12px 18px', color: '#6b7280' }}>
                         {(rule.support * 100).toFixed(1)}%
                       </td>
                       <td style={{ padding: '12px 18px', color: '#38bdf8', fontWeight: '600' }}>
@@ -1510,9 +1503,9 @@ export default function AiRoasteryManager({ cafe, token }) {
                         <button
                           onClick={() => toggleRuleActive(rule.id, rule.isActive)}
                           style={{
-                            background: rule.isActive ? '#064e3b' : '#33231c',
-                            color: rule.isActive ? '#6ee7b7' : '#a89f91',
-                            border: 'none',
+                            background: rule.isActive ? '#ecfdf5' : '#f3f4f6',
+                            color: rule.isActive ? '#047857' : '#6b7280',
+                            border: `1px solid ${rule.isActive ? '#a7f3d0' : '#e5e7eb'}`,
                             padding: '4px 10px',
                             borderRadius: '12px',
                             fontSize: '11px',
@@ -1527,7 +1520,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                   ))}
                   {affinityRules.length === 0 && (
                     <tr>
-                      <td colSpan={7} style={{ padding: '24px', textAlign: 'center', color: '#a89f91' }}>
+                      <td colSpan={7} style={{ padding: '24px', textAlign: 'center', color: '#6b7280' }}>
                         No mined rules yet. Click "Mine Fresh Association Rules" to process historical orders.
                       </td>
                     </tr>
@@ -1547,10 +1540,11 @@ export default function AiRoasteryManager({ cafe, token }) {
           {/* Header with New Campaign Button */}
           <div
             style={{
-              background: '#221915',
-              border: '1px solid #3d2a23',
-              borderRadius: '14px',
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: '16px',
               padding: '18px 24px',
+              boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
@@ -1562,7 +1556,7 @@ export default function AiRoasteryManager({ cafe, token }) {
               <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '800' }}>
                 Autonomous Customer Retention &amp; RFM Churn Defense
               </h3>
-              <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a89f91' }}>
+              <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#6b7280' }}>
                 AI analyzes recency, frequency, and monetary values to detect churning regulars and trigger high-converting win-back incentives.
               </p>
             </div>
@@ -1587,7 +1581,7 @@ export default function AiRoasteryManager({ cafe, token }) {
               style={{
                 ...rfmCardStyle,
                 borderTop: '3px solid #34d399',
-                background: selectedSegmentFilter === 'champions' ? 'rgba(52, 211, 153, 0.1)' : '#221915',
+                background: selectedSegmentFilter === 'champions' ? 'rgba(52, 211, 153, 0.15)' : '#ffffff',
               }}
               onClick={() => setSelectedSegmentFilter(selectedSegmentFilter === 'champions' ? 'all' : 'champions')}
             >
@@ -1595,17 +1589,17 @@ export default function AiRoasteryManager({ cafe, token }) {
                 <span>👑</span>
                 <span style={{ fontSize: '14px', fontWeight: '800', color: '#34d399' }}>Champions</span>
               </div>
-              <div style={{ fontSize: '26px', fontWeight: '800', color: '#f5efe6' }}>
+              <div style={{ fontSize: '26px', fontWeight: '800', color: '#111827' }}>
                 {rfmSegments?.championsCount || 0}
               </div>
-              <span style={{ fontSize: '11px', color: '#a89f91' }}>High spend • Frequent (&lt;14d)</span>
+              <span style={{ fontSize: '11px', color: '#6b7280' }}>High spend • Frequent (&lt;14d)</span>
             </div>
 
             <div
               style={{
                 ...rfmCardStyle,
                 borderTop: '3px solid #38bdf8',
-                background: selectedSegmentFilter === 'loyal_regulars' ? 'rgba(56, 189, 248, 0.1)' : '#221915',
+                background: selectedSegmentFilter === 'loyal_regulars' ? 'rgba(56, 189, 248, 0.15)' : '#ffffff',
               }}
               onClick={() => setSelectedSegmentFilter(selectedSegmentFilter === 'loyal_regulars' ? 'all' : 'loyal_regulars')}
             >
@@ -1613,17 +1607,17 @@ export default function AiRoasteryManager({ cafe, token }) {
                 <span>☕</span>
                 <span style={{ fontSize: '14px', fontWeight: '800', color: '#38bdf8' }}>Loyal Regulars</span>
               </div>
-              <div style={{ fontSize: '26px', fontWeight: '800', color: '#f5efe6' }}>
+              <div style={{ fontSize: '26px', fontWeight: '800', color: '#111827' }}>
                 {rfmSegments?.loyalRegularsCount || 0}
               </div>
-              <span style={{ fontSize: '11px', color: '#a89f91' }}>Consistent (&lt;30d)</span>
+              <span style={{ fontSize: '11px', color: '#6b7280' }}>Consistent (&lt;30d)</span>
             </div>
 
             <div
               style={{
                 ...rfmCardStyle,
                 borderTop: '3px solid #f59e0b',
-                background: selectedSegmentFilter === 'at_risk' ? 'rgba(245, 158, 11, 0.1)' : '#221915',
+                background: selectedSegmentFilter === 'at_risk' ? 'rgba(245, 158, 11, 0.15)' : '#ffffff',
               }}
               onClick={() => setSelectedSegmentFilter(selectedSegmentFilter === 'at_risk' ? 'all' : 'at_risk')}
             >
@@ -1631,7 +1625,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                 <span>⚠️</span>
                 <span style={{ fontSize: '14px', fontWeight: '800', color: '#fbbf24' }}>At-Risk Guests</span>
               </div>
-              <div style={{ fontSize: '26px', fontWeight: '800', color: '#f5efe6' }}>
+              <div style={{ fontSize: '26px', fontWeight: '800', color: '#111827' }}>
                 {rfmSegments?.atRiskCount || 0}
               </div>
               <span style={{ fontSize: '11px', color: '#fde68a' }}>No visit 21–60 days</span>
@@ -1641,7 +1635,7 @@ export default function AiRoasteryManager({ cafe, token }) {
               style={{
                 ...rfmCardStyle,
                 borderTop: '3px solid #ef4444',
-                background: selectedSegmentFilter === 'hibernating' ? 'rgba(239, 68, 68, 0.1)' : '#221915',
+                background: selectedSegmentFilter === 'hibernating' ? 'rgba(239, 68, 68, 0.15)' : '#ffffff',
               }}
               onClick={() => setSelectedSegmentFilter(selectedSegmentFilter === 'hibernating' ? 'all' : 'hibernating')}
             >
@@ -1649,17 +1643,17 @@ export default function AiRoasteryManager({ cafe, token }) {
                 <span>🧊</span>
                 <span style={{ fontSize: '14px', fontWeight: '800', color: '#f87171' }}>Hibernating</span>
               </div>
-              <div style={{ fontSize: '26px', fontWeight: '800', color: '#f5efe6' }}>
+              <div style={{ fontSize: '26px', fontWeight: '800', color: '#111827' }}>
                 {rfmSegments?.hibernatingCount || 0}
               </div>
-              <span style={{ fontSize: '11px', color: '#a89f91' }}>Inactive &gt;60 days</span>
+              <span style={{ fontSize: '11px', color: '#6b7280' }}>Inactive &gt;60 days</span>
             </div>
 
             <div
               style={{
                 ...rfmCardStyle,
                 borderTop: '3px solid #a855f7',
-                background: selectedSegmentFilter === 'new_explorers' ? 'rgba(168, 85, 247, 0.1)' : '#221915',
+                background: selectedSegmentFilter === 'new_explorers' ? 'rgba(168, 85, 247, 0.15)' : '#ffffff',
               }}
               onClick={() => setSelectedSegmentFilter(selectedSegmentFilter === 'new_explorers' ? 'all' : 'new_explorers')}
             >
@@ -1667,16 +1661,16 @@ export default function AiRoasteryManager({ cafe, token }) {
                 <span>🌱</span>
                 <span style={{ fontSize: '14px', fontWeight: '800', color: '#c084fc' }}>New Explorers</span>
               </div>
-              <div style={{ fontSize: '26px', fontWeight: '800', color: '#f5efe6' }}>
+              <div style={{ fontSize: '26px', fontWeight: '800', color: '#111827' }}>
                 {rfmSegments?.newExplorersCount || 0}
               </div>
-              <span style={{ fontSize: '11px', color: '#a89f91' }}>1 Visit • Nudge for Habit</span>
+              <span style={{ fontSize: '11px', color: '#6b7280' }}>1 Visit • Nudge for Habit</span>
             </div>
           </div>
 
           {/* Active Campaigns Performance Ledger */}
-          <div style={{ background: '#221915', border: '1px solid #3d2a23', borderRadius: '14px', overflow: 'hidden' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid #33231c' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #f3f4f6' }}>
               <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '700' }}>
                 Automated Marketing Campaigns &amp; Conversion ROI
               </h3>
@@ -1685,7 +1679,7 @@ export default function AiRoasteryManager({ cafe, token }) {
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
                 <thead>
-                  <tr style={{ background: '#1a1412', color: '#a89f91', borderBottom: '1px solid #33231c' }}>
+                  <tr style={{ background: '#f9fafb', color: '#4b5563', borderBottom: '1px solid #e5e7eb' }}>
                     <th style={{ padding: '12px 18px' }}>Campaign Name</th>
                     <th style={{ padding: '12px 18px' }}>Target Segment</th>
                     <th style={{ padding: '12px 18px' }}>Promo Code</th>
@@ -1698,14 +1692,14 @@ export default function AiRoasteryManager({ cafe, token }) {
                 </thead>
                 <tbody>
                   {campaigns.map(camp => (
-                    <tr key={camp.id} style={{ borderBottom: '1px solid #2a1d18' }}>
-                      <td style={{ padding: '12px 18px', fontWeight: '700', color: '#f5efe6' }}>
+                    <tr key={camp.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                      <td style={{ padding: '12px 18px', fontWeight: '700', color: '#111827' }}>
                         {camp.name}
                       </td>
-                      <td style={{ padding: '12px 18px', textTransform: 'capitalize', color: '#a89f91' }}>
+                      <td style={{ padding: '12px 18px', textTransform: 'capitalize', color: '#6b7280' }}>
                         {camp.targetSegment.replace(/_/g, ' ')}
                       </td>
-                      <td style={{ padding: '12px 18px', fontWeight: '800', color: '#ea7a33' }}>
+                      <td style={{ padding: '12px 18px', fontWeight: '800', color: '#176B50' }}>
                         {camp.promoCode} ({camp.discountPercent}% OFF)
                       </td>
                       <td style={{ padding: '12px 18px' }}>{camp.targetAudienceCount} guests</td>
@@ -1723,7 +1717,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                               onClick={() => handleLaunchBroadcast(camp.id)}
                               disabled={sendingBroadcastId === camp.id}
                               style={{
-                                background: '#ea7a33',
+                                background: '#176B50',
                                 color: '#fff',
                                 border: 'none',
                                 padding: '6px 12px',
@@ -1756,12 +1750,13 @@ export default function AiRoasteryManager({ cafe, token }) {
                           <button
                             onClick={() => viewCampaignDetails(camp.id)}
                             style={{
-                              background: '#2d201b',
-                              color: '#f5efe6',
-                              border: '1px solid #3d2a23',
-                              padding: '4px 8px',
+                              background: '#ffffff',
+                              color: '#4b5563',
+                              border: '1px solid #e5e7eb',
+                              padding: '4px 10px',
                               borderRadius: '6px',
                               fontSize: '11px',
+                              fontWeight: '600',
                               cursor: 'pointer',
                             }}
                           >
@@ -1773,7 +1768,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                   ))}
                   {campaigns.length === 0 && (
                     <tr>
-                      <td colSpan={8} style={{ padding: '24px', textAlign: 'center', color: '#a89f91' }}>
+                      <td colSpan={8} style={{ padding: '24px', textAlign: 'center', color: '#6b7280' }}>
                         No campaigns drafted yet. Click "Draft AI Win-Back Campaign" to configure.
                       </td>
                     </tr>
@@ -1789,7 +1784,7 @@ export default function AiRoasteryManager({ cafe, token }) {
               <div style={{ ...modalContentStyle, maxWidth: '600px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Target size={20} color="#ea7a33" />
+                    <Target size={20} color="#176B50" />
                     <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800' }}>
                       Configure Autonomous Retention Campaign
                     </h3>
@@ -1799,7 +1794,7 @@ export default function AiRoasteryManager({ cafe, token }) {
 
                 <form onSubmit={handleCreateCampaign} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   <div>
-                    <label style={{ fontSize: '12px', color: '#a89f91', display: 'block', marginBottom: '4px' }}>
+                    <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
                       Campaign Name
                     </label>
                     <input
@@ -1813,7 +1808,7 @@ export default function AiRoasteryManager({ cafe, token }) {
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div>
-                      <label style={{ fontSize: '12px', color: '#a89f91', display: 'block', marginBottom: '4px' }}>
+                      <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
                         Target RFM Cohort
                       </label>
                       <select
@@ -1830,7 +1825,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                     </div>
 
                     <div>
-                      <label style={{ fontSize: '12px', color: '#a89f91', display: 'block', marginBottom: '4px' }}>
+                      <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
                         Incentive Discount (%)
                       </label>
                       <select
@@ -1847,7 +1842,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                   </div>
 
                   <div>
-                    <label style={{ fontSize: '12px', color: '#a89f91', display: 'block', marginBottom: '4px' }}>
+                    <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
                       Delivery Channel
                     </label>
                     <select
@@ -1862,7 +1857,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                   </div>
 
                   <div>
-                    <label style={{ fontSize: '12px', color: '#a89f91', display: 'block', marginBottom: '4px' }}>
+                    <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
                       Message Template (Leave blank for AI auto-personalized copy)
                     </label>
                     <textarea
@@ -1901,8 +1896,8 @@ export default function AiRoasteryManager({ cafe, token }) {
                     <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800' }}>
                       {selectedCampaignDetails.name} — Delivery &amp; Conversion Logs
                     </h3>
-                    <span style={{ fontSize: '12px', color: '#a89f91' }}>
-                      Promo: <strong style={{ color: '#ea7a33' }}>{selectedCampaignDetails.promoCode}</strong> | Attributed: <strong style={{ color: '#34d399' }}>₹{selectedCampaignDetails.attributedRevenue}</strong>
+                    <span style={{ fontSize: '12px', color: '#6b7280' }}>
+                      Promo: <strong style={{ color: '#176B50' }}>{selectedCampaignDetails.promoCode}</strong> | Attributed: <strong style={{ color: '#34d399' }}>₹{selectedCampaignDetails.attributedRevenue}</strong>
                     </span>
                   </div>
                   <button onClick={() => setSelectedCampaignDetails(null)} style={closeBtnStyle}>✕</button>
@@ -1911,7 +1906,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                 <div style={{ maxHeight: '380px', overflowY: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
                     <thead>
-                      <tr style={{ background: '#1a1412', color: '#a89f91' }}>
+                      <tr style={{ background: '#f9fafb', color: '#4b5563', borderBottom: '1px solid #e5e7eb' }}>
                         <th style={{ padding: '8px 12px' }}>Guest Name</th>
                         <th style={{ padding: '8px 12px' }}>Phone</th>
                         <th style={{ padding: '8px 12px' }}>Segment</th>
@@ -1922,9 +1917,9 @@ export default function AiRoasteryManager({ cafe, token }) {
                     </thead>
                     <tbody>
                       {(selectedCampaignDetails.recipients || []).map(r => (
-                        <tr key={r.id} style={{ borderBottom: '1px solid #2d201b' }}>
-                          <td style={{ padding: '8px 12px', color: '#f5efe6', fontWeight: '600' }}>{r.customerName}</td>
-                          <td style={{ padding: '8px 12px', color: '#a89f91' }}>{r.phone}</td>
+                        <tr key={r.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                          <td style={{ padding: '8px 12px', color: '#111827', fontWeight: '600' }}>{r.customerName}</td>
+                          <td style={{ padding: '8px 12px', color: '#6b7280' }}>{r.phone}</td>
                           <td style={{ padding: '8px 12px', textTransform: 'capitalize' }}>{r.rfmSegment}</td>
                           <td style={{ padding: '8px 12px', color: '#38bdf8' }}>{r.deliveryStatus}</td>
                           <td style={{ padding: '8px 12px', color: r.redeemed ? '#34d399' : '#6b7280', fontWeight: '700' }}>
@@ -1958,13 +1953,14 @@ export default function AiRoasteryManager({ cafe, token }) {
 // ============================================================================
 
 const cardStyle = {
-  background: '#221915',
-  border: '1px solid #3d2a23',
-  borderRadius: '12px',
+  background: '#ffffff',
+  border: '1px solid #e5e7eb',
+  borderRadius: '16px',
   padding: '18px 20px',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
+  boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
 };
 
 const cardHeaderStyle = {
@@ -1976,32 +1972,34 @@ const cardHeaderStyle = {
 
 const cardLabelStyle = {
   fontSize: '12px',
-  color: '#a89f91',
+  color: '#6b7280',
   fontWeight: '700',
   textTransform: 'uppercase',
   letterSpacing: '0.5px',
 };
 
 const quadrantCardStyle = {
-  borderRadius: '12px',
+  borderRadius: '16px',
   padding: '18px 20px',
   cursor: 'pointer',
   transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-  boxShadow: '0 4px 14px rgba(0,0,0,0.25)',
+  boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
+  border: '1px solid #e5e7eb',
 };
 
 const rfmCardStyle = {
-  borderRadius: '12px',
+  borderRadius: '16px',
   padding: '16px 18px',
-  border: '1px solid #3d2a23',
+  border: '1px solid #e5e7eb',
   cursor: 'pointer',
   transition: 'all 0.2s ease',
+  boxShadow: '0 2px 10px rgba(35, 23, 15, 0.04)',
 };
 
 const inputStyle = {
-  background: '#1a1412',
-  border: '1px solid #3d2a23',
-  color: '#f5efe6',
+  background: '#f8fafc',
+  border: '1px solid #d1d5db',
+  color: '#111827',
   padding: '8px 12px',
   borderRadius: '8px',
   fontSize: '13px',
@@ -2009,9 +2007,9 @@ const inputStyle = {
 };
 
 const selectStyle = {
-  background: '#1a1412',
-  border: '1px solid #3d2a23',
-  color: '#f5efe6',
+  background: '#f8fafc',
+  border: '1px solid #d1d5db',
+  color: '#111827',
   padding: '8px 12px',
   borderRadius: '8px',
   fontSize: '13px',
@@ -2020,7 +2018,7 @@ const selectStyle = {
 };
 
 const btnPrimaryStyle = {
-  background: 'linear-gradient(135deg, #ea7a33, #dc2626)',
+  background: '#176B50',
   color: '#ffffff',
   border: 'none',
   padding: '10px 18px',
@@ -2028,13 +2026,13 @@ const btnPrimaryStyle = {
   fontWeight: '700',
   fontSize: '13px',
   cursor: 'pointer',
-  boxShadow: '0 4px 12px rgba(234, 122, 51, 0.35)',
+  boxShadow: '0 4px 12px rgba(23, 107, 80, 0.25)',
 };
 
 const btnSecondaryStyle = {
-  background: '#2d201b',
-  color: '#f5efe6',
-  border: '1px solid #4a372f',
+  background: '#ffffff',
+  color: '#4b5563',
+  border: '1px solid #e5e7eb',
   padding: '10px 18px',
   borderRadius: '10px',
   fontWeight: '600',
@@ -2058,19 +2056,19 @@ const modalOverlayStyle = {
 };
 
 const modalContentStyle = {
-  background: '#221915',
-  border: '1px solid #4a372f',
+  background: '#ffffff',
+  border: '1px solid #e5e7eb',
   borderRadius: '16px',
   padding: '24px',
   width: '100%',
-  boxShadow: '0 20px 48px rgba(0,0,0,0.6)',
-  color: '#f5efe6',
+  boxShadow: '0 20px 48px rgba(0,0,0,0.15)',
+  color: '#111827',
 };
 
 const closeBtnStyle = {
   background: 'transparent',
   border: 'none',
-  color: '#a89f91',
+  color: '#6b7280',
   fontSize: '18px',
   cursor: 'pointer',
   padding: '4px',

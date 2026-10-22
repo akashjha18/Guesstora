@@ -1,6 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ensureSeedData } from '../src/seed.js';
+import { ensureSeedData, shouldSeedDemoData } from '../src/seed.js';
+
+test('demo seed is disabled in production', () => {
+  assert.equal(shouldSeedDemoData({ NODE_ENV: 'production' }), false);
+  assert.equal(shouldSeedDemoData({ NODE_ENV: 'development' }), true);
+  assert.equal(shouldSeedDemoData({ NODE_ENV: 'development', SEED_DEMO_DATA: 'false' }), false);
+});
 
 test('seed can be safely re-run without creating duplicate demo data', async () => {
   const calls = [];

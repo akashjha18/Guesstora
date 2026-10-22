@@ -49,7 +49,7 @@ export default function BillOperationsModals({
           <div className="theme-modal-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '460px' }}>
             <div className="modal-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#ffedd5', display: 'grid', placeItems: 'center', color: '#ea7a33' }}>
+                <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#ffedd5', display: 'grid', placeItems: 'center', color: '#176B50' }}>
                   <Armchair size={18} />
                 </div>
                 <div>
@@ -380,7 +380,7 @@ export default function BillOperationsModals({
 
               <div className="form-group" style={{ marginBottom: 14 }}>
                 <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#332211', marginBottom: 6 }}>
-                  Discount Reason <span style={{ color: '#ea7a33' }}>*</span>
+                  Discount Reason <span style={{ color: '#176B50' }}>*</span>
                 </label>
                 <input
                   type="text"
@@ -426,7 +426,7 @@ export default function BillOperationsModals({
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: 15, borderTop: '1px solid #ddd', paddingTop: 6 }}>
                       <span>Final Bill Amount:</span>
-                      <span style={{ color: '#ea7a33' }}>₹{final.toLocaleString('en-IN')}</span>
+                      <span style={{ color: '#176B50' }}>₹{final.toLocaleString('en-IN')}</span>
                     </div>
                   </div>
                 );
@@ -477,7 +477,7 @@ export default function BillOperationsModals({
             <form onSubmit={handleCreatePromoCode} style={{ padding: '20px' }}>
               <div className="form-group" style={{ marginBottom: 14 }}>
                 <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#332211', marginBottom: 6 }}>
-                  Promo Code Voucher <span style={{ color: '#ea7a33' }}>*</span>
+                  Promo Code Voucher <span style={{ color: '#176B50' }}>*</span>
                 </label>
                 <input
                   type="text"
@@ -505,7 +505,7 @@ export default function BillOperationsModals({
 
                 <div className="form-group">
                   <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#332211', marginBottom: 6 }}>
-                    Discount Value <span style={{ color: '#ea7a33' }}>*</span>
+                    Discount Value <span style={{ color: '#176B50' }}>*</span>
                   </label>
                   <input
                     type="number"
