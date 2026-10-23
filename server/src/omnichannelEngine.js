@@ -15,7 +15,7 @@ import { serializeOrder } from './routes/serializers.js';
 
 /**
  * Normalizes and ingests external third-party delivery orders
- * (Zomato, Swiggy, UrbanPiper) into Gusstora's live order queue.
+ * (Zomato, Swiggy, UrbanPiper) into GUESTORA's live order queue.
  */
 export async function ingestAggregatorOrder({ cafeId, channel, payload }) {
   if (!cafeId) throw new Error('cafeId is required for aggregator ingestion');
@@ -233,15 +233,15 @@ export async function dispatchWhatsAppCloudMessage({
   let messageText = '';
   if (templateType === 'order_confirmed') {
     const { orderNo = 'Order', itemCount = 1, total = 0 } = templateParams;
-    messageText = `☕ *Gusstora Order Confirmed!*\n\nHi ${templateParams.customerName || 'there'}, your order *#${orderNo}* (${itemCount} items) has been received and sent to the kitchen.\n\n*Total Amount:* ₹${total}\nWe'll notify you as soon as it's freshly brewed!`;
+    messageText = `☕ *GUESTORA Order Confirmed!*\n\nHi ${templateParams.customerName || 'there'}, your order *#${orderNo}* (${itemCount} items) has been received and sent to the kitchen.\n\n*Total Amount:* ₹${total}\nWe'll notify you as soon as it's freshly brewed!`;
   } else if (templateType === 'order_ready') {
     const { orderNo = 'Order' } = templateParams;
     messageText = `🎉 *Your Order is Ready!*\n\nOrder *#${orderNo}* is freshly brewed and ready at the counter for pickup.\nPlease present your order number to the barista. Enjoy!`;
   } else if (templateType === 'loyalty_reward') {
     const { claimCode = '', amount = 100 } = templateParams;
-    messageText = `🎁 *You've Unlocked a Gusstora Reward!*\n\nCongratulations! Show this claim code to your cashier on your next visit:\n\n*CODE: ${claimCode}* (₹${amount} OFF)\n\nValid for 60 days. See you soon!`;
+    messageText = `🎁 *You've Unlocked a GUESTORA Reward!*\n\nCongratulations! Show this claim code to your cashier on your next visit:\n\n*CODE: ${claimCode}* (₹${amount} OFF)\n\nValid for 60 days. See you soon!`;
   } else {
-    messageText = customText || 'Hello from Gusstora Roastery!';
+    messageText = customText || 'Hello from GUESTORA Roastery!';
   }
 
   // 3. Dispatch to Meta Cloud API or run simulator

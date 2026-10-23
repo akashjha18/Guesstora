@@ -109,7 +109,7 @@ export default function Login() {
             <div className="auth-logo-wrap">
               <img
                 src="/gusstora_logo_transparent.png"
-                alt="Gusstora Coffee Logo"
+                alt="GUESTORA Coffee Logo"
                 className="auth-logo-img"
               />
             </div>
@@ -249,7 +249,7 @@ export default function Login() {
             </Link>
             <div className="auth-security-note">
               <ShieldCheck size={13} />
-              <span>Protected by Gusstora Multi-Tenant RBAC Security</span>
+              <span>Protected by GUESTORA Multi-Tenant RBAC Security</span>
             </div>
           </div>
         </div>

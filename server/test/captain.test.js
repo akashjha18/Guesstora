@@ -7,14 +7,14 @@ test('▶ Phase 8: Waiter Captain App & Interactive Floor Management', async (t)
   let cafe = await Cafe.findOne({ where: { slug: 'demo-cafe' } });
   if (!cafe) {
     cafe = await Cafe.create({
-      name: 'Gusstora Artisan Roastery',
+      name: 'GUESTORA Artisan Roastery',
       slug: 'captain-test-cafe-' + Date.now(),
       brandColor: '#ea580c',
       currency: 'INR',
     });
   }
 
-  // Ensure test staff with PIN exists
+  // Ensure test staff profile exists
   let staff = await User.findOne({ where: { email: 'captain-test@gusstora.com' } });
   if (!staff) {
     staff = await User.create({
@@ -22,7 +22,6 @@ test('▶ Phase 8: Waiter Captain App & Interactive Floor Management', async (t)
       email: 'captain-test@gusstora.com',
       passwordHash: 'dummy-hash',
       role: 'cashier',
-      pin: '4321',
       assignedSection: 'Main Floor',
       status: 'active',
     });
@@ -50,8 +49,7 @@ test('▶ Phase 8: Waiter Captain App & Interactive Floor Management', async (t)
     isActive: true,
   });
 
-  await t.test('Captain PIN Authentication validates 4-digit numeric code', async () => {
-    assert.equal(staff.pin, '4321');
+  await t.test('Captain staff profile includes its assigned floor section', async () => {
     assert.equal(staff.assignedSection, 'Main Floor');
     assert.equal(staff.name, 'Captain Arjun');
   });

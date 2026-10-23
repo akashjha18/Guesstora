@@ -343,7 +343,7 @@ omnichannelRouter.get('/owner/brand', requireOwnerOrManager, async (req, res) =>
       let [defaultBrand] = await Brand.findOrCreate({
         where: { slug: 'gusstora-roasters-chain' },
         defaults: {
-          name: 'Gusstora Roasters & Co.',
+          name: 'GUESTORA Roasters & Co.',
           slug: 'gusstora-roasters-chain',
           headquarters: 'Bandra West, Mumbai',
           ownerId: req.auth.sub,

@@ -146,7 +146,7 @@ test('full shift lifecycle calculations produce balanced day-end reports', () =>
   assert.equal(summary.cashVariance, 0);
   assert.equal(summary.varianceStatus, 'balanced');
 
-  const zReport = formatZReportText(shift, summary, 'Gusstora Artisan Café');
+  const zReport = formatZReportText(shift, summary, 'GUESTORA Artisan Café');
   assert.match(zReport, /Z-REPORT/);
   assert.match(zReport, /CASH DRAWER RECONCILIATION/);
   assert.match(zReport, /BALANCED/);

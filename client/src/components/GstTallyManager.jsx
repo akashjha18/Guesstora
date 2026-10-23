@@ -1146,7 +1146,7 @@ export default function GstTallyManager({ cafe, token }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
                   <span style={{ color: '#6b7280' }}>Company Name:</span>
-                  <span style={{ fontWeight: 600, color: '#111827' }}>{gstConfig.tallyCompany || 'Gusstora Roasters'}</span>
+                  <span style={{ fontWeight: 600, color: '#111827' }}>{gstConfig.tallyCompany || 'GUESTORA Roasters'}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
                   <span style={{ color: '#6b7280' }}>Sales Credit Ledger:</span>
@@ -1170,7 +1170,7 @@ export default function GstTallyManager({ cafe, token }) {
               <div style={{ marginTop: '20px', padding: '14px', background: '#eff6ff', borderRadius: '8px', border: '1px solid #bfdbfe', fontSize: '12px', color: '#1e40af', lineHeight: '1.5' }}>
                 <b>How to import into Tally Prime:</b>
                 <ol style={{ margin: '6px 0 0 16px', padding: 0 }}>
-                  <li>Open Tally Prime and select company "{gstConfig.tallyCompany || 'Gusstora Roasters'}".</li>
+                  <li>Open Tally Prime and select company "{gstConfig.tallyCompany || 'GUESTORA Roasters'}".</li>
                   <li>Press <b>Alt + O (Import)</b> &gt; <b>Transactions (Vouchers)</b>.</li>
                   <li>Select the downloaded <code>tally_sales_vouchers.xml</code> file and press Enter.</li>
                 </ol>
@@ -1354,7 +1354,7 @@ export default function GstTallyManager({ cafe, token }) {
                   type="text"
                   value={gstConfig.legalBusinessName}
                   onChange={e => setGstConfig({ ...gstConfig, legalBusinessName: e.target.value })}
-                  placeholder="Gusstora Roasters LLP"
+                  placeholder="GUESTORA Roasters LLP"
                   style={{
                     width: '100%',
                     background: '#f8fafc',
@@ -1501,7 +1501,7 @@ export default function GstTallyManager({ cafe, token }) {
                   type="text"
                   value={gstConfig.tallyCompany}
                   onChange={e => setGstConfig({ ...gstConfig, tallyCompany: e.target.value })}
-                  placeholder="Gusstora Roasters"
+                  placeholder="GUESTORA Roasters"
                   style={{
                     width: '100%',
                     background: '#f8fafc',

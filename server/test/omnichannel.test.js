@@ -176,7 +176,7 @@ describe('Phase 5: Omnichannel & Enterprise Scale Engine', () => {
 
     assert.equal(res.success, true);
     assert.equal(res.mode, 'mock');
-    assert.match(res.messageText, /Gusstora Order Confirmed/);
+    assert.match(res.messageText, /GUESTORA Order Confirmed/);
     assert.match(res.messageText, /#ZOM-102/);
     assert.match(res.messageText, /₹440/);
 

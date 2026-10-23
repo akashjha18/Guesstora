@@ -49,7 +49,7 @@ export function generateEscPosReceipt(order, cafe = {}, options = {}) {
   // Header
   parts.push(ESCPOS.ALIGN_CENTER);
   parts.push(ESCPOS.DOUBLE_SIZE);
-  parts.push(Buffer.from(`${(cafe.name || 'GUSSTORA SPECIALTY COFFEE').toUpperCase()}\n`));
+  parts.push(Buffer.from(`${(cafe.name || 'GUESTORA SPECIALTY COFFEE').toUpperCase()}\n`));
   parts.push(ESCPOS.NORMAL_SIZE);
   if (cafe.address) parts.push(Buffer.from(`${cafe.address}\n`));
   if (cafe.phone) parts.push(Buffer.from(`Tel: ${cafe.phone}\n`));

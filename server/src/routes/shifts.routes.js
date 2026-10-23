@@ -140,7 +140,7 @@ router.post('/owner/shifts/close', requireRole('owner', 'manager', 'cashier'), a
       }
     );
 
-    const zReportText = formatZReportText(shift, summary, cafe?.name || 'Gusstora Artisan Café');
+    const zReportText = formatZReportText(shift, summary, cafe?.name || 'GUESTORA Artisan Café');
 
     await createAuditLog({
       cafeId: req.auth.cafe,
@@ -201,7 +201,7 @@ router.get('/owner/shifts/:id', requireRole('owner', 'manager', 'cashier'), asyn
 
     const summary = calculateShiftSummary(shift, orders, shift.closingFloatCounted);
     const cafe = await Cafe.findByPk(req.auth.cafe);
-    const zReportText = formatZReportText(shift, summary, cafe?.name || 'Gusstora Artisan Café');
+    const zReportText = formatZReportText(shift, summary, cafe?.name || 'GUESTORA Artisan Café');
 
     return res.json({
       shift: serializeShift(shift),
@@ -229,7 +229,7 @@ router.get('/owner/shifts/:id/z-report', requireRole('owner', 'manager', 'cashie
 
     const summary = calculateShiftSummary(shift, orders, shift.closingFloatCounted);
     const cafe = await Cafe.findByPk(req.auth.cafe);
-    const zReportText = formatZReportText(shift, summary, cafe?.name || 'Gusstora Artisan Café');
+    const zReportText = formatZReportText(shift, summary, cafe?.name || 'GUESTORA Artisan Café');
 
     return res.json({
       shift: serializeShift(shift),

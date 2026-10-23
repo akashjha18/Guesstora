@@ -32,7 +32,7 @@ test('▶ Phase 6: Hardware Peripherals, Thermal ESC/POS & EDC Terminals', async
   };
 
   const sampleCafe = {
-    name: 'Gusstora Artisan Roastery',
+    name: 'GUESTORA Artisan Roastery',
     address: '12 Lavelle Road, Bangalore',
     phone: '+91 98765 43210',
   };
@@ -57,7 +57,7 @@ test('▶ Phase 6: Hardware Peripherals, Thermal ESC/POS & EDC Terminals', async
     assert.ok(buffer.includes(ESCPOS.DRAWER_KICK));
     // Verify it contains cafe name and order number in text
     const textContent = buffer.toString('utf-8');
-    assert.ok(textContent.includes('GUSSTORA ARTISAN ROASTERY'));
+    assert.ok(textContent.includes('GUESTORA ARTISAN ROASTERY'));
     assert.ok(textContent.includes('ORD-TEST-88'));
     assert.ok(textContent.includes('₹1396.50'));
   });

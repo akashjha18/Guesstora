@@ -1,5 +1,5 @@
 /**
- * Gusstora Customer Facing Display (CFD) Synchronization Channel
+ * GUESTORA Customer Facing Display (CFD) Synchronization Channel
  * Utilizes the HTML5 BroadcastChannel API for zero-latency local dual-screen communication,
  * with localStorage fallback for cross-process synchronization.
  */

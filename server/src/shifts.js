@@ -223,7 +223,7 @@ export function formatZReportText(shift = {}, arg2 = {}, arg3 = {}) {
     summary = shift.summary || {};
     cafe = typeof arg2 === 'string' ? { name: arg2 } : (arg2 || {});
   }
-  const cafeName = (cafe.name || 'GUSSTORA ARTISAN ROASTERY').toUpperCase();
+  const cafeName = (cafe.name || 'GUESTORA ARTISAN ROASTERY').toUpperCase();
   const shiftId = String(shift.id || '').slice(-6).toUpperCase();
   const staffName = shift.staffName || shift.user?.name || shift.User?.name || 'Cashier';
   const openTime = shift.openedAt ? new Date(shift.openedAt).toLocaleString('en-IN') : '-';
@@ -278,7 +278,7 @@ export function formatZReportText(shift = {}, arg2 = {}, arg3 = {}) {
     '',
     'Manager Verified:  _________________',
     '',
-    centerText('Gusstora Operating System', 38),
+    centerText('GUESTORA Operating System', 38),
     sep,
   ].join('\n');
 }

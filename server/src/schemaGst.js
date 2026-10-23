@@ -49,7 +49,7 @@ export async function ensureGstSchema() {
   });
   await safeAddColumn('cafes', 'tallyCompany', {
     type: sequelize.Sequelize.STRING(255),
-    defaultValue: 'Gusstora Roasters',
+    defaultValue: 'GUESTORA Roasters',
   });
   await safeAddColumn('cafes', 'tallySalesLedger', {
     type: sequelize.Sequelize.STRING(255),

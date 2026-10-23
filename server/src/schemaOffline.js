@@ -41,7 +41,7 @@ export async function ensureOfflineAndCfdSchema() {
       if (!cafesTable.cfdWelcomeTitle) {
         await qi.addColumn('cafes', 'cfdWelcomeTitle', {
           type: 'VARCHAR(255)',
-          defaultValue: 'Gusstora Specialty Coffee',
+          defaultValue: 'GUESTORA Specialty Coffee',
         }).catch(() => {});
       }
       if (!cafesTable.cfdWelcomeSubtitle) {

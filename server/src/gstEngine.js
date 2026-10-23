@@ -457,8 +457,8 @@ export function generateEInvoicePayload(order, cafe = {}) {
     },
     SellerDtls: {
       Gstin: cafe.gstin || '27AABCU9603R1ZM',
-      LglNm: cafe.legalBusinessName || cafe.name || 'Gusstora Roasters LLP',
-      TrdNm: cafe.name || 'Gusstora',
+      LglNm: cafe.legalBusinessName || cafe.name || 'GUESTORA Roasters LLP',
+      TrdNm: cafe.name || 'GUESTORA',
       Addr1: cafe.address || 'Bandrakurla Complex',
       Loc: cafe.stateName || 'Mumbai',
       Pin: 400051,
@@ -496,7 +496,7 @@ export function generateEInvoicePayload(order, cafe = {}) {
  * Produces clean standard Tally import XML with Sales, CGST, SGST, IGST, and Cash/Bank ledgers.
  */
 export function generateTallyVoucherXml({ orders = [], cafe = {} }) {
-  const companyName = cafe.tallyCompany || 'Gusstora Roasters';
+  const companyName = cafe.tallyCompany || 'GUESTORA Roasters';
   const salesLedger = cafe.tallySalesLedger || 'Food & Beverage Sales';
   const cgstLedger = cafe.tallyCgstLedger || 'CGST Input/Output 2.5%';
   const sgstLedger = cafe.tallySgstLedger || 'SGST Input/Output 2.5%';

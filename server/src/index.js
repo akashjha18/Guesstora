@@ -514,6 +514,7 @@ if (shouldSeedDemoData()) await seed();
 
 const app = express();
 const loginLimiter = createRateLimiter({ maxRequests: 10, windowMs: 60000 });
+const captainLoginLimiter = createRateLimiter({ maxRequests: 5, windowMs: 60000 });
 const orderLimiter = createRateLimiter({ maxRequests: 30, windowMs: 60000 });
 const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
   .split(',')
@@ -549,6 +550,12 @@ app.use('/api/auth/login', (req, res, next) => {
   }
   next();
 });
+app.use('/api/public/cafes/:slug/captain/login', (req, res, next) => {
+  if (!captainLoginLimiter(req.ip)) {
+    return res.status(429).json({ message: 'Too many sign-in attempts. Please wait a minute and try again.' });
+  }
+  next();
+});
 app.use('/api/public/cafes/:slug/orders', (req, res, next) => {
   if (!orderLimiter(req.ip)) {
     return res.status(429).json({ message: 'Too many order attempts. Please wait a minute and try again.' });
@@ -558,7 +565,7 @@ app.use('/api/public/cafes/:slug/orders', (req, res, next) => {
 app.use('/api', routes);
 app.use((err, _q, res, _n) => { console.error(err); res.status(500).json({ message: 'Something went wrong.' }); });
 
-const server = app.listen(config.port, () => console.log(`Gusstora API on :${config.port}`));
+const server = app.listen(config.port, () => console.log(`GUESTORA API on :${config.port}`));
 let shutdownStarted = false;
 const shutdown = signal => {
   if (shutdownStarted) return;

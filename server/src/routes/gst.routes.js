@@ -41,7 +41,7 @@ gstRouter.get('/owner/gst/config', requireStaff, async (req, res) => {
       gstEnabled: cafe.gstEnabled !== false,
       taxInclusivePricing: cafe.taxInclusivePricing !== false,
       defaultGstRate: Number(cafe.defaultGstRate) || 5.0,
-      tallyCompany: cafe.tallyCompany || cafe.name || 'Gusstora Roasters',
+      tallyCompany: cafe.tallyCompany || cafe.name || 'GUESTORA Roasters',
       tallySalesLedger: cafe.tallySalesLedger || 'Food & Beverage Sales',
       tallyCgstLedger: cafe.tallyCgstLedger || 'CGST Input/Output 2.5%',
       tallySgstLedger: cafe.tallySgstLedger || 'SGST Input/Output 2.5%',

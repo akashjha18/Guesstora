@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import { Cafe, CafeTable, MenuItem, Order, OrderItem, User } from '../models.js';
@@ -10,9 +11,11 @@ import { serializeOrder } from './serializers.js';
 const router = Router();
 
 const CAPTAIN_ALLOWED_ROLES = ['owner', 'manager', 'cashier', 'kitchen', 'captain', 'waiter'];
+const FLOOR_ROLES = ['owner', 'manager', 'cashier', 'captain', 'waiter'];
+const CAPTAIN_MANAGER_ROLES = ['owner', 'manager', 'cashier'];
 
 // Middleware: Require Captain, Waiter, or Staff authorization
-export function requireCaptainOrStaff(req, res, next) {
+export async function requireCaptainOrStaff(req, res, next) {
   const authHeader = req.headers?.authorization || '';
   const token = authHeader.startsWith('Bearer ')
     ? authHeader.slice(7).trim()
@@ -24,19 +27,44 @@ export function requireCaptainOrStaff(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, jwtSecret);
-    const userRole = decoded.role || 'captain';
-    if (!CAPTAIN_ALLOWED_ROLES.includes(userRole)) {
+    const user = await User.findOne({
+      where: { id: decoded.sub || decoded.id, cafeId: decoded.cafe, status: 'active' },
+    });
+    if (!user || !CAPTAIN_ALLOWED_ROLES.includes(user.role)) {
       return res.status(403).json({ message: 'Floor captain or staff access required.' });
     }
 
-    req.auth = decoded;
+    req.auth = {
+      ...decoded,
+      id: user.id,
+      sub: user.id,
+      name: user.name || 'Floor Captain',
+      role: user.role,
+      cafe: user.cafeId,
+      assignedSection: user.assignedSection || 'All',
+    };
     return next();
   } catch (err) {
+    if (err.name?.startsWith('Sequelize')) {
+      return next(err);
+    }
     return res.status(401).json({
-      message: err.name === 'TokenExpiredError' ? 'Session expired. Please enter PIN again.' : 'Invalid captain session.',
+      message: err.name === 'TokenExpiredError' ? 'Session expired. Please sign in again.' : 'Invalid captain session.',
       code: err.name === 'TokenExpiredError' ? 'TOKEN_EXPIRED' : 'INVALID_TOKEN',
     });
   }
+}
+
+function requireCaptainManager(req, res, next) {
+  if (!CAPTAIN_MANAGER_ROLES.includes(req.auth.role)) {
+    return res.status(403).json({ message: 'Manager or cashier authorization is required for this action.' });
+  }
+  return next();
+}
+
+function tableSectionScope(req) {
+  const section = req.auth.role === 'waiter' ? req.auth.assignedSection : null;
+  return section && section !== 'All' ? { section } : {};
 }
 
 function generateOrderNumber(tableNumber) {
@@ -48,67 +76,49 @@ function generateOrderNumber(tableNumber) {
 // 1. PUBLIC / AUTH ENDPOINTS
 // ============================================================================
 
-// POST /api/public/cafes/:slug/captain/pin-login - Fast 4-digit numeric PIN unlock for floor staff
-router.post('/public/cafes/:slug/captain/pin-login', async (req, res) => {
+// POST /api/public/cafes/:slug/captain/login - Password sign-in for floor staff
+router.post('/public/cafes/:slug/captain/login', async (req, res) => {
   try {
-    const { slug } = req.params;
-    const { pin, staffId } = req.body;
-
-    const cafe = await Cafe.findOne({ where: { slug } });
+    const cafe = await Cafe.findOne({ where: { slug: req.params.slug } });
     if (!cafe) {
       return res.status(404).json({ message: 'Cafe not found.' });
     }
 
-    if (!pin || String(pin).trim().length < 3) {
-      return res.status(400).json({ message: 'Please enter a valid 4-digit PIN.' });
+    const email = String(req.body?.email || '').trim().toLowerCase();
+    const password = String(req.body?.password || '');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 6) {
+      return res.status(400).json({ message: 'Enter a valid email and password.' });
     }
 
-    const cleanPin = String(pin).trim();
-    let staffUser = null;
-
-    if (staffId) {
-      staffUser = await User.findOne({ where: { id: staffId } });
-    }
-
-    if (!staffUser) {
-      // Find active user matching PIN
-      staffUser = await User.findOne({
-        where: {
-          pin: cleanPin,
-          status: 'active',
-        },
-      });
-    }
-
-    // Fallback for demo mode: if pin is '1234' and no specific pin was set, match first active staff/owner
-    if (!staffUser && (cleanPin === '1234' || cleanPin === '0000')) {
-      staffUser = await User.findOne({ where: { status: 'active' } });
-    }
-
-    if (!staffUser || (staffUser.pin && staffUser.pin !== cleanPin && cleanPin !== '1234')) {
-      return res.status(401).json({ message: 'Invalid Captain PIN. Please try again.' });
-    }
-
-    const role = staffUser.role || 'captain';
-    const token = jwt.sign(
-      {
-        sub: staffUser.id,
-        id: staffUser.id,
-        name: staffUser.name || 'Floor Captain',
-        role: role,
-        cafe: cafe.id,
-        assignedSection: staffUser.assignedSection || 'All',
+    const staffUser = await User.findOne({
+      where: {
+        email,
+        cafeId: cafe.id,
+        status: 'active',
+        role: { [Op.in]: FLOOR_ROLES },
       },
-      jwtSecret,
-      { expiresIn: '14d' }
-    );
+    });
+    if (!staffUser || !(await bcrypt.compare(password, staffUser.passwordHash))) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
+
+    const token = jwt.sign({
+      sub: staffUser.id,
+      id: staffUser.id,
+      name: staffUser.name || 'Floor Captain',
+      email: staffUser.email,
+      role: staffUser.role,
+      cafe: cafe.id,
+      assignedSection: staffUser.assignedSection || 'All',
+    }, jwtSecret, { expiresIn: '12h' });
 
     return res.json({
       token,
       user: {
         id: staffUser.id,
         name: staffUser.name || 'Floor Captain',
-        role,
+        email: staffUser.email,
+        role: staffUser.role,
         assignedSection: staffUser.assignedSection || 'All',
       },
       cafe: {
@@ -119,27 +129,8 @@ router.post('/public/cafes/:slug/captain/pin-login', async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('Captain PIN login error:', err);
-    return res.status(500).json({ message: 'Failed to authenticate captain.' });
-  }
-});
-
-// GET /api/public/cafes/:slug/captain/staff-list - Quick waiter switching profiles
-router.get('/public/cafes/:slug/captain/staff-list', async (req, res) => {
-  try {
-    const { slug } = req.params;
-    const cafe = await Cafe.findOne({ where: { slug } });
-    if (!cafe) return res.status(404).json({ message: 'Cafe not found.' });
-
-    const staff = await User.findAll({
-      where: { status: 'active' },
-      attributes: ['id', 'name', 'role', 'assignedSection'],
-      order: [['name', 'ASC']],
-    });
-
-    return res.json(staff);
-  } catch (err) {
-    return res.status(500).json({ message: 'Failed to retrieve staff profiles.' });
+    console.error('Captain login error:', err);
+    return res.status(500).json({ message: 'Failed to sign in to Captain.' });
   }
 });
 
@@ -153,7 +144,7 @@ router.get('/captain/floor-plan', requireCaptainOrStaff, async (req, res) => {
     const cafeId = req.auth.cafe;
 
     const tables = await CafeTable.findAll({
-      where: { cafeId, isActive: true },
+      where: { cafeId, isActive: true, ...tableSectionScope(req) },
       order: [['tableNumber', 'ASC']],
     });
 
@@ -161,7 +152,7 @@ router.get('/captain/floor-plan', requireCaptainOrStaff, async (req, res) => {
     const activeOrderIds = tables.map(t => t.activeOrderId).filter(Boolean);
     const activeOrders = activeOrderIds.length > 0
       ? await Order.findAll({
-          where: { id: { [Op.in]: activeOrderIds } },
+          where: { id: { [Op.in]: activeOrderIds }, cafeId },
           include: [{ model: OrderItem, as: 'items' }],
         })
       : [];
@@ -263,7 +254,7 @@ router.post('/captain/tables/:id/seat', requireCaptainOrStaff, async (req, res) 
     const { id } = req.params;
     const { guestCount, dinerName, dinerPhone } = req.body;
 
-    const table = await CafeTable.findOne({ where: { id, cafeId } });
+    const table = await CafeTable.findOne({ where: { id, cafeId, ...tableSectionScope(req) } });
     if (!table) return res.status(404).json({ message: 'Table not found.' });
 
     table.status = 'occupied';
@@ -298,7 +289,9 @@ router.post('/captain/tables/:id/seat', requireCaptainOrStaff, async (req, res) 
 router.get('/captain/tables/:id/order', requireCaptainOrStaff, async (req, res) => {
   try {
     const cafeId = req.auth.cafe;
-    const table = await CafeTable.findOne({ where: { id: req.params.id, cafeId } });
+    const table = await CafeTable.findOne({
+      where: { id: req.params.id, cafeId, ...tableSectionScope(req) },
+    });
     if (!table) return res.status(404).json({ message: 'Table not found.' });
 
     if (!table.activeOrderId) {
@@ -334,7 +327,23 @@ router.post('/captain/tables/:id/order', requireCaptainOrStaff, async (req, res)
       return res.status(400).json({ message: 'Please select at least one item to fire.' });
     }
 
-    const table = await CafeTable.findOne({ where: { id, cafeId } });
+    const requestedMenuItemIds = [...new Set(items.map(item => String(item.menuItemId || '')))];
+    if (requestedMenuItemIds.some(id => !id)) {
+      return res.status(400).json({ message: 'Every order item must reference an active menu item.' });
+    }
+    const menuItems = await MenuItem.findAll({
+      where: {
+        id: { [Op.in]: requestedMenuItemIds },
+        cafeId,
+        available: true,
+      },
+    });
+    if (menuItems.length !== requestedMenuItemIds.length) {
+      return res.status(400).json({ message: 'One or more selected menu items are unavailable.' });
+    }
+    const menuItemById = new Map(menuItems.map(item => [item.id, item]));
+
+    const table = await CafeTable.findOne({ where: { id, cafeId, ...tableSectionScope(req) } });
     if (!table) return res.status(404).json({ message: 'Table not found.' });
 
     let order = null;
@@ -380,7 +389,8 @@ router.post('/captain/tables/:id/order', requireCaptainOrStaff, async (req, res)
     const newItemsCreated = [];
 
     for (const raw of items) {
-      const price = Number(raw.price) || 0;
+      const menuItem = menuItemById.get(String(raw.menuItemId));
+      const price = Number(menuItem.price) || 0;
       const quantity = Math.max(1, Number(raw.quantity) || 1);
       const itemCourse = ['starters', 'mains', 'desserts', 'beverages'].includes(raw.course)
         ? raw.course
@@ -389,8 +399,8 @@ router.post('/captain/tables/:id/order', requireCaptainOrStaff, async (req, res)
 
       const lineItem = await OrderItem.create({
         orderId: order.id,
-        menuItemId: raw.menuItemId || null,
-        name: raw.name || 'Menu Item',
+        menuItemId: menuItem.id,
+        name: menuItem.name,
         price,
         quantity,
         isCompleted: false,
@@ -466,6 +476,12 @@ router.post('/captain/orders/:orderId/fire-course', requireCaptainOrStaff, async
       include: [{ model: OrderItem, as: 'items' }],
     });
     if (!order) return res.status(404).json({ message: 'Order not found.' });
+    if (req.auth.role === 'waiter') {
+      const table = await CafeTable.findOne({
+        where: { cafeId, tableNumber: order.table, ...tableSectionScope(req) },
+      });
+      if (!table) return res.status(404).json({ message: 'Order not found.' });
+    }
 
     const filterCourse = course && course !== 'all' ? course : null;
     let firedCount = 0;
@@ -504,11 +520,11 @@ router.post('/captain/orders/:orderId/fire-course', requireCaptainOrStaff, async
 });
 
 // POST /api/captain/orders/:orderId/items/:itemId/void - Cancel/void item with reason code
-router.post('/captain/orders/:orderId/items/:itemId/void', requireCaptainOrStaff, async (req, res) => {
+router.post('/captain/orders/:orderId/items/:itemId/void', requireCaptainOrStaff, requireCaptainManager, async (req, res) => {
   try {
     const cafeId = req.auth.cafe;
     const { orderId, itemId } = req.params;
-    const { reason, authorizedBy } = req.body;
+    const { reason } = req.body;
 
     if (!reason) {
       return res.status(400).json({ message: 'Cancellation reason is mandatory.' });
@@ -529,7 +545,7 @@ router.post('/captain/orders/:orderId/items/:itemId/void', requireCaptainOrStaff
     const voidPrice = (item.price || 0) * (item.quantity || 1);
     item.itemStatus = 'void';
     item.voidReason = String(reason).trim();
-    item.voidAuthorizedBy = authorizedBy || req.auth.name || 'Floor Captain';
+    item.voidAuthorizedBy = req.auth.name || 'Floor Captain';
     await item.save();
 
     order.subtotal = Math.max(0, (order.subtotal || 0) - voidPrice);
@@ -579,7 +595,7 @@ router.post('/captain/orders/:orderId/items/:itemId/void', requireCaptainOrStaff
 // ============================================================================
 
 // POST /api/captain/tables/transfer - Transfer guest party from Table A to Table B
-router.post('/captain/tables/transfer', requireCaptainOrStaff, async (req, res) => {
+router.post('/captain/tables/transfer', requireCaptainOrStaff, requireCaptainManager, async (req, res) => {
   try {
     const cafeId = req.auth.cafe;
     const { sourceTableId, targetTableId, reason } = req.body;
@@ -645,7 +661,7 @@ router.post('/captain/tables/transfer', requireCaptainOrStaff, async (req, res) 
 });
 
 // POST /api/captain/tables/merge - Merge secondary table into primary table
-router.post('/captain/tables/merge', requireCaptainOrStaff, async (req, res) => {
+router.post('/captain/tables/merge', requireCaptainOrStaff, requireCaptainManager, async (req, res) => {
   try {
     const cafeId = req.auth.cafe;
     const { primaryTableId, secondaryTableId, reason } = req.body;
@@ -721,7 +737,7 @@ router.post('/captain/tables/:id/request-bill', requireCaptainOrStaff, async (re
     const cafeId = req.auth.cafe;
     const { id } = req.params;
 
-    const table = await CafeTable.findOne({ where: { id, cafeId } });
+    const table = await CafeTable.findOne({ where: { id, cafeId, ...tableSectionScope(req) } });
     if (!table) return res.status(404).json({ message: 'Table not found.' });
 
     table.status = 'billed';
@@ -729,7 +745,7 @@ router.post('/captain/tables/:id/request-bill', requireCaptainOrStaff, async (re
 
     let orderTotal = 0;
     if (table.activeOrderId) {
-      const order = await Order.findOne({ where: { id: table.activeOrderId } });
+      const order = await Order.findOne({ where: { id: table.activeOrderId, cafeId } });
       orderTotal = order?.total || 0;
     }
 
@@ -753,7 +769,7 @@ router.post('/captain/tables/:id/request-bill', requireCaptainOrStaff, async (re
 });
 
 // POST /api/captain/tables/:id/release - 1-Click Release/Free Table
-router.post('/captain/tables/:id/release', requireCaptainOrStaff, async (req, res) => {
+router.post('/captain/tables/:id/release', requireCaptainOrStaff, requireCaptainManager, async (req, res) => {
   try {
     const cafeId = req.auth.cafe;
     const { id } = req.params;

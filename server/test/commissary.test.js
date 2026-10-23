@@ -41,14 +41,14 @@ describe('Phase 10: Central Commissary, Inter-Store Indents & Advanced Inventory
     await ensureCommissarySchema();
 
     commissaryCafe = await Cafe.create({
-      name: 'Gusstora Central Roastery & Commissary',
+      name: 'GUESTORA Central Roastery & Commissary',
       slug: `roastery-commissary-${Date.now()}`,
       tables: 0,
       currency: 'INR',
     });
 
     outletCafe = await Cafe.create({
-      name: 'Gusstora Bandra Flagship Outlet',
+      name: 'GUESTORA Bandra Flagship Outlet',
       slug: `bandra-outlet-${Date.now()}`,
       tables: 12,
       currency: 'INR',
@@ -72,7 +72,7 @@ describe('Phase 10: Central Commissary, Inter-Store Indents & Advanced Inventory
     // 2. Roasted Finished Good in Commissary (0 kg initial)
     roastedBlendItem = await InventoryItem.create({
       cafeId: commissaryCafe.id,
-      name: 'Gusstora Signature Espresso Roast',
+      name: 'GUESTORA Signature Espresso Roast',
       category: 'Roasted Coffee',
       currentStock: 0.0,
       unit: 'kg',

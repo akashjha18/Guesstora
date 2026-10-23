@@ -39,7 +39,7 @@ describe('Phase 12: Beyond Petpooja - AI Roastery OS & Intelligent Automation', 
     await ensureAiRoasterySchema();
 
     testCafe = await Cafe.create({
-      name: 'Gusstora Specialty Roastery Lab',
+      name: 'GUESTORA Specialty Roastery Lab',
       slug: `gusstora-roastery-lab-${Date.now()}`,
       phone: '9811223344',
       address: 'Indiranagar 100ft Road, Bengaluru',

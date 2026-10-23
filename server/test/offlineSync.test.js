@@ -8,7 +8,7 @@ test('▶ Phase 7: Offline-First PWA Architecture & Dual-Screen CFD', async (t) 
   let cafe = await Cafe.findOne({ where: { slug: 'demo-cafe' } });
   if (!cafe) {
     cafe = await Cafe.create({
-      name: 'Gusstora Test Roastery',
+      name: 'GUESTORA Test Roastery',
       slug: 'test-roastery-' + Date.now(),
       brandColor: '#ea580c',
       currency: 'INR',
@@ -156,14 +156,14 @@ test('▶ Phase 7: Offline-First PWA Architecture & Dual-Screen CFD', async (t) 
   });
 
   await t.test('CFD Config supports custom greeting, promotional banner and UPI VPA', async () => {
-    cafe.cfdWelcomeTitle = 'Welcome to Gusstora Coffee Atelier';
+    cafe.cfdWelcomeTitle = 'Welcome to GUESTORA Coffee Atelier';
     cafe.cfdWelcomeSubtitle = 'Fresh Roasts & Sourdough Croissants';
     cafe.cfdPromoBanner = 'Get 10% off your next bag of whole beans!';
     cafe.cfdUpiVpa = 'roastery@okhdfcbank';
     await cafe.save();
 
     const reloaded = await Cafe.findByPk(cafe.id);
-    assert.equal(reloaded.cfdWelcomeTitle, 'Welcome to Gusstora Coffee Atelier');
+    assert.equal(reloaded.cfdWelcomeTitle, 'Welcome to GUESTORA Coffee Atelier');
     assert.equal(reloaded.cfdWelcomeSubtitle, 'Fresh Roasts & Sourdough Croissants');
     assert.equal(reloaded.cfdPromoBanner, 'Get 10% off your next bag of whole beans!');
     assert.equal(reloaded.cfdUpiVpa, 'roastery@okhdfcbank');

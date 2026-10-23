@@ -31,7 +31,7 @@ export async function generatePaymentIntent({ order, gateway = 'upi', cafe = {} 
   const normalizedGateway = String(gateway).toLowerCase();
   const amount = Number(order.total);
   const amountMinor = Math.round(amount * 100);
-  const cafeName = cafe.name || 'Gusstora Roastery';
+  const cafeName = cafe.name || 'GUESTORA Roastery';
 
   if (normalizedGateway === 'upi') {
     const upiVpa = cafe.cfdUpiVpa || process.env.CAFE_UPI_VPA;

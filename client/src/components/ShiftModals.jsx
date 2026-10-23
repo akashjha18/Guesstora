@@ -258,7 +258,7 @@ export default function ShiftModals({
 
             <div className="z-report-thermal-receipt">
               <div className="kot-head-brand">
-                <h2 className="kot-cafe-name">{zReportModalData.cafeName || cafe?.name || 'GUSSTORA ARTISAN ROASTERY'}</h2>
+                <h2 className="kot-cafe-name">{zReportModalData.cafeName || cafe?.name || 'GUESTORA ARTISAN ROASTERY'}</h2>
                 <div style={{ fontSize: 11, color: '#444', marginBottom: 4 }}>
                   {cafe?.tagline || 'Craft Coffee & Artisanal Kitchen'}
                 </div>

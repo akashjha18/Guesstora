@@ -962,7 +962,7 @@ export async function createWinbackCampaign({
     isActive: true,
   });
 
-  const defaultTemplate = `Hey {{customerName}}! We haven't seen you at Gusstora in a while. Your favorite {{favoriteItem}} is roasted fresh and waiting! Enjoy {{discountPercent}}% OFF on your next visit with exclusive code: *{{promoCode}}*. Tap here to order: {{cafeUrl}}`;
+  const defaultTemplate = `Hey {{customerName}}! We haven't seen you at GUESTORA in a while. Your favorite {{favoriteItem}} is roasted fresh and waiting! Enjoy {{discountPercent}}% OFF on your next visit with exclusive code: *{{promoCode}}*. Tap here to order: {{cafeUrl}}`;
 
   const template = customTemplate || defaultTemplate;
 

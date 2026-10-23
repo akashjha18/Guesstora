@@ -1108,7 +1108,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
               }}>
                 <span style={{ color: '#16a34a', fontWeight: 700 }}>Preview: </span>
                 {testTemplate === 'order_confirmed' && (
-                  <span>☕ Gusstora: Your order #PB-9012 for ₹480 has been placed! Our roastery baristas are brewing it now.</span>
+                  <span>☕ GUESTORA: Your order #PB-9012 for ₹480 has been placed! Our roastery baristas are brewing it now.</span>
                 )}
                 {testTemplate === 'order_ready' && (
                   <span>🔔 Hot & Ready! Your order #PB-9012 is ready for Table 4. Enjoy your artisanal brew!</span>
@@ -1232,7 +1232,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: '#111827' }}>
-                    {brandOverview?.brand?.name || 'Gusstora Roasters Chain'}
+                    {brandOverview?.brand?.name || 'GUESTORA Roasters Chain'}
                   </h2>
                   <span style={{
                     background: '#ecfdf5',
@@ -1821,7 +1821,7 @@ export default function OmnichannelManager({ cafe, token, onCafeSwitch }) {
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Gusstora Express - Airport Terminal 2"
+                  placeholder="e.g. GUESTORA Express - Airport Terminal 2"
                   value={newOutletName}
                   onChange={e => setNewOutletName(e.target.value)}
                   required

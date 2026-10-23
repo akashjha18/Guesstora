@@ -1,18 +1,28 @@
 import { sequelize } from './db.js';
+import bcrypt from 'bcryptjs';
+import { Op } from 'sequelize';
+import { User } from './models.js';
 
 export async function ensureCaptainSchema() {
   const qi = sequelize.getQueryInterface();
 
-  // 1. Ensure Captain columns on users table (quick 4-digit PIN authentication & section assignment)
+  // 1. Ensure staff PIN and Captain section assignment
   try {
     const usersTable = await qi.describeTable('users').catch(() => null);
     if (usersTable) {
       if (!usersTable.pin) {
         await qi.addColumn('users', 'pin', {
-          type: 'VARCHAR(10)',
-          defaultValue: '1234',
+          type: 'VARCHAR(255)',
+          defaultValue: null,
           allowNull: true,
         }).catch(() => {});
+      } else {
+        await qi.changeColumn('users', 'pin', {
+          type: 'VARCHAR(255)',
+          defaultValue: null,
+          allowNull: true,
+        });
+        await sequelize.query("UPDATE users SET pin = NULL WHERE pin IN ('1234', '0000')");
       }
       if (!usersTable.assignedSection) {
         await qi.addColumn('users', 'assignedSection', {
@@ -20,6 +30,18 @@ export async function ensureCaptainSchema() {
           defaultValue: 'All',
           allowNull: true,
         }).catch(() => {});
+      }
+
+      const usersWithPins = await User.findAll({
+        where: { pin: { [Op.ne]: null } },
+        attributes: ['id', 'pin'],
+      });
+      for (const user of usersWithPins) {
+        if (/^\$2[aby]\$/.test(user.pin)) continue;
+        user.pin = /^\d{4}$/.test(user.pin) && !['1234', '0000'].includes(user.pin)
+          ? await bcrypt.hash(user.pin, 10)
+          : null;
+        await user.save({ fields: ['pin'] });
       }
     }
   } catch (err) {

@@ -80,7 +80,7 @@ export default function CommissaryManager({ cafe, token }) {
   });
   const [dispatchForm, setDispatchForm] = useState({
     dispatchedBy: 'Logistics Lead',
-    transporterName: 'Gusstora Fleet Logistics',
+    transporterName: 'GUESTORA Fleet Logistics',
     vehicleNumber: 'MH-12-GF-4491',
     driverContact: '+91 98200 44123',
     dispatchQuantities: [],
@@ -825,7 +825,7 @@ export default function CommissaryManager({ cafe, token }) {
                   requestedBy: 'Store Manager',
                   items: [
                     {
-                      itemName: 'Gusstora Signature Espresso Roast',
+                      itemName: 'GUESTORA Signature Espresso Roast',
                       category: 'Roasted Coffee',
                       unit: 'kg',
                       requestedQty: 5,
@@ -1028,7 +1028,7 @@ export default function CommissaryManager({ cafe, token }) {
                           setSelectedIndent(ind);
                           setDispatchForm({
                             dispatchedBy: 'Commissary Dispatch Lead',
-                            transporterName: 'Gusstora Fleet Logistics',
+                            transporterName: 'GUESTORA Fleet Logistics',
                             vehicleNumber: 'MH-12-GF-4491',
                             driverContact: '+91 98200 44123',
                             dispatchQuantities: (ind.items || []).map(li => ({ id: li.id, dispatchedQty: li.approvedQty })),

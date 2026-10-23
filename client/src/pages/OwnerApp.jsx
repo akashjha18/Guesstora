@@ -429,6 +429,7 @@ export default function OwnerApp() {
     phone: '',
     password: '',
     role: 'cashier',
+    assignedSection: 'All',
   });
   const [savingStaff, setSavingStaff] = useState(false);
 
@@ -1109,7 +1110,7 @@ export default function OwnerApp() {
       });
       setError(res.message || 'Staff member added successfully!');
       setShowAddStaffModal(false);
-      setStaffForm({ name: '', email: '', phone: '', password: '', role: 'cashier' });
+      setStaffForm({ name: '', email: '', phone: '', password: '', role: 'cashier', assignedSection: 'All' });
       fetchStaff();
       load();
     } catch (err) {
@@ -1122,6 +1123,16 @@ export default function OwnerApp() {
   async function handleUpdateStaff(e) {
     e.preventDefault();
     if (!editingStaff) return;
+    if (isOwner && editingStaff.newPassword) {
+      if (editingStaff.newPassword.length < 6) {
+        setError('New password must be at least 6 characters long.');
+        return;
+      }
+      if (editingStaff.newPassword !== editingStaff.confirmPassword) {
+        setError('New password and confirmation do not match.');
+        return;
+      }
+    }
     setSavingStaff(true);
     setError('');
     try {
@@ -1131,6 +1142,9 @@ export default function OwnerApp() {
         role: editingStaff.role,
         status: editingStaff.status,
       };
+      if (editingStaff.role === 'waiter') {
+        payload.assignedSection = editingStaff.assignedSection || 'All';
+      }
       if (editingStaff.newPassword) {
         payload.password = editingStaff.newPassword;
       }
@@ -1835,7 +1849,7 @@ export default function OwnerApp() {
     if (!b?.phone) return '#';
     const dateStr = new Date(b.dateTime).toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
     const timeStr = new Date(b.dateTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-    const cafeName = data?.cafe?.name || 'Gusstora Artisan Roastery';
+    const cafeName = data?.cafe?.name || 'GUESTORA Artisan Roastery';
     const tableInfo = b.tableNumber ? `Table T-${b.tableNumber}` : 'Table Assigned upon arrival';
     const msg = `Greetings ${b.name}! Your table reservation at ${cafeName} is confirmed for ${b.guests} guests on ${dateStr} at ${timeStr} (${tableInfo}). We look forward to hosting you!`;
     return `https://wa.me/91${cleanPhone(b.phone)}?text=${encodeURIComponent(msg)}`;
@@ -3015,10 +3029,10 @@ export default function OwnerApp() {
         <div className="sidebar-top">
           <div className="brand-logo-area">
             <div className="brand-icon-box">
-              <img src="/gusstora_emblem.png" alt="Gusstora" className="brand-logo-icon" />
+              <img src="/gusstora_emblem.png" alt="GUESTORA" className="brand-logo-icon" />
             </div>
             <div className="brand-text">
-              <h2>Gusstora</h2>
+              <h2>GUESTORA</h2>
               <span className="brand-sub">Café Control Centre</span>
             </div>
             <button
@@ -4021,7 +4035,7 @@ export default function OwnerApp() {
                     <span className="crm-orders-tag">BUSINESS INSIGHTS</span>
                   </div>
                   <div className="crm-orders-title-row">
-                    <h1 className="crm-orders-title">{data?.cafe?.name || 'Gusstora'} Executive Pulse</h1>
+                    <h1 className="crm-orders-title">{data?.cafe?.name || 'GUESTORA'} Executive Pulse</h1>
                     <span className="crm-menu-status-badge">
                       <span className="crm-pulse-dot" />
                       Live Venue Analytics
@@ -8495,7 +8509,7 @@ export default function OwnerApp() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <Coffee size={18} style={{ color: '#176B50' }} />
-                      <strong style={{ fontSize: '14px', letterSpacing: '0.02em', color: '#F1F7F2' }}>{data?.cafe?.name || 'Gusstora Roastery'}</strong>
+                      <strong style={{ fontSize: '14px', letterSpacing: '0.02em', color: '#F1F7F2' }}>{data?.cafe?.name || 'GUESTORA Roastery'}</strong>
                     </div>
                     <span style={{ fontSize: '10.5px', background: 'rgba(23, 107, 80, 0.2)', border: '1px solid rgba(23, 107, 80, 0.4)', color: '#176B50', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>VIP CLUB</span>
                   </div>
@@ -8728,6 +8742,9 @@ export default function OwnerApp() {
                     />
                     <input
                       type="text"
+                      required
+                      pattern="^#[0-9A-Fa-f]{6}$"
+                      title="Enter a six-digit hex color, such as #176B50"
                       value={data.cafe.brandColor || '#176B50'}
                       onChange={e => setData({ ...data, cafe: { ...data.cafe, brandColor: e.target.value } })}
                       style={{ flex: 1 }}
@@ -8777,7 +8794,7 @@ export default function OwnerApp() {
                   <span>CFD Welcome Title</span>
                   <input
                     type="text"
-                    placeholder="Welcome to Gusstora"
+                    placeholder="Welcome to GUESTORA"
                     value={data.cafe.cfdWelcomeTitle || ''}
                     onChange={e => setData({ ...data, cafe: { ...data.cafe, cfdWelcomeTitle: e.target.value } })}
                   />
@@ -8857,7 +8874,7 @@ export default function OwnerApp() {
                   className="crm-btn-primary"
                   type="button"
                   onClick={() => {
-                    setStaffForm({ name: '', email: '', phone: '', password: '', role: 'cashier' });
+                    setStaffForm({ name: '', email: '', phone: '', password: '', role: 'cashier', assignedSection: 'All' });
                     setShowAddStaffModal(true);
                   }}
                 >
@@ -8908,7 +8925,7 @@ export default function OwnerApp() {
                 </div>
                 <div className="crm-stat-content">
                   <span className="crm-stat-label">Front & Kitchen Crew</span>
-                  <div className="crm-stat-value">{staffList.filter(s => s.role === 'cashier' || s.role === 'kitchen').length}</div>
+                  <div className="crm-stat-value">{staffList.filter(s => s.role === 'cashier' || s.role === 'kitchen' || s.role === 'waiter').length}</div>
                 </div>
                 <span className="crm-stat-tag cooking">Floor & Line</span>
               </div>
@@ -9045,6 +9062,7 @@ export default function OwnerApp() {
                   <option value="manager">Manager</option>
                   <option value="cashier">Cashier</option>
                   <option value="kitchen">Kitchen</option>
+                  <option value="waiter">Waiter</option>
                 </select>
 
                 <select
@@ -9111,9 +9129,16 @@ export default function OwnerApp() {
                             </div>
                           </td>
                           <td>
-                            <span className={`role-badge ${member.role}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                              {member.role === 'owner' ? <><Crown size={12} /> OWNER</> : member.role === 'manager' ? <><ClipboardList size={12} /> MANAGER</> : member.role === 'cashier' ? <><CreditCard size={12} /> CASHIER</> : <><ChefHat size={12} /> KITCHEN</>}
-                            </span>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 5 }}>
+                              <span className={`role-badge ${member.role}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                                {member.role === 'owner' ? <><Crown size={12} /> OWNER</> : member.role === 'manager' ? <><ClipboardList size={12} /> MANAGER</> : member.role === 'cashier' ? <><CreditCard size={12} /> CASHIER</> : member.role === 'waiter' ? <><Utensils size={12} /> WAITER</> : <><ChefHat size={12} /> KITCHEN</>}
+                              </span>
+                              {member.role === 'waiter' && (
+                                <small style={{ color: 'var(--text-muted, #7d736b)', fontSize: '11px' }}>
+                                  {member.assignedSection || 'All'}
+                                </small>
+                              )}
+                            </div>
                           </td>
                           <td>
                             <div style={{ fontSize: '12.5px', color: '#334155' }}>
@@ -9160,7 +9185,7 @@ export default function OwnerApp() {
                                 <button
                                   type="button"
                                   className="staff-action-btn"
-                                  onClick={() => setEditingStaff({ ...member, newPassword: '' })}
+                                  onClick={() => setEditingStaff({ ...member, newPassword: '', confirmPassword: '' })}
                                 >
                                   <Pencil size={13} />
                                   <span>Edit</span>
@@ -10322,7 +10347,7 @@ export default function OwnerApp() {
                             type="text"
                             value={qrKitWifiSsid}
                             onChange={e => setQrKitWifiSsid(e.target.value)}
-                            placeholder="e.g. Gusstora_Guest_5G"
+                            placeholder="e.g. GUESTORA_Guest_5G"
                           />
                         </label>
                         <label>
@@ -10412,7 +10437,7 @@ export default function OwnerApp() {
                         }}
                       >
                         <Coffee size={18} className="standee-logo-icon" />
-                        <span className="standee-cafe-name">{data?.cafe?.name || 'Gusstora Roastery'}</span>
+                        <span className="standee-cafe-name">{data?.cafe?.name || 'GUESTORA Roastery'}</span>
                       </div>
 
                       {/* Standee Body */}
@@ -10566,7 +10591,7 @@ export default function OwnerApp() {
                       }}
                     >
                       <Coffee size={24} className="print-header-icon" />
-                      <h2 className="print-header-title">{data?.cafe?.name || 'Gusstora Roastery'}</h2>
+                      <h2 className="print-header-title">{data?.cafe?.name || 'GUESTORA Roastery'}</h2>
                     </div>
 
                     <div className="print-card-body">
@@ -12470,7 +12495,7 @@ export default function OwnerApp() {
               {/* 80mm ESC/POS Layout */}
               <div className="kot-thermal-receipt">
                 <div className="kot-head-brand">
-                  <h2 className="kot-cafe-name">{data?.cafe?.name || 'GUSSTORA ARTISAN ROASTERY'}</h2>
+                  <h2 className="kot-cafe-name">{data?.cafe?.name || 'GUESTORA ARTISAN ROASTERY'}</h2>
                   <div style={{ fontSize: 11, color: '#444', marginBottom: 4 }}>
                     {data?.cafe?.tagline || 'Craft Coffee & Artisanal Kitchen'}
                   </div>
@@ -12580,7 +12605,7 @@ export default function OwnerApp() {
                       Visit Again Soon!
                     </div>
                   ) : (
-                    <div style={{ marginTop: 4 }}>Punched via Gusstora POS Core</div>
+                    <div style={{ marginTop: 4 }}>Punched via GUESTORA POS Core</div>
                   )}
                 </div>
               </div>
@@ -12658,18 +12683,19 @@ export default function OwnerApp() {
 
                 <div className="form-group">
                   <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Lock size={14} /> Temporary Password <span style={{ color: 'var(--accent-red)' }}>*</span>
+                    <Lock size={14} /> Login Password <span style={{ color: 'var(--accent-red)' }}>*</span>
                   </label>
                   <input
                     type="password"
+                    autoComplete="new-password"
                     required
                     minLength={6}
-                    placeholder="Minimum 6 characters"
+                    placeholder="At least 6 characters"
                     value={staffForm.password}
                     onChange={e => setStaffForm({ ...staffForm, password: e.target.value })}
                   />
                   <small style={{ color: 'var(--text-muted)', fontSize: '11px', marginTop: '4px' }}>
-                    The staff member will use this password along with their email to log in to the dashboard.
+                    Use this email and password to sign in to the Captain app.
                   </small>
                 </div>
 
@@ -12694,9 +12720,25 @@ export default function OwnerApp() {
                     {isOwner && <option value="manager">Manager (Operations, Menu, CRM & Staff)</option>}
                     <option value="cashier">Cashier (POS Orders, Tables & Redemptions)</option>
                     <option value="kitchen">Kitchen (KDS Order Prep Display)</option>
+                    <option value="waiter">Waiter (Captain floor app; take table orders)</option>
                     {isOwner && <option value="owner">Owner (Full Root Sovereignty)</option>}
                   </select>
                 </div>
+
+                {staffForm.role === 'waiter' && (
+                  <div className="form-group">
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Armchair size={14} /> Assigned Floor Section
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={50}
+                      placeholder="All sections"
+                      value={staffForm.assignedSection}
+                      onChange={e => setStaffForm({ ...staffForm, assignedSection: e.target.value })}
+                    />
+                  </div>
+                )}
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
                   <button
@@ -12776,18 +12818,36 @@ export default function OwnerApp() {
                   />
                 </div>
 
-                <div className="form-group">
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Lock size={14} /> Reset Password (Optional)
-                  </label>
-                  <input
-                    type="password"
-                    placeholder="Leave blank to keep existing password"
-                    minLength={6}
-                    value={editingStaff.newPassword || ''}
-                    onChange={e => setEditingStaff({ ...editingStaff, newPassword: e.target.value })}
-                  />
-                </div>
+                {isOwner && (
+                  <div className="form-group">
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Lock size={14} /> Set New Login Password (Optional)
+                    </label>
+                    <input
+                      type="password"
+                      autoComplete="new-password"
+                      placeholder="Leave blank to keep the current password"
+                      minLength={6}
+                      value={editingStaff.newPassword || ''}
+                      onChange={e => setEditingStaff({ ...editingStaff, newPassword: e.target.value })}
+                    />
+                    {editingStaff.newPassword && (
+                      <input
+                        type="password"
+                        autoComplete="new-password"
+                        placeholder="Confirm new password"
+                        minLength={6}
+                        required
+                        value={editingStaff.confirmPassword || ''}
+                        onChange={e => setEditingStaff({ ...editingStaff, confirmPassword: e.target.value })}
+                        style={{ marginTop: '8px' }}
+                      />
+                    )}
+                    <small style={{ color: 'var(--text-muted)', fontSize: '11px', marginTop: '4px' }}>
+                      Only café owners can reset login passwords. The new password must be at least 6 characters.
+                    </small>
+                  </div>
+                )}
 
                 <div className="form-group">
                   <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -12812,8 +12872,24 @@ export default function OwnerApp() {
                     {isOwner && <option value="manager">Manager (Operations & Staff)</option>}
                     <option value="cashier">Cashier (POS Orders & CRM)</option>
                     <option value="kitchen">Kitchen (KDS Display)</option>
+                    <option value="waiter">Waiter (Captain floor app)</option>
                   </select>
                 </div>
+
+                {editingStaff.role === 'waiter' && (
+                  <div className="form-group">
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Armchair size={14} /> Assigned Floor Section
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={50}
+                      placeholder="All sections"
+                      value={editingStaff.assignedSection || 'All'}
+                      onChange={e => setEditingStaff({ ...editingStaff, assignedSection: e.target.value })}
+                    />
+                  </div>
+                )}
 
                 <div className="form-group">
                   <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -13026,7 +13102,7 @@ export default function OwnerApp() {
                     <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
                       {ruleForm.messageTemplate
                         .replace(/\{customerName\}/g, 'Aarav')
-                        .replace(/\{cafeName\}/g, data.cafe?.name || 'Gusstora Café')
+                        .replace(/\{cafeName\}/g, data.cafe?.name || 'GUESTORA Café')
                         .replace(/\{stampsLeft\}/g, '2')
                         .replace(/\{currentStamps\}/g, '6')
                         .replace(/\{claimCode\}/g, 'CLM-4K8P')

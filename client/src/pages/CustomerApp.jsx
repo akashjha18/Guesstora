@@ -124,6 +124,16 @@ const money = n =>
     maximumFractionDigits: 0
   }).format(n || 0);
 
+function getBrandForeground(color) {
+  const hex = /^#([0-9a-f]{6})$/i.exec(color)?.[1];
+  if (!hex) return '#FFFFFF';
+  const channels = [0, 2, 4].map(offset => parseInt(hex.slice(offset, offset + 2), 16) / 255);
+  const luminance = channels
+    .map(channel => channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4)
+    .reduce((sum, channel, index) => sum + channel * [0.2126, 0.7152, 0.0722][index], 0);
+  return luminance > 0.179 ? '#17211D' : '#FFFFFF';
+}
+
 
 function FaveBrandLogo() {
   return (
@@ -1194,7 +1204,7 @@ export default function CustomerApp() {
   }
 
   const copyWifi = () => {
-    const ssid = cafe?.wifiSsid || 'Gusstora-Roastery-5G';
+    const ssid = cafe?.wifiSsid || 'GUESTORA-Roastery-5G';
     const pwd = cafe?.wifiPassword || 'perkbytecoffee';
     const text = `Wi-Fi: ${ssid} | Password: ${pwd}`;
     if (navigator?.clipboard?.writeText) {
@@ -1331,7 +1341,7 @@ export default function CustomerApp() {
     return (
       <div className="customer-loader-wrap">
         <div className="loader-coffee-box">
-          <img src="/gusstora_emblem.png" alt="Gusstora" className="loader-logo-spin" />
+          <img src="/gusstora_emblem.png" alt="GUESTORA" className="loader-logo-spin" />
         </div>
         <p>{notice || 'Brewing the menu…'}</p>
       </div>
@@ -1339,7 +1349,17 @@ export default function CustomerApp() {
   }
 
   return (
-    <div className="brix-app-shell">
+    <div
+      className="brix-app-shell"
+      style={{
+        '--cafe-brand-color': cafe?.brandColor || '#176B50',
+        '--cafe-brand-foreground': getBrandForeground(cafe?.brandColor || '#176B50'),
+        '--brix-olive-medium': 'var(--cafe-brand-color)',
+        '--brix-primary-accent': 'var(--cafe-brand-color)',
+        '--brix-primary-accent-hover': 'color-mix(in srgb, var(--cafe-brand-color) 84%, black)',
+        '--brix-sidebar-active': 'var(--cafe-brand-color)',
+      }}
+    >
       {/* ===================== LEFT SIDEBAR (OLIVE GREEN ~21% WIDTH) ===================== */}
       <aside className="brix-sidebar" aria-label="Café Sidebar">
         <div>
@@ -1678,7 +1698,7 @@ export default function CustomerApp() {
                 </h2>
                 <p className="tracker-subtext">
                   {stageIndex === 3
-                    ? 'Thank you for choosing Gusstora. We hope you love your artisan brew!'
+                    ? 'Thank you for choosing GUESTORA. We hope you love your artisan brew!'
                     : stageIndex === 2
                     ? placed.table?.toLowerCase().includes('takeaway')
                       ? 'Please collect your items at the front counter pickup zone.'
@@ -1815,7 +1835,7 @@ export default function CustomerApp() {
                 <div className="diner-feedback-head">
                   <div className="diner-feedback-title-row">
                     <Sparkles size={18} className="text-gold" />
-                    <h4>How is your Gusstora experience?</h4>
+                    <h4>How is your GUESTORA experience?</h4>
                   </div>
                   <p className="diner-feedback-sub">
                     Your direct review helps fellow coffee enthusiasts discover us, and ensures our craft stays exceptional.
@@ -2526,12 +2546,12 @@ export default function CustomerApp() {
       {tab === 'loyalty' && (
         <main className="customer-main-narrow">
           <div className="loyalty-card-dark">
-            <div className="loyalty-watermark">Gusstora Club</div>
+            <div className="loyalty-watermark">GUESTORA Club</div>
             <div className="loyalty-card-top">
               <div className="loyalty-brand-badge">
-                <img src="/gusstora_emblem.png" alt="Gusstora" />
+                <img src="/gusstora_emblem.png" alt="GUESTORA" />
                 <div>
-                  <span className="brand-tier">GUSSTORA PRIVILEGE</span>
+                  <span className="brand-tier">GUESTORA PRIVILEGE</span>
                   <h3>Stamp & Reward Passport</h3>
                 </div>
               </div>
@@ -2734,7 +2754,7 @@ export default function CustomerApp() {
                 <div className="profile-top-row">
                   <div className="profile-identity">
                     <div className="profile-avatar-box">
-                      <img src="/gusstora_emblem.png" alt="Gusstora" />
+                      <img src="/gusstora_emblem.png" alt="GUESTORA" />
                     </div>
                     <div>
                       <div className="profile-name-cluster">
@@ -3112,7 +3132,7 @@ export default function CustomerApp() {
                   </button>
                 </div>
                 <p style={{ margin: 0, fontSize: 13, color: '#777B6B' }}>
-                  SSID: <b>{cafe.wifiSsid || 'Gusstora-Guest-5G'}</b>
+                  SSID: <b>{cafe.wifiSsid || 'GUESTORA-Guest-5G'}</b>
                 </p>
               </div>
 
@@ -3861,7 +3881,7 @@ export default function CustomerApp() {
             </div>
 
             <div className="otp-modal-body">
-              <span className="otp-kicker">GUSSTORA VIP ACCESS</span>
+              <span className="otp-kicker">GUESTORA VIP ACCESS</span>
               <h3>{otpStep === 1 ? 'Customer Identification' : 'Verify Mobile OTP'}</h3>
               <p className="otp-subtext">
                 {otpStep === 1
@@ -3969,7 +3989,7 @@ export default function CustomerApp() {
 
             <div className="voucher-modal-inner">
               <div className="voucher-modal-brand">
-                <img src="/gusstora_emblem.png" alt="Gusstora" className="modal-brand-emblem" />
+                <img src="/gusstora_emblem.png" alt="GUESTORA" className="modal-brand-emblem" />
                 <span className="voucher-gold-tag">VIP DINING PASS</span>
                 <h2>{money(selectedVoucherQr.amount)} Voucher</h2>
                 <p className="voucher-instruction">Present this QR code or Claim Code to your barista or cashier at billing.</p>

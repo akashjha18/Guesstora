@@ -3,10 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   AlertCircle,
   AlertTriangle,
+  Armchair,
   ArrowLeft,
   ArrowRight,
   Bell,
-  Check,
   CheckCircle2,
   ChefHat,
   ChevronDown,
@@ -19,7 +19,6 @@ import {
   Layers,
   Lock,
   LogOut,
-  Maximize2,
   Minimize2,
   Minus,
   MoveRight,
@@ -29,7 +28,6 @@ import {
   RefreshCw,
   Search,
   Send,
-  Shield,
   ShieldAlert,
   Smartphone,
   Sparkles,
@@ -42,7 +40,6 @@ import {
   Volume2,
   VolumeX,
   X,
-  Zap,
 } from 'lucide-react';
 import { api, BASE, getToken } from '../api';
 
@@ -110,19 +107,20 @@ export default function CaptainApp() {
       return null;
     }
   });
+  const canManageFloor = ['owner', 'manager', 'cashier'].includes(currentCaptain?.role);
 
-  // Staff PIN screen state
-  const [staffList, setStaffList] = useState([]);
-  const [selectedStaff, setSelectedStaff] = useState(null);
-  const [pinInput, setPinInput] = useState('');
-  const [pinError, setPinError] = useState('');
-  const [isPinAuthenticating, setIsPinAuthenticating] = useState(false);
+  // Staff password sign-in state
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   // Floor plan data state
   const [cafeData, setCafeData] = useState(null);
   const [tables, setTables] = useState([]);
   const [sections, setSections] = useState(['All']);
-  const [activeSection, setActiveSection] = useState('All');
+  const [activeSection, setActiveSection] = useState('');
+  const [tableSearch, setTableSearch] = useState('');
   const [stats, setStats] = useState({ total: 0, available: 0, occupied: 0, billed: 0, cleaning: 0 });
   const [isLoadingFloor, setIsLoadingFloor] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
@@ -157,7 +155,6 @@ export default function CaptainApp() {
   // Void item state
   const [voidingItemId, setVoidingItemId] = useState(null);
   const [voidReason, setVoidReason] = useState('Guest changed mind');
-  const [voidManagerPin, setVoidManagerPin] = useState('1234');
   const [isVoiding, setIsVoiding] = useState(false);
 
   // UI settings
@@ -184,23 +181,6 @@ export default function CaptainApp() {
     };
   };
 
-  // 1. Fetch Staff List for quick PIN unlock
-  const loadStaffList = async () => {
-    try {
-      const res = await fetch(`${BASE}/public/cafes/${slug}/captain/staff-list`);
-      const data = await res.json();
-      const list = Array.isArray(data) ? data : data.staff || [];
-      if (list.length > 0) {
-        setStaffList(list);
-        if (!selectedStaff) {
-          setSelectedStaff(list[0]);
-        }
-      }
-    } catch {
-      // Fail gracefully
-    }
-  };
-
   // 2. Fetch Floor Plan
   const loadFloorPlan = async () => {
     setIsLoadingFloor(true);
@@ -215,14 +195,27 @@ export default function CaptainApp() {
         setCaptainToken('');
         localStorage.removeItem('gusstora_captain_token');
         localStorage.removeItem('gusstora_captain_user');
-        loadStaffList();
         return;
       }
 
       if (res.ok && (data.tables || data.ok)) {
         if (data.cafe) setCafeData(data.cafe);
         setTables(data.tables || []);
-        setSections(data.sections || ['All']);
+        const availableSections = data.sections || ['All'];
+        setSections(availableSections);
+        setActiveSection(current =>
+          current === 'All' || availableSections.includes(current)
+            ? current
+            : availableSections[0] || 'All',
+        );
+        setSelectedTable(current => {
+          const currentTable = current && data.tables?.find(table => table.id === current.id);
+          if (currentTable) return currentTable;
+          const defaultSection = availableSections[0];
+          return data.tables?.find(table => table.section === defaultSection && table.status === 'available')
+            || data.tables?.find(table => table.section === defaultSection)
+            || null;
+        });
         setStats(data.stats || { total: 0, available: 0, occupied: 0, billed: 0, cleaning: 0 });
         setLastRefreshed(new Date());
 
@@ -259,7 +252,6 @@ export default function CaptainApp() {
 
   // Initial load
   useEffect(() => {
-    loadStaffList();
     loadCafeMenu();
   }, [slug]);
 
@@ -271,59 +263,37 @@ export default function CaptainApp() {
     }
   }, [captainToken]);
 
-  // Handle PIN Keypad interaction
-  const handleKeypadPress = digit => {
-    setPinError('');
-    if (digit === 'C') {
-      setPinInput('');
-      return;
-    }
-    if (digit === 'DEL') {
-      setPinInput(prev => prev.slice(0, -1));
-      return;
-    }
-    if (pinInput.length < 4) {
-      const nextPin = pinInput + digit;
-      setPinInput(nextPin);
-      if (nextPin.length === 4) {
-        handlePinSubmit(nextPin);
-      }
-    }
-  };
-
-  const handlePinSubmit = async pinToTest => {
-    const pin = pinToTest || pinInput;
-    if (!pin) return;
-    setIsPinAuthenticating(true);
-    setPinError('');
+  const handleLogin = async event => {
+    event.preventDefault();
+    setIsLoggingIn(true);
+    setLoginError('');
 
     try {
-      const res = await fetch(`${BASE}/public/cafes/${slug}/captain/pin-login`, {
+      const res = await fetch(`${BASE}/public/cafes/${slug}/captain/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          pin,
-          userId: selectedStaff?.id,
+          email: loginEmail,
+          password: loginPassword,
         }),
       });
       const data = await res.json();
 
-      if (res.ok && (data.token || data.ok)) {
+      if (res.ok && data.token) {
         setCaptainToken(data.token);
         setCurrentCaptain(data.user);
         localStorage.setItem('gusstora_captain_token', data.token);
         localStorage.setItem('gusstora_captain_user', JSON.stringify(data.user));
-        setPinInput('');
+        setLoginPassword('');
         showToast(`Welcome ${data.user?.name || 'Staff'}! Floor unlocked.`, 'success');
       } else {
-        setPinError(data.message || 'Invalid 4-digit PIN. Please try again.');
-        setPinInput('');
+        setLoginError(data.message || 'Unable to sign in. Check your email and password.');
         if (!isMuted) playCaptainTone('void');
       }
-    } catch (err) {
-      setPinError('Connection error while authenticating PIN.');
+    } catch {
+      setLoginError('Connection error while signing in.');
     } finally {
-      setIsPinAuthenticating(false);
+      setIsLoggingIn(false);
     }
   };
 
@@ -334,15 +304,21 @@ export default function CaptainApp() {
     localStorage.removeItem('gusstora_captain_user');
     setActiveDrawer(null);
     setSelectedTable(null);
-    loadStaffList();
-    showToast('Session locked. Enter PIN to resume.', 'success');
+    setLoginPassword('');
+    showToast('Session locked. Sign in to resume.', 'success');
   };
 
   // Table status filtering
   const filteredTables = useMemo(() => {
-    if (activeSection === 'All') return tables;
-    return tables.filter(t => t.section === activeSection);
-  }, [tables, activeSection]);
+    const query = tableSearch.trim().toLowerCase();
+    return tables.filter(table => {
+      const matchesSection = activeSection === 'All' || table.section === activeSection;
+      const matchesSearch = !query ||
+        String(table.tableNumber || '').toLowerCase().includes(query) ||
+        String(table.name || '').toLowerCase().includes(query);
+      return matchesSection && matchesSearch;
+    });
+  }, [tables, activeSection, tableSearch]);
 
   // Open appropriate action for a table
   const handleTableClick = table => {
@@ -378,7 +354,7 @@ export default function CaptainApp() {
         }),
       });
       const data = await res.json();
-      if (res.ok && data.ok) {
+      if (res.ok && (data.success || data.ok)) {
         showToast(`Table ${selectedTable.tableNumber} seated with ${seatPax} guests.`, 'success');
         await loadFloorPlan();
         if (andTakeOrder) {
@@ -481,7 +457,7 @@ export default function CaptainApp() {
         }),
       });
       const data = await res.json();
-      if (res.ok && data.ok) {
+      if (res.ok && (data.success || data.ok)) {
         showToast(`KOT Fired! Ticket #${data.order?.orderNumber || ''} sent to kitchen.`, 'fire');
         setOrderCart([]);
         setOrderChefNotes('');
@@ -507,7 +483,7 @@ export default function CaptainApp() {
         body: JSON.stringify({ course }),
       });
       const data = await res.json();
-      if (res.ok && data.ok) {
+      if (res.ok && (data.success || data.ok)) {
         showToast(`Fired ${course.toUpperCase()} (${data.firedCount} items released to kitchen)!`, 'fire');
         await loadFloorPlan();
       } else {
@@ -528,11 +504,10 @@ export default function CaptainApp() {
         headers: getAuthHeaders(),
         body: JSON.stringify({
           reason: voidReason,
-          managerPin: voidManagerPin,
         }),
       });
       const data = await res.json();
-      if (res.ok && data.ok) {
+      if (res.ok && (data.success || data.ok)) {
         showToast(`Item voided. Subtotal recalculated.`, 'success');
         setVoidingItemId(null);
         await loadFloorPlan();
@@ -561,7 +536,7 @@ export default function CaptainApp() {
         }),
       });
       const data = await res.json();
-      if (res.ok && data.ok) {
+      if (res.ok && (data.success || data.ok)) {
         showToast(`Party transferred successfully to Table ${data.toTable?.tableNumber}!`, 'success');
         await loadFloorPlan();
         setActiveDrawer(null);
@@ -587,7 +562,7 @@ export default function CaptainApp() {
         }),
       });
       const data = await res.json();
-      if (res.ok && data.ok) {
+      if (res.ok && (data.success || data.ok)) {
         showToast(`Tables merged successfully!`, 'success');
         await loadFloorPlan();
         setActiveDrawer(null);
@@ -609,7 +584,7 @@ export default function CaptainApp() {
         headers: getAuthHeaders(),
       });
       const data = await res.json();
-      if (res.ok && data.ok) {
+      if (res.ok && (data.success || data.ok)) {
         showToast(`Bill requested! Table marked as Billed.`, 'success');
         await loadFloorPlan();
       } else {
@@ -630,7 +605,7 @@ export default function CaptainApp() {
         headers: getAuthHeaders(),
       });
       const data = await res.json();
-      if (res.ok && data.ok) {
+      if (res.ok && (data.success || data.ok)) {
         showToast(`Table released and marked Available!`, 'success');
         await loadFloorPlan();
         setActiveDrawer(null);
@@ -660,7 +635,7 @@ export default function CaptainApp() {
   }, [orderCart]);
 
   // -------------------------------------------------------------
-  // RENDER: 1. PIN Keypad Screen (when locked or not authenticated)
+  // RENDER: 1. Staff sign-in screen (when locked or not authenticated)
   // -------------------------------------------------------------
   if (!captainToken || !currentCaptain) {
     return (
@@ -678,89 +653,50 @@ export default function CaptainApp() {
           <div className="captain-pin-brand">
             <div className="captain-brand-badge">
               <Smartphone size={24} className="captain-accent-icon" />
-              <span>Gusstora Captain</span>
+              <span>GUESTORA Captain</span>
             </div>
             <h1 className="captain-pin-title">Waiter & Floor Terminal</h1>
-            <p className="captain-pin-subtitle">Select staff profile or enter 4-digit security PIN</p>
+            <p className="captain-pin-subtitle">Sign in with your staff email and password</p>
           </div>
 
-          {/* Staff Profile Picker */}
-          {staffList.length > 0 && (
-            <div className="captain-staff-picker">
-              <span className="captain-picker-label">Select Active Staff:</span>
-              <div className="captain-staff-avatars-row">
-                {staffList.map(st => {
-                  const isSel = selectedStaff?.id === st.id;
-                  return (
-                    <button
-                      key={st.id}
-                      type="button"
-                      className={`captain-staff-chip ${isSel ? 'active' : ''}`}
-                      onClick={() => {
-                        setSelectedStaff(st);
-                        setPinError('');
-                      }}
-                    >
-                      <div className="captain-staff-avatar">{st.name.charAt(0).toUpperCase()}</div>
-                      <div className="captain-staff-meta">
-                        <span className="captain-staff-name">{st.name}</span>
-                        <span className="captain-staff-section">
-                          {st.role} • {st.assignedSection || 'All'}
-                        </span>
-                      </div>
-                      {isSel && <Check size={16} className="captain-selected-check" />}
-                    </button>
-                  );
-                })}
-              </div>
+          <form className="captain-login-form" onSubmit={handleLogin}>
+            <div className="captain-input-group">
+              <label className="captain-input-label" htmlFor="captain-login-email">Staff email</label>
+              <input
+                id="captain-login-email"
+                className="captain-input-field"
+                type="email"
+                autoComplete="username"
+                required
+                value={loginEmail}
+                onChange={event => setLoginEmail(event.target.value)}
+              />
             </div>
-          )}
-
-          {/* 4-Digit PIN Circles Display */}
-          <div className="captain-pin-display-card">
-            <div className="captain-pin-dots">
-              {[0, 1, 2, 3].map(i => (
-                <div key={i} className={`captain-pin-dot ${pinInput.length > i ? 'filled' : ''}`} />
-              ))}
+            <div className="captain-input-group">
+              <label className="captain-input-label" htmlFor="captain-login-password">Password</label>
+              <input
+                id="captain-login-password"
+                className="captain-input-field"
+                type="password"
+                autoComplete="current-password"
+                minLength={6}
+                required
+                value={loginPassword}
+                onChange={event => setLoginPassword(event.target.value)}
+              />
             </div>
-            {pinError ? (
-              <div className="captain-pin-error">
+            {loginError && (
+              <div className="captain-pin-error" role="alert">
                 <AlertCircle size={14} />
-                <span>{pinError}</span>
-              </div>
-            ) : (
-              <div className="captain-pin-hint">
-                <Shield size={13} />
-                <span>Default PIN: 1234 (Tap below or keypad)</span>
+                <span>{loginError}</span>
               </div>
             )}
-          </div>
-
-          {/* 12-Key Touch Keypad */}
-          <div className="captain-keypad-grid">
-            {['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', 'DEL'].map(k => (
-              <button
-                key={k}
-                type="button"
-                className={`captain-keypad-btn ${k === 'C' ? 'clear' : k === 'DEL' ? 'del' : ''}`}
-                onClick={() => handleKeypadPress(k)}
-                disabled={isPinAuthenticating}
-              >
-                {k === 'DEL' ? '⌫' : k}
-              </button>
-            ))}
-          </div>
-
-          {/* Quick 1-Tap Demo Unlock */}
-          <button
-            type="button"
-            className="captain-quick-demo-btn"
-            onClick={() => handlePinSubmit('1234')}
-            disabled={isPinAuthenticating}
-          >
-            <Zap size={16} />
-            <span>Quick Unlock (Default PIN: 1234)</span>
-          </button>
+            <button type="submit" className="captain-primary-btn" disabled={isLoggingIn}>
+              <Lock size={18} />
+              <span>{isLoggingIn ? 'Signing in…' : 'Sign in to Captain'}</span>
+            </button>
+            <p className="captain-pin-hint">Use the password set for your staff account in CRM.</p>
+          </form>
         </div>
       </div>
     );
@@ -789,21 +725,34 @@ export default function CaptainApp() {
       <header className="captain-header">
         <div className="captain-header-left">
           <div className="captain-header-brand">
-            <span className="captain-brand-glow" />
-            <span className="captain-brand-title">{cafeData?.name || 'Gusstora'}</span>
+            <span className="captain-brand-mark"><Utensils size={21} /></span>
+            <div className="captain-brand-copy">
+              <span className="captain-brand-title">Table Management</span>
+              <span className="captain-brand-cafe">{cafeData?.name || 'GUESTORA'}</span>
+            </div>
           </div>
           <div className="captain-header-waiter-badge">
             <div className="captain-waiter-avatar">{currentCaptain.name.charAt(0).toUpperCase()}</div>
             <div className="captain-waiter-info">
               <span className="captain-waiter-name">{currentCaptain.name}</span>
               <span className="captain-waiter-role">
-                {currentCaptain.role} • {currentCaptain.assignedSection || 'All Floors'}
+                {currentCaptain.role} · {currentCaptain.assignedSection || 'All Sections'}
               </span>
             </div>
           </div>
         </div>
 
         <div className="captain-header-actions">
+          <label className="captain-table-search">
+            <Search size={17} aria-hidden="true" />
+            <input
+              type="search"
+              aria-label="Search table number"
+              placeholder="Search table number..."
+              value={tableSearch}
+              onChange={event => setTableSearch(event.target.value)}
+            />
+          </label>
           <button
             type="button"
             className="captain-action-icon-btn"
@@ -833,47 +782,68 @@ export default function CaptainApp() {
         </div>
       </header>
 
-      {/* Floor KPI Bar */}
-      <div className="captain-kpi-bar">
-        <div className="captain-kpi-item available">
-          <span className="captain-kpi-dot available" />
-          <span className="captain-kpi-val">{stats.available}</span>
-          <span className="captain-kpi-lbl">Vacant</span>
-        </div>
-        <div className="captain-kpi-item occupied">
-          <span className="captain-kpi-dot occupied" />
-          <span className="captain-kpi-val">{stats.occupied}</span>
-          <span className="captain-kpi-lbl">Active KOT</span>
-        </div>
-        <div className="captain-kpi-item billed">
-          <span className="captain-kpi-dot billed" />
-          <span className="captain-kpi-val">{stats.billed}</span>
-          <span className="captain-kpi-lbl">Billed</span>
-        </div>
-        <div className="captain-kpi-item cleaning">
-          <span className="captain-kpi-dot cleaning" />
-          <span className="captain-kpi-val">{stats.cleaning}</span>
-          <span className="captain-kpi-lbl">Clean</span>
-        </div>
-      </div>
-
       {/* Section Tabs */}
-      <div className="captain-sections-scroll">
+      <nav className="captain-sections-scroll" aria-label="Floor sections">
+        <button
+          type="button"
+          className={`captain-section-tab ${activeSection === 'All' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveSection('All');
+            setSelectedTable(tables.find(table => table.status === 'available') || tables[0] || null);
+          }}
+        >
+          All Tables
+        </button>
         {sections.map(sec => (
           <button
             key={sec}
             type="button"
             className={`captain-section-tab ${activeSection === sec ? 'active' : ''}`}
-            onClick={() => setActiveSection(sec)}
+            onClick={() => {
+              setActiveSection(sec);
+              const sectionTables = tables.filter(table => table.section === sec);
+              setSelectedTable(sectionTables.find(table => table.status === 'available') || sectionTables[0] || null);
+            }}
           >
             {sec}
           </button>
         ))}
-      </div>
+      </nav>
 
-      {/* Main Floor Table Grid */}
-      <main className="captain-main-content">
-        <div className="captain-table-grid">
+      <main className="captain-main-content grid-layout">
+        <aside className="captain-status-panel" aria-label="Table status summary">
+          <div className="captain-kpi-item available">
+            <span className="captain-kpi-icon"><Armchair size={22} /></span>
+            <span className="captain-kpi-copy">
+              <strong className="captain-kpi-val">{stats.available}</strong>
+              <span className="captain-kpi-lbl">Vacant Tables</span>
+            </span>
+          </div>
+          <div className="captain-kpi-item occupied">
+            <span className="captain-kpi-icon"><Flame size={21} /></span>
+            <span className="captain-kpi-copy">
+              <strong className="captain-kpi-val">{stats.occupied}</strong>
+              <span className="captain-kpi-lbl">Active KOT</span>
+            </span>
+          </div>
+          <div className="captain-kpi-item billed">
+            <span className="captain-kpi-icon"><CreditCard size={21} /></span>
+            <span className="captain-kpi-copy">
+              <strong className="captain-kpi-val">{stats.billed}</strong>
+              <span className="captain-kpi-lbl">Billed Tables</span>
+            </span>
+          </div>
+          <div className="captain-kpi-item cleaning">
+            <span className="captain-kpi-icon"><Sparkles size={21} /></span>
+            <span className="captain-kpi-copy">
+              <strong className="captain-kpi-val">{stats.cleaning}</strong>
+              <span className="captain-kpi-lbl">Clean Tables</span>
+            </span>
+          </div>
+        </aside>
+
+        <section className="captain-grid-canvas grid-canvas" aria-label="Tables in selected section">
+          <div className="captain-table-grid">
           {filteredTables.map(table => {
             const isOcc = table.status === 'occupied';
             const isBilled = table.status === 'billed';
@@ -882,13 +852,28 @@ export default function CaptainApp() {
             const isAvail = table.status === 'available';
 
             const activeOrder = table.activeOrder;
-            const courseBreakdown = activeOrder?.courseStatus || {};
+            const tableOrderTotal = activeOrder?.total ?? table.orderSummary?.runningTotal;
+            const courseBreakdown = activeOrder?.courseStatus || Object.fromEntries(
+              Object.entries(table.orderSummary?.courseBreakdown || {}).map(([course, counts]) => [
+                course,
+                counts.fired ? 'fired' : counts.hold ? 'hold' : counts.served ? 'served' : '',
+              ]),
+            );
 
             return (
               <div
                 key={table.id}
-                className={`captain-table-card ${table.status}`}
+                className={`captain-table-card ${table.status} ${selectedTable?.id === table.id ? 'selected' : ''}`}
                 onClick={() => handleTableClick(table)}
+                onKeyDown={event => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    handleTableClick(table);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label={`Table ${table.tableNumber}, ${table.capacity} seats, ${table.status}`}
               >
                 {/* Table Header Row */}
                 <div className="captain-card-top">
@@ -923,7 +908,7 @@ export default function CaptainApp() {
                         <span>{table.elapsedMinutes || 0}m</span>
                       </div>
                       <div className="captain-stat-pill total">
-                        <span>{money(activeOrder?.total || 0)}</span>
+                        {tableOrderTotal !== undefined && <span>{money(tableOrderTotal)}</span>}
                       </div>
                     </div>
 
@@ -956,7 +941,7 @@ export default function CaptainApp() {
                   <div className="captain-card-body billed">
                     <div className="captain-billed-total">
                       <span>Total Bill:</span>
-                      <strong>{money(activeOrder?.total || 0)}</strong>
+                      {tableOrderTotal !== undefined && <strong>{money(tableOrderTotal)}</strong>}
                     </div>
                     <div className="captain-billed-hint">
                       <CreditCard size={13} />
@@ -982,7 +967,14 @@ export default function CaptainApp() {
               </div>
             );
           })}
-        </div>
+          </div>
+          {!filteredTables.length && (
+            <div className="captain-no-tables">
+              <Armchair size={24} />
+              <span>{tableSearch ? 'No tables match your search.' : 'No tables in this section yet.'}</span>
+            </div>
+          )}
+        </section>
       </main>
 
       {/* ------------------------------------------------------------- */}
@@ -1140,7 +1132,7 @@ export default function CaptainApp() {
                           <span className={`hub-status-badge ${item.itemStatus}`}>
                             {item.itemStatus === 'hold' ? '⏳ HOLD' : item.itemStatus === 'voided' ? '🚫 VOID' : '🔥 FIRED'}
                           </span>
-                          {item.itemStatus !== 'voided' && (
+                          {canManageFloor && item.itemStatus !== 'voided' && (
                             <button
                               type="button"
                               className="hub-void-icon-btn"
@@ -1180,7 +1172,7 @@ export default function CaptainApp() {
                   <span>+ Add Items / KOT</span>
                 </button>
 
-                <button
+                {canManageFloor && <button
                   type="button"
                   className="captain-hub-action-btn secondary"
                   onClick={() => {
@@ -1190,9 +1182,9 @@ export default function CaptainApp() {
                 >
                   <MoveRight size={18} />
                   <span>Transfer Table</span>
-                </button>
+                </button>}
 
-                <button
+                {canManageFloor && <button
                   type="button"
                   className="captain-hub-action-btn secondary"
                   onClick={() => {
@@ -1202,7 +1194,7 @@ export default function CaptainApp() {
                 >
                   <Layers size={18} />
                   <span>Merge Tables</span>
-                </button>
+                </button>}
 
                 <button
                   type="button"
@@ -1213,14 +1205,14 @@ export default function CaptainApp() {
                   <span>Request Bill</span>
                 </button>
 
-                <button
+                {canManageFloor && <button
                   type="button"
                   className="captain-hub-action-btn clean"
                   onClick={() => handleReleaseTable(selectedTable.id)}
                 >
                   <Sparkles size={18} />
                   <span>Release / Ready</span>
-                </button>
+                </button>}
               </div>
             </div>
           </div>
@@ -1531,13 +1523,13 @@ export default function CaptainApp() {
       {/* ------------------------------------------------------------- */}
       {/* MODAL 6: Security Void Item Authorization */}
       {/* ------------------------------------------------------------- */}
-      {activeDrawer === 'void' && selectedTable && voidingItemId && (
+      {canManageFloor && activeDrawer === 'void' && selectedTable && voidingItemId && (
         <div className="captain-modal-backdrop" onClick={() => setActiveDrawer('table-hub')}>
           <div className="captain-bottom-sheet" onClick={e => e.stopPropagation()}>
             <div className="captain-sheet-header">
               <div className="captain-sheet-title-group">
-                <h3>Authorize Item Void</h3>
-                <span>Enter manager PIN & cancellation reason code</span>
+                <h3>Void Order Item</h3>
+                <span>Record a reason for this correction. Access is limited to floor managers and cashiers.</span>
               </div>
               <button type="button" className="captain-sheet-close" onClick={() => setActiveDrawer('table-hub')}>
                 <X size={20} />
@@ -1560,17 +1552,6 @@ export default function CaptainApp() {
                 </select>
               </div>
 
-              <div className="captain-input-group">
-                <label className="captain-input-label">Manager Authorization PIN:</label>
-                <input
-                  type="password"
-                  placeholder="Enter 4-digit PIN"
-                  className="captain-input-field"
-                  value={voidManagerPin}
-                  onChange={e => setVoidManagerPin(e.target.value)}
-                />
-              </div>
-
               <div className="captain-sheet-actions">
                 <button
                   type="button"
@@ -1579,7 +1560,7 @@ export default function CaptainApp() {
                   disabled={isVoiding}
                 >
                   <ShieldAlert size={18} />
-                  <span>Authorize & Void Item</span>
+                  <span>Void Item</span>
                 </button>
               </div>
             </div>

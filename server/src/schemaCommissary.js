@@ -118,7 +118,7 @@ export async function ensureCommissarySchema() {
     stnNumber: { type: 'VARCHAR(100)', allowNull: false, unique: true },
     supplyingCafeId: { type: 'CHAR(36)', allowNull: false },
     requestingCafeId: { type: 'CHAR(36)', allowNull: false },
-    transporterName: { type: 'VARCHAR(150)', defaultValue: 'Gusstora Fleet Logistics' },
+    transporterName: { type: 'VARCHAR(150)', defaultValue: 'GUESTORA Fleet Logistics' },
     vehicleNumber: { type: 'VARCHAR(50)', defaultValue: 'MH-12-GF-4491' },
     driverContact: { type: 'VARCHAR(50)', allowNull: true },
     status: { type: 'VARCHAR(30)', defaultValue: 'in_transit' }, // 'in_transit', 'delivered', 'disputed'

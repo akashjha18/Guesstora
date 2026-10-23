@@ -30,7 +30,7 @@ export async function ensureSeedData(options = {}) {
       instagramUrl: 'https://instagram.com/gusstora.cafe',
       tagline: 'Artisanal Roastery, Specialty Brews & Warm Bites',
       brandColor: '#ea580c',
-      wifiSsid: 'Gusstora-Roastery-5G',
+      wifiSsid: 'GUESTORA-Roastery-5G',
       wifiPassword: 'perkbytecoffee',
       tables: 12,
     });
@@ -229,7 +229,7 @@ export async function ensureSeedData(options = {}) {
           instagramUrl: cafe.instagramUrl || 'https://instagram.com/gusstora.cafe',
           tagline: cafe.tagline || 'Artisanal Roastery, Specialty Brews & Warm Bites',
           brandColor: cafe.brandColor || '#ea580c',
-          wifiSsid: cafe.wifiSsid || 'Gusstora-Roastery-5G',
+          wifiSsid: cafe.wifiSsid || 'GUESTORA-Roastery-5G',
           wifiPassword: cafe.wifiPassword || 'perkbytecoffee',
           tables: cafe.tables || 12,
         });
@@ -734,7 +734,7 @@ export async function ensureSeedData(options = {}) {
       let [brand] = await BrandModel.findOrCreate({
         where: { slug: 'gusstora-roasters-chain' },
         defaults: {
-          name: 'Gusstora Roasters & Co.',
+          name: 'GUESTORA Roasters & Co.',
           slug: 'gusstora-roasters-chain',
           headquarters: 'Bandra West, Mumbai',
           settings: { taxNumber: '27AABCU9603R1ZM' },
@@ -749,7 +749,7 @@ export async function ensureSeedData(options = {}) {
       await CafeModel.findOrCreate({
         where: { slug: 'gusstora-airport-t2' },
         defaults: {
-          name: 'Gusstora Express - Airport T2',
+          name: 'GUESTORA Express - Airport T2',
           slug: 'gusstora-airport-t2',
           address: 'Terminal 2 Departures, CSIA Mumbai',
           phone: '9876500099',

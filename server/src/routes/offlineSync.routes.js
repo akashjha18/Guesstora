@@ -210,7 +210,7 @@ router.get('/public/cafes/:slug/cfd-config', async (req, res) => {
       tagline: cafe.tagline || 'Specialty Coffee & Roastery',
       wifiSsid: cafe.wifiSsid,
       wifiPassword: cafe.wifiPassword,
-      cfdWelcomeTitle: cafe.cfdWelcomeTitle || 'Gusstora Specialty Coffee',
+      cfdWelcomeTitle: cafe.cfdWelcomeTitle || 'GUESTORA Specialty Coffee',
       cfdWelcomeSubtitle: cafe.cfdWelcomeSubtitle || 'Handcrafted Roasts & Fresh Bakes',
       cfdPromoBanner: cafe.cfdPromoBanner || 'Ask our Barista about our Seasonal Single-Origin Pour-overs!',
       cfdUpiVpa: cafe.cfdUpiVpa || 'gusstora@okaxis',

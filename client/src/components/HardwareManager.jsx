@@ -58,7 +58,7 @@ export default function HardwareManager({ cafe, token }) {
   // Barcode Scanner Simulator State
   const [scannedBarcode, setScannedBarcode] = useState('');
   const [scannerHistory, setScannerHistory] = useState([
-    { code: '8901030829102', name: 'Gusstora 250g Whole Bean Tin', price: 650, time: 'Just now' },
+    { code: '8901030829102', name: 'GUESTORA 250g Whole Bean Tin', price: 650, time: 'Just now' },
     { code: '8901030829119', name: 'Artisan Pour-Over Dripper V02', price: 1450, time: '10m ago' },
   ]);
 
@@ -289,7 +289,7 @@ export default function HardwareManager({ cafe, token }) {
         }),
       });
       if (!res.ok) throw new Error('Soundbox ping failed.');
-      showToast('Paytm Soundbox: "Received ₹280 on Gusstora UPI" simulated.');
+      showToast('Paytm Soundbox: "Received ₹280 on GUESTORA UPI" simulated.');
       fetchData();
     } catch (err) {
       showToast(err.message, true);

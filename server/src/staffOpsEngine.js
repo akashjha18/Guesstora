@@ -713,7 +713,7 @@ export async function settleTipPool({
 }
 
 export function formatTipSettlementSlip({ tipPool, distributions = [], cafe = {} }) {
-  const cafeName = (cafe.name || 'GUSSTORA COFFEE').toUpperCase();
+  const cafeName = (cafe.name || 'GUESTORA COFFEE').toUpperCase();
   const title = (tipPool.title || 'TIP POOL DISBURSEMENT').toUpperCase();
   const dateStr = tipPool.date || new Date().toISOString().split('T')[0];
 

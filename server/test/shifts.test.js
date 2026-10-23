@@ -184,7 +184,7 @@ test('formatZReportText generates compliant 80mm monospace string', () => {
     },
   };
 
-  const text = formatZReportText(shift, { name: 'Gusstora Roastery' });
+  const text = formatZReportText(shift, { name: 'GUESTORA Roastery' });
   assert.ok(text.includes('DAY-END AUDIT // Z-REPORT'));
   assert.ok(text.includes('CASHIER     : Priya Sharma'));
   assert.ok(text.includes('NET REALIZED REVENUE'));

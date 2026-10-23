@@ -1,5 +1,5 @@
 /**
- * Gusstora Offline-First PWA Storage & Reconciler
+ * GUESTORA Offline-First PWA Storage & Reconciler
  * Uses browser IndexedDB with fallback to localStorage.
  * Enables zero-downtime offline billing, local ticket generation, and automated sync reconciliation.
  */

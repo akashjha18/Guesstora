@@ -129,7 +129,7 @@ export default function Onboard() {
   }
 
   function canProceedStep2() {
-    return brandColor.trim().length >= 4;
+    return /^#[0-9a-f]{6}$/i.test(brandColor.trim());
   }
 
   function canProceedStep3() {
@@ -208,9 +208,9 @@ export default function Onboard() {
       <header className="onboard-header">
         <div className="onboard-header-inner">
           <div className="onboard-logo-group">
-            <img src="/gusstora_logo_transparent.png" alt="PerkByte" className="onboard-header-logo" />
+            <img src="/gusstora_logo_transparent.png" alt="GUESTORA logo" className="onboard-header-logo" />
             <div className="onboard-header-text">
-              <span className="onboard-brand-name">Gusstora / PerkByte</span>
+              <span className="onboard-brand-name">GUESTORA / PerkByte</span>
               <span className="onboard-brand-badge">Partner Self-Onboarding</span>
             </div>
           </div>
@@ -457,6 +457,8 @@ export default function Onboard() {
                       />
                       <input
                         type="text"
+                        pattern="^#[0-9A-Fa-f]{6}$"
+                        title="Enter a six-digit hex color, such as #176B50"
                         value={brandColor}
                         onChange={e => setBrandColor(e.target.value)}
                         className="onboard-input hex-input"

@@ -1864,7 +1864,7 @@ export default function AiRoasteryManager({ cafe, token }) {
                       rows={3}
                       value={campaignForm.customTemplate}
                       onChange={e => setCampaignForm({ ...campaignForm, customTemplate: e.target.value })}
-                      placeholder="Hey {{customerName}}! We miss you at Gusstora. Your favorite {{favoriteItem}} is roasted fresh and waiting! Enjoy {{discountPercent}}% OFF with code {{promoCode}}..."
+                      placeholder="Hey {{customerName}}! We miss you at GUESTORA. Your favorite {{favoriteItem}} is roasted fresh and waiting! Enjoy {{discountPercent}}% OFF with code {{promoCode}}..."
                       style={{
                         ...inputStyle,
                         width: '100%',

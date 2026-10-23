@@ -527,11 +527,11 @@ export default function KdsApp() {
             <ArrowLeft size={18} />
           </button>
           <div className="kds-logo-wrap" style={{ width: 42, height: 42, minWidth: 42, minHeight: 42, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
-            <img src="/gusstora_emblem.png" alt="Gusstora" width="34" height="34" className="kds-logo-img" style={{ width: 34, height: 34, maxWidth: 34, maxHeight: 34, objectFit: 'contain', display: 'block' }} />
+            <img src="/gusstora_emblem.png" alt="GUESTORA" width="34" height="34" className="kds-logo-img" style={{ width: 34, height: 34, maxWidth: 34, maxHeight: 34, objectFit: 'contain', display: 'block' }} />
           </div>
           <div>
             <div className="kds-title-row">
-              <h1 className="kds-heading">{cafeInfo?.name || 'Gusstora Artisan Roastery'}</h1>
+              <h1 className="kds-heading">{cafeInfo?.name || 'GUESTORA Artisan Roastery'}</h1>
               <span className="kds-badge">KDS LIVE</span>
             </div>
             <div className="kds-sub-meta">
@@ -1136,7 +1136,7 @@ export default function KdsApp() {
             {/* 80mm ESC/POS Thermal Layout */}
             <div className="kot-thermal-receipt">
               <div className="kot-head-brand">
-                <h2 className="kot-cafe-name">{cafeInfo?.name || 'GUSSTORA ROASTERY'}</h2>
+                <h2 className="kot-cafe-name">{cafeInfo?.name || 'GUESTORA ROASTERY'}</h2>
                 <div className="kot-doc-type">*** KITCHEN ORDER TICKET (KOT) ***</div>
               </div>
 
@@ -1197,7 +1197,7 @@ export default function KdsApp() {
 
               <div className="kot-receipt-footer">
                 <div>TOTAL ITEMS: {(kotPrintOrder.items || []).reduce((s, i) => s + (i.quantity || 1), 0)}</div>
-                <div style={{ marginTop: 4 }}>Punched via Gusstora KDS Cloud System</div>
+                <div style={{ marginTop: 4 }}>Punched via GUESTORA KDS Cloud System</div>
               </div>
             </div>
 

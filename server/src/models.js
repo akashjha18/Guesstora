@@ -25,7 +25,7 @@ export const Cafe = sequelize.define('Cafe', {
   wifiSsid: DataTypes.STRING(100),
   wifiPassword: DataTypes.STRING(100),
   brandId: { type: DataTypes.UUID, allowNull: true },
-  cfdWelcomeTitle: { type: DataTypes.STRING(255), defaultValue: 'Gusstora Specialty Coffee' },
+  cfdWelcomeTitle: { type: DataTypes.STRING(255), defaultValue: 'GUESTORA Specialty Coffee' },
   cfdWelcomeSubtitle: { type: DataTypes.STRING(255), defaultValue: 'Handcrafted Roasts & Fresh Bakes' },
   cfdPromoBanner: { type: DataTypes.STRING(500), allowNull: true },
   cfdUpiVpa: { type: DataTypes.STRING(100), allowNull: true },
@@ -38,7 +38,7 @@ export const Cafe = sequelize.define('Cafe', {
   gstEnabled: { type: DataTypes.BOOLEAN, defaultValue: true },
   taxInclusivePricing: { type: DataTypes.BOOLEAN, defaultValue: true },
   defaultGstRate: { type: DataTypes.FLOAT, defaultValue: 5.0 },
-  tallyCompany: { type: DataTypes.STRING(255), defaultValue: 'Gusstora Roasters' },
+  tallyCompany: { type: DataTypes.STRING(255), defaultValue: 'GUESTORA Roasters' },
   tallySalesLedger: { type: DataTypes.STRING(255), defaultValue: 'Food & Beverage Sales' },
   tallyCgstLedger: { type: DataTypes.STRING(255), defaultValue: 'CGST Input/Output 2.5%' },
   tallySgstLedger: { type: DataTypes.STRING(255), defaultValue: 'SGST Input/Output 2.5%' },
@@ -69,9 +69,9 @@ export const User = sequelize.define('User', {
   email: { type: DataTypes.STRING, unique: true },
   phone: DataTypes.STRING,
   passwordHash: DataTypes.STRING,
+  pin: { type: DataTypes.STRING(255), allowNull: true, defaultValue: null },
   role: { type: DataTypes.STRING, defaultValue: 'owner' },
   status: { type: DataTypes.STRING, defaultValue: 'active' },
-  pin: { type: DataTypes.STRING(10), defaultValue: '1234' },
   assignedSection: { type: DataTypes.STRING(50), defaultValue: 'All' },
   hourlyWage: { type: DataTypes.FLOAT, defaultValue: 0 },
   monthlySalary: { type: DataTypes.FLOAT, defaultValue: 0 },
@@ -722,7 +722,7 @@ export const StockTransfer = sequelize.define('StockTransfer', {
   stnNumber: { type: DataTypes.STRING(100), allowNull: false, unique: true },
   supplyingCafeId: { type: DataTypes.UUID, allowNull: false },
   requestingCafeId: { type: DataTypes.UUID, allowNull: false },
-  transporterName: { type: DataTypes.STRING(150), defaultValue: 'Gusstora Fleet Logistics' },
+  transporterName: { type: DataTypes.STRING(150), defaultValue: 'GUESTORA Fleet Logistics' },
   vehicleNumber: { type: DataTypes.STRING(50), defaultValue: 'MH-12-GF-4491' },
   driverContact: { type: DataTypes.STRING(50), allowNull: true },
   status: { type: DataTypes.ENUM('in_transit', 'delivered', 'disputed'), defaultValue: 'in_transit' },
@@ -1089,9 +1089,6 @@ AiMarketingCampaign.belongsTo(Cafe, { foreignKey: 'cafeId' });
 
 AiMarketingCampaign.hasMany(AiCampaignRecipient, { as: 'recipients', foreignKey: 'campaignId' });
 AiCampaignRecipient.belongsTo(AiMarketingCampaign, { as: 'campaign', foreignKey: 'campaignId' });
-
-
-
 
 
 

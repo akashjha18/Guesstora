@@ -35,7 +35,7 @@ async function withEnv(values, callback) {
 
 test('generatePaymentIntent generates a UPI link only with configured café VPA', async () => {
   await withEnv({ CAFE_UPI_VPA: 'gusstora@okaxis' }, async () => {
-    const intent = await generatePaymentIntent({ order, gateway: 'upi', cafe: { name: 'Gusstora Roastery' } });
+    const intent = await generatePaymentIntent({ order, gateway: 'upi', cafe: { name: 'GUESTORA Roastery' } });
     assert.equal(intent.gateway, 'upi');
     assert.equal(intent.amount, 350);
     assert.equal(intent.currency, 'INR');

@@ -41,6 +41,7 @@ const serializeUser = u => ({
   phone: u.phone || '',
   role: u.role || 'cashier',
   status: u.status || 'active',
+  assignedSection: u.assignedSection || 'All',
   createdAt: u.createdAt,
 });
 
@@ -226,6 +227,12 @@ router.post('/auth/login', async (req, res) => {
       });
       return res.status(403).json({ message: 'Your staff account has been deactivated. Please contact your cafe administrator.' });
     }
+    if (user.role === 'waiter') {
+      return res.status(403).json({
+        message: 'Waiter accounts cannot access the CRM. Use the dedicated Waiter sign-in option.',
+        code: 'WAITER_PORTAL_ONLY',
+      });
+    }
 
     const accessToken = generateAccessToken(user);
     const refresh = await generateRefreshToken(user, {
@@ -382,6 +389,9 @@ router.post('/auth/register-cafe', async (req, res) => {
 
     if (!cafeName || String(cafeName).trim().length < 2) {
       return res.status(400).json({ message: 'Café name must be at least 2 characters.' });
+    }
+    if (!/^#[0-9a-f]{6}$/i.test(String(brandColor))) {
+      return res.status(400).json({ message: 'Brand color must be a six-digit hex value.' });
     }
 
     const slug = String(rawSlug || cafeName).trim().toLowerCase()
@@ -1528,6 +1538,8 @@ router.post('/owner/staff', requireRole('owner', 'manager'), async (req, res) =>
   const phone = cleanPhone(req.body.phone);
   const password = String(req.body.password || '').trim();
   const role = String(req.body.role || 'cashier').toLowerCase().trim();
+  const requestedSection = String(req.body.assignedSection || 'All').trim();
+  const assignedSection = requestedSection.toLowerCase() === 'all' ? 'All' : requestedSection;
 
   if (!name || name.length < 2) {
     return res.status(400).json({ message: 'Full name must be at least 2 characters long.' });
@@ -1539,9 +1551,20 @@ router.post('/owner/staff', requireRole('owner', 'manager'), async (req, res) =>
     return res.status(400).json({ message: 'Password must be at least 6 characters long.' });
   }
 
-  const validRoles = ['owner', 'manager', 'cashier', 'kitchen'];
+  const validRoles = ['owner', 'manager', 'cashier', 'kitchen', 'waiter'];
   if (!validRoles.includes(role)) {
     return res.status(400).json({ message: `Invalid role. Allowed roles are: ${validRoles.join(', ')}` });
+  }
+  if (assignedSection.length > 50) {
+    return res.status(400).json({ message: 'Floor section must be 50 characters or fewer.' });
+  }
+  if (role === 'waiter' && assignedSection && assignedSection !== 'All') {
+    const sectionExists = await CafeTable.findOne({
+      where: { cafeId: req.auth.cafe, section: assignedSection, isActive: true },
+    });
+    if (!sectionExists) {
+      return res.status(400).json({ message: 'Choose a floor section that contains an active table.' });
+    }
   }
 
   // Managers cannot create Owners
@@ -1562,6 +1585,7 @@ router.post('/owner/staff', requireRole('owner', 'manager'), async (req, res) =>
     phone,
     passwordHash,
     role,
+    assignedSection: role === 'waiter' ? assignedSection || 'All' : 'All',
     status: 'active',
   });
 
@@ -1573,7 +1597,13 @@ router.post('/owner/staff', requireRole('owner', 'manager'), async (req, res) =>
     action: 'STAFF_CREATED',
     category: 'staff',
     status: 'success',
-    details: { id: staffMember.id, name: staffMember.name, email: staffMember.email, role: staffMember.role },
+    details: {
+      id: staffMember.id,
+      name: staffMember.name,
+      email: staffMember.email,
+      role: staffMember.role,
+      assignedSection: staffMember.assignedSection,
+    },
     req,
   });
 
@@ -1615,11 +1645,28 @@ router.patch('/owner/staff/:id', requireRole('owner', 'manager'), async (req, re
 
   if (req.body.role !== undefined) {
     const role = String(req.body.role).toLowerCase().trim();
-    const validRoles = ['owner', 'manager', 'cashier', 'kitchen'];
+    const validRoles = ['owner', 'manager', 'cashier', 'kitchen', 'waiter'];
     if (!validRoles.includes(role)) {
       return res.status(400).json({ message: `Invalid role. Allowed roles: ${validRoles.join(', ')}` });
     }
     target.role = role;
+  }
+
+  if (req.body.assignedSection !== undefined) {
+    const requestedSection = String(req.body.assignedSection || 'All').trim();
+    const section = requestedSection.toLowerCase() === 'all' ? 'All' : requestedSection;
+    if (section.length > 50) {
+      return res.status(400).json({ message: 'Floor section must be 50 characters or fewer.' });
+    }
+    target.assignedSection = section || 'All';
+    if (target.role === 'waiter' && target.assignedSection !== 'All') {
+      const sectionExists = await CafeTable.findOne({
+        where: { cafeId: req.auth.cafe, section: target.assignedSection, isActive: true },
+      });
+      if (!sectionExists) {
+        return res.status(400).json({ message: 'Choose a floor section that contains an active table.' });
+      }
+    }
   }
 
   if (req.body.status !== undefined) {
@@ -1634,7 +1681,10 @@ router.patch('/owner/staff/:id', requireRole('owner', 'manager'), async (req, re
     target.status = status;
   }
 
-  if (req.body.password) {
+  if (req.body.password !== undefined) {
+    if (req.auth.role !== 'owner') {
+      return res.status(403).json({ message: 'Only a café owner can reset staff login passwords.' });
+    }
     const pass = String(req.body.password).trim();
     if (pass.length < 6) {
       return res.status(400).json({ message: 'Password must be at least 6 characters long.' });
@@ -1652,7 +1702,14 @@ router.patch('/owner/staff/:id', requireRole('owner', 'manager'), async (req, re
     action: 'STAFF_UPDATED',
     category: 'staff',
     status: 'success',
-    details: { id: target.id, name: target.name, role: target.role, status: target.status },
+    details: {
+      id: target.id,
+      name: target.name,
+      role: target.role,
+      status: target.status,
+      assignedSection: target.assignedSection,
+      passwordReset: req.body.password !== undefined,
+    },
     req,
   });
 
@@ -1702,6 +1759,9 @@ router.delete('/owner/staff/:id', requireRole('owner'), async (req, res) => {
 });
 
 router.patch('/owner/cafe', requireRole('owner'), async (req, res) => {
+  if (req.body.brandColor !== undefined && !/^#[0-9a-f]{6}$/i.test(String(req.body.brandColor))) {
+    return res.status(400).json({ message: 'Brand color must be a six-digit hex value.' });
+  }
   const allowed = [
     'name', 'phone', 'address', 'tables', 'currency', 'googleReviewUrl', 'instagramUrl',
     'tagline', 'logo', 'bannerImage', 'brandColor', 'wifiSsid', 'wifiPassword',

@@ -53,11 +53,11 @@ export default function CfdApp() {
         console.warn('Failed to load CFD config, using defaults:', err);
         if (mounted) {
           setCafeConfig({
-            name: 'Gusstora Artisan Roastery',
+            name: 'GUESTORA Artisan Roastery',
             slug,
             brandColor: '#176B50',
             currency: 'INR',
-            cfdWelcomeTitle: 'Gusstora Specialty Coffee',
+            cfdWelcomeTitle: 'GUESTORA Specialty Coffee',
             cfdWelcomeSubtitle: 'Handcrafted Roasts & Fresh Sourdough Bakes',
             cfdPromoBanner: 'Ask our Barista about our Seasonal Ethiopian Pour-over!',
             cfdUpiVpa: 'gusstora@okaxis',
@@ -138,7 +138,7 @@ export default function CfdApp() {
   const upiQrData = useMemo(() => {
     if (cfdState.type !== 'CART_UPDATE') return null;
     const vpa = cafeConfig?.cfdUpiVpa || 'gusstora@okaxis';
-    const payeeName = encodeURIComponent(cafeConfig?.name || 'Gusstora Coffee');
+    const payeeName = encodeURIComponent(cafeConfig?.name || 'GUESTORA Coffee');
     const amount = Number(cfdState.payload?.total || 0).toFixed(2);
     const note = encodeURIComponent(`Order Bill`);
     return `upi://pay?pa=${vpa}&pn=${payeeName}&am=${amount}&cu=INR&tn=${note}`;
@@ -149,7 +149,13 @@ export default function CfdApp() {
   const hasItems = cartItems.length > 0;
 
   return (
-    <div className="cfd-root">
+    <div
+      className="cfd-root"
+      style={{
+        '--cfd-brand-color': cafeConfig?.brandColor || '#176B50',
+        '--cfd-brand-light': `color-mix(in srgb, ${cafeConfig?.brandColor || '#176B50'} 35%, white)`,
+      }}
+    >
       {/* Top Ambient Bar */}
       <header className="cfd-header">
         <div className="cfd-header-brand">
@@ -157,7 +163,7 @@ export default function CfdApp() {
             <Coffee size={24} className="cfd-brand-icon" />
           </div>
           <div>
-            <h1 className="cfd-cafe-name">{cafeConfig?.name || 'Gusstora Coffee Roasters'}</h1>
+            <h1 className="cfd-cafe-name">{cafeConfig?.name || 'GUESTORA Coffee Roasters'}</h1>
             <p className="cfd-cafe-tagline">{cafeConfig?.tagline || 'Specialty Roastery & Espresso Bar'}</p>
           </div>
         </div>
@@ -197,7 +203,7 @@ export default function CfdApp() {
             </div>
             <h2 className="cfd-completed-title">Payment Received!</h2>
             <p className="cfd-completed-subtitle">
-              Thank you for visiting {cafeConfig?.name || 'Gusstora'}. Your handcrafted order is being prepared with precision.
+              Thank you for visiting {cafeConfig?.name || 'GUESTORA'}. Your handcrafted order is being prepared with precision.
             </p>
 
             <div className="cfd-completed-summary-pill">
@@ -387,7 +393,7 @@ export default function CfdApp() {
                 <Coffee size={64} className="cfd-idle-logo-icon" />
               </div>
               <h2 className="cfd-idle-title">
-                {cafeConfig?.cfdWelcomeTitle || 'Welcome to Gusstora'}
+                {cafeConfig?.cfdWelcomeTitle || 'Welcome to GUESTORA'}
               </h2>
               <p className="cfd-idle-subtitle">
                 {cafeConfig?.cfdWelcomeSubtitle || 'Artisan Coffee Roasters • Handcrafted with Passion'}
@@ -428,7 +434,7 @@ export default function CfdApp() {
                 <div className="cfd-feature-icon-circle">
                   <Award size={24} />
                 </div>
-                <h3 className="cfd-feature-title">Gusstora Loyalty Club</h3>
+                <h3 className="cfd-feature-title">GUESTORA Loyalty Club</h3>
                 <p className="cfd-feature-desc">
                   Share your phone number at the counter to collect digital stamps on every visit and earn free pour-overs.
                 </p>

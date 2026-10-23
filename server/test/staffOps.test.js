@@ -41,7 +41,7 @@ describe('Phase 11: Staff Operations, Biometric Attendance & Tip Payroll', () =>
     await ensureStaffOpsSchema();
 
     testCafe = await Cafe.create({
-      name: 'Gusstora Artisan Roastery - Bandra',
+      name: 'GUESTORA Artisan Roastery - Bandra',
       slug: `gusstora-bandra-${Date.now()}`,
       phone: '9876543210',
       address: 'Pali Hill, Bandra West, Mumbai',

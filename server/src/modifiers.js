@@ -1,5 +1,5 @@
 /**
- * Gusstora Modifiers & Variants Engine
+ * GUESTORA Modifiers & Variants Engine
  * Handles normalization, option verification, and dynamic price calculations.
  */
 

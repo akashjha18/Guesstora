@@ -386,7 +386,7 @@ export async function approveIndent(indentId, supplyingCafeId, {
 
 export async function dispatchIndentSTN(indentId, supplyingCafeId, {
   dispatchedBy = 'Commissary Dispatch Lead',
-  transporterName = 'Gusstora Fleet Logistics',
+  transporterName = 'GUESTORA Fleet Logistics',
   vehicleNumber = 'MH-12-GF-4491',
   driverContact = '+91 98200 44123',
   dispatchQuantities = [], // [{ id, dispatchedQty }]
@@ -867,7 +867,7 @@ export function formatPurchaseOrderText(po, cafe = {}) {
   out += '========================================================================\n';
   out += `                      PURCHASE ORDER: ${po.poNumber}\n`;
   out += '========================================================================\n';
-  out += `BUYER:      ${cafe.name || 'Gusstora Roasters'}\n`;
+  out += `BUYER:      ${cafe.name || 'GUESTORA Roasters'}\n`;
   if (cafe.gstin) out += `GSTIN:      ${cafe.gstin}\n`;
   out += `DATE:       ${new Date(po.createdAt).toLocaleDateString('en-IN')}\n`;
   out += `STATUS:     ${po.status.toUpperCase()}\n`;
