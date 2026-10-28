@@ -27187,29 +27187,39 @@ h1, h2, h3, h4, p {
 }
 
 /* ==========================================================================
-   Phase 7: Customer Facing Display (CFD) Styling & Dark Roastery Theme
+   Phase 7: Customer Facing Display (CFD) - Premium Artisanal Roastery Theme
+   Color Palette: Deep Forest Green (#123D32), Primary Green (#174E3D), 
+   Warm Ivory (#F8F3E9), Cream (#F2E7D4), Coffee Brown (#4A2C1D), 
+   Muted Gold (#C99A52), Soft Sage (#E5EDE2), Primary Text (#19372F),
+   Secondary Text (#766A5D), Borders (#E5D9C7).
    ========================================================================== */
 .cfd-root {
   min-height: 100vh;
   width: 100vw;
-  background: radial-gradient(circle at 50% 20%, #20130b 0%, #120b07 65%, #0a0604 100%);
-  color: #f5ede4;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #F8F3E9;
+  background-image: url('/cfd_bg.jpg');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: #19372F;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
   box-sizing: border-box;
+  position: relative;
 }
 
 .cfd-header {
-  height: 72px;
-  border-bottom: 1px solid color-mix(in srgb, var(--cfd-brand-color, #176B50) 18%, transparent);
-  background: rgba(26, 18, 12, 0.85);
-  backdrop-filter: blur(16px);
+  height: 74px;
+  border-bottom: 1px solid rgba(229, 217, 199, 0.7);
+  background: rgba(248, 243, 233, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2rem;
+  padding: 0 clamp(1.25rem, 3.5vw, 2.5rem);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -27218,90 +27228,329 @@ h1, h2, h3, h4, p {
 .cfd-header-brand {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.9rem;
 }
 
-.cfd-logo-badge {
+.cfd-header-logo {
   width: 44px;
   height: 44px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--cfd-brand-color, #176B50), color-mix(in srgb, var(--cfd-brand-color, #176B50), black 35%));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--cfd-brand-color, #176B50) 35%, transparent);
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(74, 44, 29, 0.12));
 }
 
-.cfd-brand-icon {
-  color: #ffffff;
+.cfd-header-titles {
+  display: flex;
+  flex-direction: column;
 }
 
 .cfd-cafe-name {
-  font-size: 1.25rem;
+  font-family: 'Playfair Display', 'DM Serif Display', Georgia, serif;
+  font-size: 1.45rem;
   font-weight: 700;
-  color: #fdfbf7;
+  color: #123D32;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
 }
 
 .cfd-cafe-tagline {
-  font-size: 0.75rem;
-  color: #a39082;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #766A5D;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.14em;
   margin: 2px 0 0 0;
 }
 
 .cfd-header-meta {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.85rem;
 }
 
-.cfd-wifi-badge,
+.cfd-wifi-badge {
+  background: #E5EDE2;
+  border: 1px solid #D2DFD0;
+  padding: 0.35rem 0.95rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #19372F;
+  box-shadow: 0 2px 6px rgba(18, 61, 50, 0.04);
+}
+
+.cfd-meta-icon {
+  color: #174E3D;
+  flex-shrink: 0;
+}
+
+.cfd-wifi-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  font-size: 0.76rem;
+}
+
+.cfd-wifi-text strong {
+  font-weight: 700;
+  color: #123D32;
+}
+
+.cfd-wifi-pwd {
+  font-size: 0.68rem;
+  color: #556B5C;
+}
+
 .cfd-clock-badge {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.4rem 0.85rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid #E5D9C7;
+  padding: 0.5rem 1.05rem;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #d1c2b5;
+  color: #19372F;
+  box-shadow: 0 2px 6px rgba(74, 44, 29, 0.04);
+  letter-spacing: 0.02em;
 }
 
 .cfd-fullscreen-btn {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #d1c2b5;
-  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid #E5D9C7;
+  color: #174E3D;
+  width: 38px;
+  height: 38px;
   border-radius: 10px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(74, 44, 29, 0.04);
 }
 
 .cfd-fullscreen-btn:hover {
-  background: color-mix(in srgb, var(--cfd-brand-color, #176B50) 20%, transparent);
-  color: var(--cfd-brand-color, #176B50);
-  border-color: var(--cfd-brand-color, #176B50);
+  background: #ffffff;
+  border-color: #174E3D;
+  color: #123D32;
+  transform: scale(1.05);
 }
 
 .cfd-main {
   flex: 1;
-  padding: 1.5rem 2rem;
-  max-width: 1600px;
+  padding: 1rem clamp(1.25rem, 3.5vw, 2.5rem);
+  max-width: 1440px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
-/* Active 50/50 Dual Display Grid */
+/* ==========================================================================
+   Case 3: Idle Ambient Roastery Showcase
+   ========================================================================== */
+.cfd-idle-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto 0;
+}
+
+.cfd-idle-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 0.4rem 0 1.6rem 0;
+}
+
+.cfd-emblem-wrapper {
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: center;
+}
+
+.cfd-idle-emblem {
+  width: 105px;
+  height: auto;
+  max-height: 110px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 16px rgba(74, 44, 29, 0.12));
+}
+
+.cfd-idle-title {
+  font-family: 'Playfair Display', 'DM Serif Display', Georgia, serif;
+  font-size: clamp(2rem, 3.2vw, 2.75rem);
+  font-weight: 700;
+  color: #123D32;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.35rem 0;
+  line-height: 1.15;
+}
+
+.cfd-idle-descriptor {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #8C6D46;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  margin: 0 0 0.3rem 0;
+}
+
+.cfd-idle-subtitle {
+  font-size: 0.95rem;
+  color: #766A5D;
+  margin: 0 0 1.25rem 0;
+  font-weight: 400;
+}
+
+.cfd-promo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #123D32;
+  color: #F8F3E9;
+  padding: 0.65rem 1.75rem;
+  border-radius: 9999px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(18, 61, 50, 0.22);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.cfd-promo-pill:hover {
+  background: #174E3D;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(18, 61, 50, 0.3);
+}
+
+.cfd-promo-icon {
+  color: #F8F3E9;
+  flex-shrink: 0;
+}
+
+.cfd-promo-arrow {
+  color: #F8F3E9;
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+.cfd-idle-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+}
+
+.cfd-feature-card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid #E5D9C7;
+  border-radius: 20px;
+  padding: 1.85rem 1.6rem 2rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(74, 44, 29, 0.05);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.cfd-feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(74, 44, 29, 0.08);
+  border-color: #D6C5AF;
+}
+
+.cfd-card-sage {
+  background: rgba(235, 242, 234, 0.88);
+  border-color: #D2DFD0;
+}
+
+.cfd-card-sage:hover {
+  border-color: #BACBBA;
+}
+
+.cfd-feature-icon-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.cfd-icon-warm {
+  background: #F4ECE1;
+  border: 1px solid #E5D9C7;
+  color: #4A2C1D;
+}
+
+.cfd-icon-sage {
+  background: #DCE8DC;
+  border: 1px solid #CADBC9;
+  color: #174E3D;
+}
+
+.cfd-feature-title {
+  font-family: 'Playfair Display', 'DM Serif Display', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #123D32;
+  margin: 0 0 0.65rem 0;
+  line-height: 1.25;
+}
+
+.cfd-feature-desc {
+  font-size: 0.85rem;
+  color: #766A5D;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.cfd-idle-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.75rem;
+  gap: 1.5rem;
+}
+
+.cfd-idle-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #123D32;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 0.45rem 1.25rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(229, 217, 199, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.cfd-hint-icon {
+  color: #123D32;
+}
+
+/* ==========================================================================
+   Case 2: Active Cart & Dynamic UPI Payment State
+   ========================================================================== */
 .cfd-active-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -27310,20 +27559,21 @@ h1, h2, h3, h4, p {
 }
 
 .cfd-panel {
-  background: rgba(26, 18, 12, 0.8);
-  border: 1px solid color-mix(in srgb, var(--cfd-brand-color, #176B50) 20%, transparent);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #E5D9C7;
   border-radius: 24px;
   padding: 1.75rem;
   backdrop-filter: blur(20px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 20px 50px rgba(74, 44, 29, 0.08);
   display: flex;
   flex-direction: column;
+  color: #19372F;
 }
 
-/* Left Panel Elements */
 .cfd-diner-badge {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--cfd-brand-color, #176B50) 15%, transparent), rgba(26, 18, 12, 0.6));
-  border: 1px solid color-mix(in srgb, var(--cfd-brand-color, #176B50) 35%, transparent);
+  background: #E5EDE2;
+  border: 1px solid #D2DFD0;
   border-radius: 16px;
   padding: 1rem 1.25rem;
   display: flex;
@@ -27332,36 +27582,36 @@ h1, h2, h3, h4, p {
 }
 
 .cfd-award-icon {
-  color: var(--cfd-brand-color, #176B50);
+  color: #174E3D;
 }
 
 .cfd-diner-greeting {
   margin: 0;
   font-size: 1.05rem;
-  color: #ffffff;
+  color: #123D32;
 }
 
 .cfd-diner-sub {
   margin: 2px 0 0 0;
   font-size: 0.75rem;
-  color: #bfa89a;
+  color: #766A5D;
 }
 
 .cfd-welcome-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(248, 243, 233, 0.8);
+  border: 1px solid #E5D9C7;
   border-radius: 14px;
   padding: 0.9rem 1.25rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   font-size: 0.85rem;
-  color: #d8c7ba;
+  color: #766A5D;
 }
 
 .cfd-upi-card {
-  background: rgba(18, 11, 7, 0.7);
-  border: 1px solid color-mix(in srgb, var(--cfd-brand-color, #176B50) 25%, transparent);
+  background: #FDFBF7;
+  border: 1px solid #E5D9C7;
   border-radius: 20px;
   padding: 1.5rem;
   margin-top: 1.25rem;
@@ -27371,6 +27621,7 @@ h1, h2, h3, h4, p {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 16px rgba(74, 44, 29, 0.04);
 }
 
 .cfd-upi-header {
@@ -27385,19 +27636,19 @@ h1, h2, h3, h4, p {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #ffffff;
+  color: #123D32;
   font-weight: 700;
   font-size: 1.05rem;
 }
 
 .cfd-qr-icon {
-  color: var(--cfd-brand-light, #176B50);
+  color: #174E3D;
 }
 
 .cfd-live-tag {
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: rgba(23, 78, 61, 0.12);
+  color: #174E3D;
+  border: 1px solid rgba(23, 78, 61, 0.25);
   font-size: 0.65rem;
   font-weight: 800;
   padding: 3px 8px;
@@ -27414,11 +27665,8 @@ h1, h2, h3, h4, p {
   padding: 14px;
   border-radius: 18px;
   display: inline-block;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
-}
-
-.cfd-upi-amount-box {
-  margin: 0.75rem 0;
+  box-shadow: 0 10px 30px rgba(74, 44, 29, 0.1);
+  border: 1px solid #E5D9C7;
 }
 
 .cfd-amount-label {
@@ -27426,13 +27674,13 @@ h1, h2, h3, h4, p {
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #a39082;
+  color: #766A5D;
 }
 
 .cfd-amount-val {
   font-size: 2.5rem;
   font-weight: 800;
-  color: var(--cfd-brand-light, #176B50);
+  color: #123D32;
   letter-spacing: -0.02em;
 }
 
@@ -27445,25 +27693,25 @@ h1, h2, h3, h4, p {
 }
 
 .cfd-app-badge {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(248, 243, 233, 0.9);
+  border: 1px solid #E5D9C7;
   border-radius: 6px;
   padding: 0.25rem 0.65rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #ded1c6;
+  color: #19372F;
 }
 
 .cfd-upi-helper {
   font-size: 0.75rem;
-  color: #8c786a;
+  color: #766A5D;
   margin: 0.5rem 0 0 0;
 }
 
 .cfd-origin-card {
   margin-top: 1.25rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: #FDFBF7;
+  border: 1px solid #E5D9C7;
   border-radius: 16px;
   padding: 1rem 1.25rem;
   display: flex;
@@ -27472,7 +27720,7 @@ h1, h2, h3, h4, p {
 }
 
 .cfd-coffee-icon {
-  color: var(--cfd-brand-light, #176B50);
+  color: #C99A52;
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -27481,13 +27729,13 @@ h1, h2, h3, h4, p {
   margin: 0 0 4px 0;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #ffffff;
+  color: #123D32;
 }
 
 .cfd-origin-desc {
   margin: 0;
   font-size: 0.75rem;
-  color: #9d897c;
+  color: #766A5D;
   line-height: 1.4;
 }
 
@@ -27497,7 +27745,7 @@ h1, h2, h3, h4, p {
   justify-content: space-between;
   align-items: center;
   padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  border-bottom: 1px solid #E5D9C7;
 }
 
 .cfd-cart-title-box {
@@ -27506,12 +27754,12 @@ h1, h2, h3, h4, p {
   gap: 0.6rem;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #ffffff;
+  color: #123D32;
 }
 
 .cfd-item-count {
-  background: color-mix(in srgb, var(--cfd-brand-color, #176B50) 15%, transparent);
-  color: var(--cfd-brand-light, #176B50);
+  background: #E5EDE2;
+  color: #174E3D;
   padding: 3px 10px;
   border-radius: 12px;
   font-size: 0.75rem;
@@ -27530,7 +27778,7 @@ h1, h2, h3, h4, p {
 }
 
 .cfd-cart-items-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: #E5D9C7;
   border-radius: 3px;
 }
 
@@ -27539,7 +27787,7 @@ h1, h2, h3, h4, p {
   justify-content: space-between;
   align-items: flex-start;
   padding: 0.9rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(229, 217, 199, 0.6);
 }
 
 .cfd-item-left {
@@ -27552,8 +27800,8 @@ h1, h2, h3, h4, p {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: color-mix(in srgb, var(--cfd-brand-color, #176B50) 20%, transparent);
-  color: var(--cfd-brand-light, #176B50);
+  background: #E5EDE2;
+  color: #174E3D;
   font-weight: 800;
   font-size: 0.85rem;
   display: flex;
@@ -27569,12 +27817,12 @@ h1, h2, h3, h4, p {
 .cfd-item-name {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #f5ede4;
+  color: #19372F;
 }
 
 .cfd-item-variant {
   font-size: 0.75rem;
-  color: #a39082;
+  color: #766A5D;
   margin-top: 2px;
 }
 
@@ -27586,8 +27834,8 @@ h1, h2, h3, h4, p {
 }
 
 .cfd-mod-chip {
-  background: color-mix(in srgb, var(--cfd-brand-color, #176B50) 15%, transparent);
-  color: var(--cfd-brand-light, #176B50);
+  background: #E5EDE2;
+  color: #174E3D;
   font-size: 0.7rem;
   border-radius: 4px;
   padding: 2px 6px;
@@ -27596,7 +27844,7 @@ h1, h2, h3, h4, p {
 
 .cfd-item-notes {
   font-size: 0.7rem;
-  color: #a89485;
+  color: #766A5D;
   font-style: italic;
   margin-top: 3px;
 }
@@ -27604,26 +27852,27 @@ h1, h2, h3, h4, p {
 .cfd-item-price {
   font-size: 1rem;
   font-weight: 700;
-  color: #ffffff;
+  color: #123D32;
   padding-left: 1rem;
 }
 
 .cfd-cart-summary {
   margin-top: auto;
   padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid #E5D9C7;
 }
 
 .cfd-summary-row {
   display: flex;
   justify-content: space-between;
   font-size: 0.85rem;
-  color: #b8a698;
+  color: #766A5D;
   margin-bottom: 0.4rem;
 }
 
 .cfd-discount-row {
-  color: #10b981;
+  color: #174E3D;
+  font-weight: 600;
 }
 
 .cfd-total-row {
@@ -27632,65 +27881,66 @@ h1, h2, h3, h4, p {
   align-items: center;
   margin-top: 0.75rem;
   padding-top: 0.75rem;
-  border-top: 2px dashed color-mix(in srgb, var(--cfd-brand-color, #176B50) 40%, transparent);
+  border-top: 2px dashed #D5DFD1;
 }
 
 .cfd-total-label {
   font-size: 1.25rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #123D32;
 }
 
 .cfd-total-val {
   font-size: 2.5rem;
   font-weight: 800;
-  color: var(--cfd-brand-light, #176B50);
+  color: #123D32;
   letter-spacing: -0.02em;
-  text-shadow: 0 0 25px color-mix(in srgb, var(--cfd-brand-color, #176B50) 35%, transparent);
 }
 
 /* ==========================================================================
-   Order Completed Celebration
+   Case 1: Order Completed Celebration
    ========================================================================== */
 .cfd-completed-card {
   text-align: center;
   max-width: 680px;
-  margin: 4rem auto;
-  background: rgba(26, 18, 12, 0.85);
-  border: 1px solid rgba(16, 185, 129, 0.4);
+  margin: 3rem auto;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #D2DFD0;
   border-radius: 28px;
   padding: 3rem 2.5rem;
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 25px 70px rgba(74, 44, 29, 0.1);
   position: relative;
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .cfd-completed-icon-wrapper {
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
-  background: rgba(16, 185, 129, 0.15);
+  background: #E5EDE2;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1.5rem auto;
-  border: 1px solid rgba(16, 185, 129, 0.35);
+  border: 1px solid #D2DFD0;
 }
 
 .cfd-completed-icon {
-  color: #10b981;
+  color: #174E3D;
 }
 
 .cfd-completed-title {
+  font-family: 'Playfair Display', 'DM Serif Display', Georgia, serif;
   font-size: 2.25rem;
-  font-weight: 800;
-  color: #ffffff;
+  font-weight: 700;
+  color: #123D32;
   margin: 0 0 0.5rem 0;
 }
 
 .cfd-completed-subtitle {
   font-size: 1rem;
-  color: #bfa89a;
+  color: #766A5D;
   max-width: 480px;
   margin: 0 auto 2rem auto;
   line-height: 1.5;
@@ -27700,8 +27950,8 @@ h1, h2, h3, h4, p {
   display: flex;
   justify-content: center;
   gap: 1.5rem;
-  background: rgba(18, 11, 7, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #FDFBF7;
+  border: 1px solid #E5D9C7;
   border-radius: 18px;
   padding: 1.25rem 2rem;
   margin-bottom: 2rem;
@@ -27715,7 +27965,7 @@ h1, h2, h3, h4, p {
 
 .cfd-pill-label {
   font-size: 0.75rem;
-  color: #8c786a;
+  color: #766A5D;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -27723,155 +27973,51 @@ h1, h2, h3, h4, p {
 .cfd-pill-val {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #123D32;
 }
 
 .cfd-pill-highlight .cfd-pill-val {
-  color: #10b981;
+  color: #174E3D;
 }
 
 .cfd-barista-note {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: color-mix(in srgb, var(--cfd-brand-color, #176B50) 15%, transparent);
-  border: 1px solid color-mix(in srgb, var(--cfd-brand-color, #176B50) 30%, transparent);
+  background: #E5EDE2;
+  border: 1px solid #D2DFD0;
   padding: 0.6rem 1.25rem;
   border-radius: 20px;
   font-size: 0.85rem;
-  color: var(--cfd-brand-light, #176B50);
+  color: #123D32;
+  font-weight: 500;
 }
 
-/* ==========================================================================
-   Idle Ambient Showcase
-   ========================================================================== */
-.cfd-idle-container {
-  max-width: 1300px;
-  margin: 1.5rem auto;
-  text-align: center;
-  width: 100%;
+/* Responsive Reflow for Customer Display */
+@media (max-width: 1024px) {
+  .cfd-idle-cards-grid {
+    gap: 1rem;
+  }
+  .cfd-feature-card {
+    padding: 1.5rem 1.25rem;
+  }
 }
 
-.cfd-idle-hero {
-  margin: 2.5rem 0 2rem 0;
-}
-
-.cfd-coffee-steam-anim {
-  width: 100px;
-  height: 100px;
-  border-radius: 28px;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--cfd-brand-color, #176B50) 25%, transparent), rgba(26, 18, 12, 0.8));
-  border: 1px solid color-mix(in srgb, var(--cfd-brand-color, #176B50) 40%, transparent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem auto;
-  box-shadow: 0 15px 40px color-mix(in srgb, var(--cfd-brand-color, #176B50) 25%, transparent);
-  animation: cfdPulse 3s infinite ease-in-out;
-}
-
-@keyframes cfdPulse {
-  0%, 100% { transform: scale(1); box-shadow: 0 15px 40px color-mix(in srgb, var(--cfd-brand-color, #176B50) 25%, transparent); }
-  50% { transform: scale(1.06); box-shadow: 0 20px 50px color-mix(in srgb, var(--cfd-brand-color, #176B50) 40%, transparent); }
-}
-
-.cfd-idle-logo-icon {
-  color: var(--cfd-brand-light, #176B50);
-}
-
-.cfd-idle-title {
-  font-size: 3rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: #fdfbf7;
-  margin: 0 0 0.5rem 0;
-}
-
-.cfd-idle-subtitle {
-  font-size: 1.2rem;
-  color: #bfa89a;
-  margin: 0;
-}
-
-.cfd-idle-promo-strip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--cfd-brand-color, #176B50) 15%, transparent), color-mix(in srgb, var(--cfd-brand-color, #176B50) 25%, transparent), color-mix(in srgb, var(--cfd-brand-color, #176B50) 15%, transparent));
-  border: 1px solid color-mix(in srgb, var(--cfd-brand-color, #176B50) 35%, transparent);
-  padding: 0.75rem 2rem;
-  border-radius: 30px;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--cfd-brand-light, #176B50);
-  margin: 1.5rem 0 2.5rem 0;
-}
-
-.cfd-idle-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.75rem;
-  margin: 2rem 0;
-}
-
-.cfd-feature-card {
-  background: rgba(26, 18, 12, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 2rem 1.5rem;
-  backdrop-filter: blur(16px);
-  text-align: left;
-  transition: all 0.25s ease;
-}
-
-.cfd-feature-card:hover {
-  border-color: color-mix(in srgb, var(--cfd-brand-color, #176B50) 35%, transparent);
-  transform: translateY(-4px);
-}
-
-.cfd-feature-icon-circle {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--cfd-brand-color, #176B50) 15%, transparent);
-  color: var(--cfd-brand-light, #176B50);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.25rem;
-}
-
-.cfd-feature-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 0.5rem 0;
-}
-
-.cfd-feature-desc {
-  font-size: 0.85rem;
-  color: #a39082;
-  line-height: 1.5;
-  margin: 0;
-}
-
-.cfd-idle-footer {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-top: 3rem;
-}
-
-.cfd-idle-hint {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  color: #8c786a;
-}
-
-.cfd-sparkle-amber {
-  color: var(--cfd-brand-light, #176B50);
+@media (max-width: 768px) {
+  .cfd-idle-cards-grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    gap: 1rem;
+  }
+  .cfd-header {
+    padding: 0 1rem;
+  }
+  .cfd-wifi-badge {
+    display: none;
+  }
+  .cfd-active-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Owner dashboard header refresh */

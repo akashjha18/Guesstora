@@ -53,13 +53,16 @@ export default function CfdApp() {
         console.warn('Failed to load CFD config, using defaults:', err);
         if (mounted) {
           setCafeConfig({
-            name: 'GUESTORA Artisan Roastery',
+            name: 'Guesstora',
             slug,
-            brandColor: '#176B50',
+            brandColor: '#174E3D',
             currency: 'INR',
-            cfdWelcomeTitle: 'GUESTORA Specialty Coffee',
-            cfdWelcomeSubtitle: 'Handcrafted Roasts & Fresh Sourdough Bakes',
-            cfdPromoBanner: 'Ask our Barista about our Seasonal Ethiopian Pour-over!',
+            tagline: 'ARTISANAL COFFEE & ROASTERY',
+            wifiSsid: 'Guestora-Roastery-5G',
+            wifiPassword: 'guestoracoffee',
+            cfdWelcomeTitle: 'Welcome to Guesstora Coffee Atelier',
+            cfdWelcomeSubtitle: 'Fresh Roasts & Sourdough Croissants',
+            cfdPromoBanner: 'Get 10% off your next bag of whole beans!',
             cfdUpiVpa: 'gusstora@okaxis',
           });
         }
@@ -159,31 +162,37 @@ export default function CfdApp() {
       {/* Top Ambient Bar */}
       <header className="cfd-header">
         <div className="cfd-header-brand">
-          <div className="cfd-logo-badge">
-            <Coffee size={24} className="cfd-brand-icon" />
-          </div>
-          <div>
-            <h1 className="cfd-cafe-name">{cafeConfig?.name || 'GUESTORA Coffee Roasters'}</h1>
-            <p className="cfd-cafe-tagline">{cafeConfig?.tagline || 'Specialty Roastery & Espresso Bar'}</p>
+          <img
+            src="/gusstora_emblem.png"
+            alt="Guesstora Logo"
+            className="cfd-header-logo"
+          />
+          <div className="cfd-header-titles">
+            <h1 className="cfd-cafe-name">{cafeConfig?.name || 'Guesstora'}</h1>
+            <p className="cfd-cafe-tagline">{cafeConfig?.tagline || 'ARTISANAL COFFEE & ROASTERY'}</p>
           </div>
         </div>
 
         <div className="cfd-header-meta">
-          {cafeConfig?.wifiSsid && (
-            <div className="cfd-wifi-badge">
-              <Wifi size={16} />
-              <span>Wi-Fi: <strong>{cafeConfig.wifiSsid}</strong> {cafeConfig.wifiPassword ? `(${cafeConfig.wifiPassword})` : ''}</span>
+          <div className="cfd-wifi-badge">
+            <Wifi size={16} className="cfd-meta-icon" />
+            <div className="cfd-wifi-text">
+              <span>Wi-Fi: <strong>{cafeConfig?.wifiSsid || 'Guestora-Roastery-5G'}</strong></span>
+              {(cafeConfig?.wifiPassword || !cafeConfig?.wifiSsid) && (
+                <span className="cfd-wifi-pwd">({cafeConfig?.wifiPassword || 'guestoracoffee'})</span>
+              )}
             </div>
-          )}
+          </div>
           <div className="cfd-clock-badge">
-            <Clock size={16} />
-            <span>{currentTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+            <Clock size={16} className="cfd-meta-icon" />
+            <span>{currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }).toLowerCase()}</span>
           </div>
           <button
             type="button"
             className="cfd-fullscreen-btn"
             onClick={toggleFullscreen}
             title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+            aria-label={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
           >
             {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
           </button>
@@ -389,40 +398,54 @@ export default function CfdApp() {
           /* ============================================================== */
           <div className="cfd-idle-container">
             <div className="cfd-idle-hero">
-              <div className="cfd-coffee-steam-anim">
-                <Coffee size={64} className="cfd-idle-logo-icon" />
+              <div className="cfd-emblem-wrapper">
+                <img
+                  src="/gusstora_emblem.png"
+                  alt="Guesstora Emblem"
+                  className="cfd-idle-emblem"
+                />
               </div>
               <h2 className="cfd-idle-title">
-                {cafeConfig?.cfdWelcomeTitle || 'Welcome to GUESTORA'}
+                {cafeConfig?.cfdWelcomeTitle && !cafeConfig.cfdWelcomeTitle.includes('GUESTORA Specialty')
+                  ? cafeConfig.cfdWelcomeTitle
+                  : 'Welcome to Guesstora Coffee Atelier'}
               </h2>
-              <p className="cfd-idle-subtitle">
-                {cafeConfig?.cfdWelcomeSubtitle || 'Artisan Coffee Roasters • Handcrafted with Passion'}
+              <p className="cfd-idle-descriptor">
+                ARTISANAL COFFEE &amp; ROASTERY
               </p>
-            </div>
+              <p className="cfd-idle-subtitle">
+                {cafeConfig?.cfdWelcomeSubtitle && !cafeConfig.cfdWelcomeSubtitle.includes('Handcrafted Roasts')
+                  ? cafeConfig.cfdWelcomeSubtitle
+                  : 'Fresh Roasts & Sourdough Croissants'}
+              </p>
 
-            {/* Promotional Banner */}
-            {cafeConfig?.cfdPromoBanner && (
-              <div className="cfd-idle-promo-strip">
-                <Sparkles size={20} className="cfd-sparkle-amber" />
-                <span>{cafeConfig.cfdPromoBanner}</span>
+              {/* Refined Promotional CTA Pill */}
+              <div className="cfd-promo-pill" role="button" tabIndex={0}>
+                <Sparkles size={16} className="cfd-promo-icon" />
+                <span className="cfd-promo-text">
+                  {cafeConfig?.cfdPromoBanner && !cafeConfig.cfdPromoBanner.includes('Ethiopian') && !cafeConfig.cfdPromoBanner.includes('Seasonal')
+                    ? cafeConfig.cfdPromoBanner
+                    : 'Get 10% off your next bag of whole beans!'}
+                </span>
+                <ChevronRight size={16} className="cfd-promo-arrow" />
               </div>
-            )}
+            </div>
 
             {/* Roastery Feature Cards */}
             <div className="cfd-idle-cards-grid">
               <div className="cfd-feature-card">
-                <div className="cfd-feature-icon-circle">
-                  <Coffee size={24} />
+                <div className="cfd-feature-icon-circle cfd-icon-warm">
+                  <Coffee size={24} strokeWidth={1.8} />
                 </div>
                 <h3 className="cfd-feature-title">Micro-Lot Roasted In-House</h3>
                 <p className="cfd-feature-desc">
-                  Curated green beans directly sourced from Chikmagalur & Coorg high-altitude shade-grown estates.
+                  Curated green beans directly sourced from Chikmagalur &amp; Coorg high-altitude shade-grown estates.
                 </p>
               </div>
 
-              <div className="cfd-feature-card">
-                <div className="cfd-feature-icon-circle">
-                  <Sparkles size={24} />
+              <div className="cfd-feature-card cfd-card-sage">
+                <div className="cfd-feature-icon-circle cfd-icon-sage">
+                  <Sparkles size={24} strokeWidth={1.8} />
                 </div>
                 <h3 className="cfd-feature-title">Artisan Viennoiserie</h3>
                 <p className="cfd-feature-desc">
@@ -431,8 +454,8 @@ export default function CfdApp() {
               </div>
 
               <div className="cfd-feature-card">
-                <div className="cfd-feature-icon-circle">
-                  <Award size={24} />
+                <div className="cfd-feature-icon-circle cfd-icon-warm">
+                  <Award size={24} strokeWidth={1.8} />
                 </div>
                 <h3 className="cfd-feature-title">GUESTORA Loyalty Club</h3>
                 <p className="cfd-feature-desc">
@@ -444,12 +467,12 @@ export default function CfdApp() {
             {/* Footer Prompt */}
             <div className="cfd-idle-footer">
               <div className="cfd-idle-hint">
-                <ShoppingBag size={18} />
+                <ShoppingBag size={18} className="cfd-hint-icon" />
                 <span>Please place your order with our cashier</span>
               </div>
               {cafeConfig?.googleReviewUrl && (
                 <div className="cfd-idle-hint">
-                  <ShieldCheck size={18} />
+                  <ShieldCheck size={18} className="cfd-hint-icon" />
                   <span>Loved your visit? Review us on Google Maps</span>
                 </div>
               )}
