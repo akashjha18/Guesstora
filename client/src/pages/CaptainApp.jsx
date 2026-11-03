@@ -1281,9 +1281,14 @@ export default function CaptainApp() {
                     .reduce((sum, c) => sum + c.quantity, 0);
 
                   return (
-                    <div key={item.id} className="captain-menu-card">
+                    <div key={item.id} className={`captain-menu-card ${item.available === false ? 'out-of-stock-card' : ''}`}>
                       <div className="captain-menu-info">
-                        <span className="captain-menu-name">{item.name}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                          <span className="captain-menu-name">{item.name}</span>
+                          {item.available === false && (
+                            <span className="out-of-stock-pill" style={{ fontSize: 10, padding: '1px 6px' }}>Sold Out</span>
+                          )}
+                        </div>
                         <span className="captain-menu-price">{money(item.price)}</span>
                         {item.description && (
                           <p className="captain-menu-desc">{item.description}</p>
@@ -1291,17 +1296,23 @@ export default function CaptainApp() {
                       </div>
 
                       <div className="captain-menu-actions">
-                        {inCartCount > 0 && (
-                          <span className="captain-cart-badge">{inCartCount} in cart</span>
+                        {item.available === false ? (
+                          <span className="out-of-stock-pill" style={{ opacity: 0.8 }}>Unavailable</span>
+                        ) : (
+                          <>
+                            {inCartCount > 0 && (
+                              <span className="captain-cart-badge">{inCartCount} in cart</span>
+                            )}
+                            <button
+                              type="button"
+                              className="captain-add-item-btn"
+                              onClick={() => handleAddToCart(item)}
+                            >
+                              <Plus size={16} />
+                              <span>Add</span>
+                            </button>
+                          </>
                         )}
-                        <button
-                          type="button"
-                          className="captain-add-item-btn"
-                          onClick={() => handleAddToCart(item)}
-                        >
-                          <Plus size={16} />
-                          <span>Add</span>
-                        </button>
                       </div>
                     </div>
                   );

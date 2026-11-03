@@ -384,6 +384,7 @@ export default function OwnerApp() {
 
   // CRM Issue Custom Voucher State
   const [issueVoucherModalOpen, setIssueVoucherModalOpen] = useState(false);
+  const [voucherCustomCode, setVoucherCustomCode] = useState('');
   const [voucherAmount, setVoucherAmount] = useState(250);
   const [voucherValidityDays, setVoucherValidityDays] = useState(30);
   const [voucherReason, setVoucherReason] = useState('Birthday Perk');
@@ -1988,6 +1989,7 @@ export default function OwnerApp() {
       const res = await api(`/owner/customers/${selectedCustomer.id || selectedCustomer._id}/issue-voucher`, {
         method: 'POST',
         body: JSON.stringify({
+          claimCode: voucherCustomCode.trim().toUpperCase() || undefined,
           amount: finalAmount,
           validityDays: Number(voucherValidityDays) || 30,
           notes: finalNotes,
@@ -3353,12 +3355,20 @@ export default function OwnerApp() {
               type="button"
               className="sidebar-logout-icon-btn"
               title="Sign out"
-              onClick={async () => {
-                await logoutUser();
-                nav('/owner/login');
+              aria-label="Sign out"
+              onClick={async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                try {
+                  await logoutUser();
+                } catch (err) {
+                  console.warn('Logout notice:', err);
+                } finally {
+                  nav('/owner/login', { replace: true });
+                }
               }}
             >
-              <LogOut size={14} />
+              <LogOut size={16} />
             </button>
           </div>
         </div>
@@ -5267,6 +5277,29 @@ export default function OwnerApp() {
                                       title="Mark order served & paid"
                                     >
                                       Serve <Check size={12} />
+                                    </button>
+                                  )}
+                                  {o.status === 'cancelled' && (
+                                    <span
+                                      className="crm-quick-step-btn cancelled-badge"
+                                      title="This order has been cancelled"
+                                    >
+                                      Cancelled
+                                    </span>
+                                  )}
+                                  {['placed', 'accepted', 'preparing'].includes(o.status) && (
+                                    <button
+                                      type="button"
+                                      className="crm-quick-step-btn cancel-step"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (window.confirm(`Are you sure you want to cancel order ${o.orderNo}?`)) {
+                                          patchOrder(o._id, { status: 'cancelled' });
+                                        }
+                                      }}
+                                      title="Cancel order"
+                                    >
+                                      Cancel <X size={12} />
                                     </button>
                                   )}
                                   <select
@@ -11523,6 +11556,7 @@ export default function OwnerApp() {
                         type="button"
                         className="crm-add-order-btn"
                         onClick={() => {
+                          setVoucherCustomCode('');
                           setVoucherAmount(250);
                           setVoucherValidityDays(30);
                           setVoucherReason('Birthday Perk');
@@ -11559,8 +11593,9 @@ export default function OwnerApp() {
                           className="crm-btn-primary"
                           style={{ marginTop: 14 }}
                           onClick={() => {
-                            setVoucherAmount(250);
-                            setVoucherValidityDays(30);
+                          setVoucherCustomCode('');
+                          setVoucherAmount(250);
+                          setVoucherValidityDays(30);
                             setVoucherReason('Birthday Perk');
                             setVoucherCustomReason('');
                             setIssueVoucherModalOpen(true);
@@ -11577,7 +11612,7 @@ export default function OwnerApp() {
                         <div key={reward._id || reward.id} className="crm-reward-card">
                           <div className="crm-reward-card-top">
                             <div className="crm-reward-title-group">
-                              <span className="reward-val-title">{money(reward.amount)} Dining Voucher</span>
+                              <span className="reward-val-title">{money(reward.amount)} {reward.title || 'Dining Voucher'}</span>
                               {reward.claimCode && (
                                 <span className="claim-code-pill-sm">{reward.claimCode}</span>
                               )}
@@ -11910,13 +11945,16 @@ export default function OwnerApp() {
                           const totalQtyInCart = matchingItems.reduce((s, i) => s + (i.quantity || 1), 0);
 
                           return (
-                            <div key={item.id || item._id} className="crm-menu-pick-item">
+                            <div key={item.id || item._id} className={`crm-menu-pick-item ${item.available === false ? 'out-of-stock-card' : ''}`}>
                               <div className="crm-pick-left">
                                 <span className={`crm-veg-dot ${item.veg ? 'veg' : 'non-veg'}`}></span>
                                 <div>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                                     <strong className="crm-pick-name">{item.name}</strong>
-                                    {hasCustoms && (
+                                    {item.available === false && (
+                                      <span className="out-of-stock-pill" style={{ fontSize: 9, padding: '1px 6px' }}>Out of Stock</span>
+                                    )}
+                                    {hasCustoms && item.available !== false && (
                                       <span className="brix-card-custom-badge" style={{ fontSize: 9, padding: '1px 5px' }}>Customisable</span>
                                     )}
                                   </div>
@@ -11925,7 +11963,9 @@ export default function OwnerApp() {
                                   </span>
                                 </div>
                               </div>
-                              {hasCustoms ? (
+                              {item.available === false ? (
+                                <span className="out-of-stock-pill" style={{ opacity: 0.8 }}>Unavailable</span>
+                              ) : hasCustoms ? (
                                 <button
                                   type="button"
                                   className="crm-pick-add-btn"
@@ -12125,6 +12165,75 @@ export default function OwnerApp() {
               {/* Modal Body */}
               <form onSubmit={handleIssueCustomVoucher}>
                 <div className="crm-modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 18, maxHeight: 'calc(85vh - 140px)', overflowY: 'auto', padding: 22 }}>
+                  {/* Custom Voucher Code (Optional) */}
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', margin: 0 }}>
+                        Custom Voucher Code <span style={{ color: '#6b7280', fontWeight: 400 }}>(Optional)</span>
+                      </label>
+                      {voucherCustomCode && (
+                        <button
+                          type="button"
+                          onClick={() => setVoucherCustomCode('')}
+                          style={{ background: 'none', border: 'none', color: '#9ca3af', fontSize: '11px', cursor: 'pointer', padding: 0 }}
+                        >
+                          Clear (Auto)
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <input
+                        type="text"
+                        placeholder="e.g. SKY250, VIPGUEST, BDAY2026 (or leave blank for Auto)"
+                        value={voucherCustomCode}
+                        onChange={e => setVoucherCustomCode(e.target.value.toUpperCase().replace(/[^A-Z0-9_-]/g, ''))}
+                        maxLength={25}
+                        style={{
+                          flex: 1,
+                          padding: '10px 14px',
+                          border: '1.5px solid #d1d5db',
+                          borderRadius: 10,
+                          fontSize: '13.5px',
+                          fontWeight: 700,
+                          letterSpacing: '0.5px',
+                          color: '#111827',
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+                          let code = '';
+                          for (let i = 0; i < 5; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+                          setVoucherCustomCode(`CLM-${code}`);
+                        }}
+                        style={{
+                          padding: '0 14px',
+                          background: '#F1F7F2',
+                          border: '1.5px solid #d1fae5',
+                          borderRadius: 10,
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          color: '#176B50',
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 5
+                        }}
+                        title="Generate random voucher code"
+                      >
+                        <Sparkles size={14} />
+                        Auto-Gen
+                      </button>
+                    </div>
+                    <small style={{ fontSize: '11px', color: '#6b7280', marginTop: 4, display: 'block' }}>
+                      Redemption code used by the customer or cashier. If left blank, a code like <b>CLM-XXXXX</b> will be auto-generated.
+                    </small>
+                  </div>
+
                   {/* Preset Amount Chips */}
                   <div className="form-group" style={{ margin: 0 }}>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: 8 }}>
@@ -12153,8 +12262,8 @@ export default function OwnerApp() {
                         </button>
                       ))}
                     </div>
-                    <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', fontWeight: 800, color: '#6b7280', fontSize: '15px' }}>
+                    <div className="crm-currency-input-wrap">
+                      <span className="crm-currency-prefix">
                         ₹
                       </span>
                       <input
@@ -12165,15 +12274,18 @@ export default function OwnerApp() {
                         value={voucherAmount}
                         onChange={e => setVoucherAmount(Math.max(1, parseInt(e.target.value, 10) || ''))}
                         placeholder="e.g. 250"
+                        className="crm-currency-input"
                         style={{
                           width: '100%',
-                          padding: '10px 14px 10px 30px',
+                          padding: '10px 14px 10px 42px',
+                          paddingLeft: '42px',
                           border: '1.5px solid #d1d5db',
                           borderRadius: 10,
                           fontSize: '15px',
                           fontWeight: 700,
                           color: '#111827',
-                          outline: 'none'
+                          outline: 'none',
+                          boxSizing: 'border-box'
                         }}
                       />
                     </div>
@@ -12272,7 +12384,13 @@ export default function OwnerApp() {
                       <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700, color: '#9a3412' }}>
                         Voucher Pass Preview
                       </span>
-                      <span className="claim-code-pill-sm">Auto CLM-XXXXX</span>
+                      {voucherCustomCode.trim() ? (
+                        <span className="claim-code-pill-sm" style={{ background: '#e0f2fe', color: '#0369a1', borderColor: '#7dd3fc', fontWeight: 800 }}>
+                          {voucherCustomCode.trim().toUpperCase()}
+                        </span>
+                      ) : (
+                        <span className="claim-code-pill-sm">Auto CLM-XXXXX</span>
+                      )}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                       <div>

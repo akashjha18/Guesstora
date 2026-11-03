@@ -495,6 +495,17 @@ const migrations = [
     }
   },
   {
+    id: '024_add_title_to_rewards',
+    up: async ({ queryInterface }) => {
+      const existingColumns = await queryInterface.describeTable('rewards').catch(() => null);
+      if (!existingColumns || existingColumns.title) return;
+      await queryInterface.addColumn('rewards', 'title', {
+        type: DataTypes.STRING,
+        allowNull: true,
+      }).catch(() => {});
+    }
+  },
+  {
     id: '023_complete_cafe_schema',
     up: async ({ queryInterface }) => {
       const existingColumns = await queryInterface.describeTable('cafes').catch(() => null);

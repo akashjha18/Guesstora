@@ -94,6 +94,7 @@ export const Customer = sequelize.define('Customer', {
 
 export const Reward = sequelize.define('Reward', {
   ...uuidPk,
+  title: { type: DataTypes.STRING, allowNull: true },
   amount: DataTypes.INTEGER,
   claimCode: { type: DataTypes.STRING, unique: true },
   claimedAt: DataTypes.DATE,

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import { sequelize } from './db.js';
 import { AuditLog, Booking, Cafe, CafeTable, Customer, Feedback, MenuItem, NotificationLog, Order, OrderItem, OtpVerification, PromoCode, RefreshToken, RegisterShift, ReminderRule, Reward, User } from './models.js';
@@ -61,6 +62,7 @@ const serializeMenuItem = i => ({
 const serializeReward = r => ({
   _id: r.id,
   id: r.id,
+  title: r.title || null,
   amount: r.amount,
   claimCode: r.claimCode,
   status: r.status,
@@ -168,7 +170,7 @@ const publicCafe = c => ({
   cfdWelcomeTitle: c.cfdWelcomeTitle || '', cfdWelcomeSubtitle: c.cfdWelcomeSubtitle || '',
   cfdPromoBanner: c.cfdPromoBanner || '', cfdUpiVpa: c.cfdUpiVpa || '', cfdIdleMedia: c.cfdIdleMedia || '',
   loyalty: { enabled: c.loyaltyEnabled, visitsRequired: c.loyaltyVisitsRequired, minimumSpend: c.loyaltyMinimumSpend, rewardCap: c.loyaltyRewardCap, validityDays: c.loyaltyValidityDays },
-  menu: (c.menu || []).filter(i => i.available).map(serializeMenuItem),
+  menu: (c.menu || []).map(serializeMenuItem),
 });
 const ownerCafe = c => ({
   _id: c.id, name: c.name, slug: c.slug, phone: c.phone, address: c.address, currency: c.currency, tables: c.tables,
@@ -1176,11 +1178,28 @@ router.post('/owner/customers/:id/issue-voucher', requireRole('owner', 'manager'
     const cafe = await Cafe.findByPk(req.auth.cafe);
     const validityDays = Math.max(1, Math.round(Number(req.body.validityDays) || cafe?.loyaltyValidityDays || 30));
     const expiresAt = new Date(Date.now() + validityDays * 86400000);
+    const title = String(req.body.title || req.body.voucherName || '').trim();
     const notes = String(req.body.notes || 'Manually issued in CRM').trim();
 
-    const claimCode = generateClaimCode();
+    let claimCode = String(req.body.claimCode || req.body.code || req.body.voucherCode || '').trim().toUpperCase();
+    if (claimCode) {
+      claimCode = claimCode.replace(/[^A-Z0-9_-]/g, '');
+      if (claimCode.length < 3) {
+        return res.status(400).json({ message: 'Custom voucher code must be at least 3 characters long.' });
+      }
+      if (claimCode.length > 30) {
+        return res.status(400).json({ message: 'Custom voucher code must not exceed 30 characters.' });
+      }
+      const existingReward = await Reward.findOne({ where: { claimCode } });
+      if (existingReward) {
+        return res.status(400).json({ message: `Voucher code "${claimCode}" is already in use. Please use a different code or leave blank to auto-generate.` });
+      }
+    } else {
+      claimCode = generateClaimCode();
+    }
 
     const reward = await customer.createReward({
+      title: title || null,
       amount,
       claimCode,
       status: 'available',
@@ -1194,7 +1213,7 @@ router.post('/owner/customers/:id/issue-voucher', requireRole('owner', 'manager'
         cafeId: req.auth.cafe,
         userId: req.auth.id || req.auth.userId,
         action: 'ISSUE_CUSTOMER_VOUCHER',
-        details: `Issued ₹${amount} voucher (${claimCode}) to customer ${customer.name || customer.phone}. Reason: ${notes}`,
+        details: `Issued ₹${amount} voucher "${title || 'Dining Voucher'}" (${claimCode}) to customer ${customer.name || customer.phone}. Reason: ${notes}`,
       }).catch(() => {});
     }
 

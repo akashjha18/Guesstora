@@ -2355,18 +2355,23 @@ export default function CustomerApp() {
                     : money(item.price);
 
                   return (
-                    <article className="brix-compact-card" key={itemId}>
+                    <article className={`brix-compact-card ${item.available === false ? 'out-of-stock-card' : ''}`} key={itemId}>
                       <div
                         className="brix-card-img-container"
-                        onClick={() => (itemHasCustomizations ? openCustomization(item) : openItemModal(item))}
-                        title="Click to view details"
+                        onClick={() => {
+                          if (item.available === false) return;
+                          itemHasCustomizations ? openCustomization(item) : openItemModal(item);
+                        }}
+                        title={item.available === false ? 'Currently Sold Out' : 'Click to view details'}
                       >
                         <img
                           src={itemImg}
                           alt={item.name}
                           loading="lazy"
                         />
-                        {item.bestseller ? (
+                        {item.available === false ? (
+                          <span className="out-of-stock-badge">SOLD OUT</span>
+                        ) : item.bestseller ? (
                           <span className="brix-lime-badge">SPECIAL</span>
                         ) : (item.price >= 240 || item.category === 'Coffee') ? (
                           <span className="brix-lime-badge">NEW</span>
@@ -2374,7 +2379,7 @@ export default function CustomerApp() {
                         <span className="brix-card-veg-indicator" title={item.veg ? 'Pure Veg' : 'Non-Veg'}>
                           <DietaryBadge isVeg={item.veg} size={10} />
                         </span>
-                        {itemHasCustomizations && (
+                        {itemHasCustomizations && item.available !== false && (
                           <span className="brix-card-custom-badge">CUSTOMISABLE</span>
                         )}
                       </div>
@@ -2395,7 +2400,9 @@ export default function CustomerApp() {
                         <div className="brix-card-action-bar">
                           <span className="brix-card-dish-price">{displayPrice}</span>
 
-                          {itemHasCustomizations ? (
+                          {item.available === false ? (
+                            <span className="out-of-stock-pill">Sold Out</span>
+                          ) : itemHasCustomizations ? (
                             <button
                               type="button"
                               className={`brix-customise-trigger-btn ${inCartQty > 0 ? 'has-qty' : ''}`}
@@ -2668,7 +2675,7 @@ export default function CustomerApp() {
 
                           <div className="voucher-ticket-body">
                             <h3 className="voucher-amount-display">{money(r.amount)} OFF</h3>
-                            <p className="voucher-desc">Eligible for dining discount or free beverage</p>
+                            <p className="voucher-desc">{r.title || 'Eligible for dining discount or free beverage'}</p>
                             {r.expiresAt && (
                               <span className="voucher-expiry-note">
                                 Valid until {new Date(r.expiresAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
@@ -2820,7 +2827,7 @@ export default function CustomerApp() {
                             <Sparkles size={16} />
                           </div>
                           <div>
-                            <b>{money(r.amount)} Discount Voucher</b>
+                            <b>{r.title ? `${money(r.amount)} · ${r.title}` : `${money(r.amount)} Discount Voucher`}</b>
                             <span className="voucher-sub">
                               {r.status === 'redeemed'
                                 ? `Redeemed ${r.redeemedAt ? new Date(r.redeemedAt).toLocaleDateString('en-IN') : ''} ${r.notes ? `(${r.notes})` : ''}`
@@ -3844,7 +3851,7 @@ export default function CustomerApp() {
                       <option value="">Do not apply reward now</option>
                       {loyalty.rewards.map(r => (
                         <option key={r._id} value={r._id}>
-                          Apply {money(r.amount)} Discount Voucher
+                          Apply {money(r.amount)} {r.title || 'Discount Voucher'}
                         </option>
                       ))}
                     </select>
